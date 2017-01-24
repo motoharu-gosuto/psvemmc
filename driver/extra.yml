@@ -1,0 +1,19 @@
+  SceSdif:
+    nid: 0x2E7C52F7
+    libraries:
+      SceSdifForDriver:
+        kernel: true
+        nid: 0x96D306FA
+        functions:
+          ksceSdifGetSdGlobalContextElement: 0xdc8f52f8
+          ksceSdifGetSdGlobalContextElement0Part: 0x6a71987f
+          ksceSdifGetSdGlobalContextElement1Part: 0xb9ea5b1e
+          ksceSdifGetSdGlobalContextElement2Part: 0x6a8235fc
+          ksceSdifGetGetCardInsertState1: 0x36a2b01b
+          ksceSdifGetGetCardInsertState2: 0xfd9e5cfa
+          ksceSdifInitializeSdDevice: 0x22c82e79  
+          ksceSdifReadSectorAsync: 0x6f8d529b
+          ksceSdifReadSector: 0xb9593652
+          ksceSdifWriteSectorAsync: 0x175543d2
+          ksceSdifWriteSector: 0xe0781171
+          ksceSdifCopyCtx: 0x23a4ef01 
