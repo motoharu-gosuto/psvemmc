@@ -11,6 +11,8 @@ psvemmc:
       syscall: true
       functions:
         - psvemmcIntialize
-        - readSectorAsync
-        - writeSectorAsync
+        - readSector
+        - writeSector
+        - readCluster
+        - writeCluster
         - psvemmcDeinitialize

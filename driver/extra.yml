@@ -8,7 +8,7 @@ modules:
         functions:
           ksceSdifGetSdContextGlobal: 0xdc8f52f8
           ksceSdifGetSdContextPartEmmc: 0x6a71987f
-          ksceSdifGetSdContextPartGameCart: 0xb9ea5b1e
+          ksceSdifGetSdContextPartGameCard: 0xb9ea5b1e
           ksceSdifGetSdContextPartWlanBt: 0x6a8235fc
           ksceSdifGetCardInsertState1: 0x36a2b01b
           ksceSdifGetCardInsertState2: 0xfd9e5cfa

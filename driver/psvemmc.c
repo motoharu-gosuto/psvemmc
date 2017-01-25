@@ -99,10 +99,14 @@ typedef struct output_23a4ef01
 
 #pragma pack(pop)
 
+#define SCE_SDIF_DEV_EMMC 0
+#define SCE_SDIF_DEV_GAME_CARD 1
+#define SCE_SDIF_DEV_WLAN_BT 2
+
 sd_context_global* ksceSdifGetSdContextGlobal(int sd_ctx_idx);
 
 sd_context_part* ksceSdifGetSdContextPartEmmc(int sd_ctx_idx);
-sd_context_part* ksceSdifGetSdContextPartGameCart(int sd_ctx_idx);
+sd_context_part* ksceSdifGetSdContextPartGameCard(int sd_ctx_idx);
 sd_context_part* ksceSdifGetSdContextPartWlanBt(int sd_ctx_idx);
 
 int ksceSdifGetCardInsertState1(int sd_ctx_idx);
@@ -122,31 +126,163 @@ int ksceSdifCopyCtx(sd_context_part* ctx, output_23a4ef01* unk0);
 
 //=================================================
 
-int psvemmcIntialize(int sectorsPerCluster)
-{
-  return 0;
-}
+//defalut size of sector for SD MMC protocol
+#define SD_DEFAULT_SECTOR_SIZE 0x200
 
-int readSectorAsync(int sector, char* buffer, int nSectors)
-{
-  return 0;
-}
+static sd_context_part* g_emmcCtx = 0;
 
-int writeSectorAsync(int sector, char* buffer, int nSectors)
+static int g_emmcCtxInitialized = 0;
+
+static int g_bytesPerSector = 0;
+static int g_sectorsPerCluster = 0;
+
+static int g_clusterPoolInitialized = 0;
+
+static SceUID g_clusterPool = 0;
+
+static void* g_clusterPoolPtr = 0;
+
+//this function initializes a pool for single cluster
+//this way I hope to save some time on free/malloc operations
+//when I need to read single cluster
+
+//this method should be called after partition table is read
+//so that we know excatly bytesPerSector and sectorsPerCluster
+
+int psvemmcIntialize(int bytesPerSector, int sectorsPerCluster)
 {
+  if(g_clusterPoolInitialized != 0)
+    return -1;
+  
+  if(bytesPerSector != SD_DEFAULT_SECTOR_SIZE)
+    return -2;
+  
+  g_bytesPerSector = bytesPerSector;
+  g_sectorsPerCluster = sectorsPerCluster;
+  
+  SceKernelMemPoolCreateOpt opt;
+  memset(&opt, 0, sizeof(opt));
+  opt.size = sizeof(opt);
+  opt.uselock = 1;
+  
+  g_clusterPool = ksceKernelMemPoolCreate("cluster_pool", g_bytesPerSector * g_sectorsPerCluster, &opt);
+  if(g_clusterPool < 0)
+    return (int)g_clusterPool;
+  
+  g_clusterPoolPtr = ksceKernelMemPoolAlloc(g_clusterPool, g_bytesPerSector * g_sectorsPerCluster);
+  if(g_clusterPoolPtr < 0)
+    return (int)g_clusterPoolPtr;
+  
+  g_clusterPoolInitialized = 1;
+  
   return 0;
 }
 
 int psvemmcDeinitialize()
 {
+  if(g_clusterPoolInitialized == 0)
+    return -1;
+  
+  ksceKernelMemPoolFree(g_clusterPool, g_clusterPoolPtr);
+  
+  ksceKernelMemPoolDestroy(g_clusterPool);
+  
+  g_clusterPoolInitialized = 0;
+  
+  return 0;
+}
+
+//this reads 0x200 byte sector
+//other size is not supported since this is a restriction for single packet of SD MMC protocol
+
+int readSector(int sector, char* buffer, int nSectors)
+{
+  if(g_emmcCtxInitialized == 0)
+    return -1;
+  
+  return 0;
+}
+
+//this writes 0x200 byte sector
+//other size is not supported since this is a restriction for single packet of SD MMC protocol
+
+int writeSector(int sector, char* buffer, int nSectors)
+{
+  if(g_emmcCtxInitialized == 0)
+    return -1;
+  
+  return 0;
+}
+
+//this function reads single cluster
+//number of clusters and size of sector should be taken from partition table
+//however size of sector other than 0x200 is not currently expected
+
+//to change sector size I need to set block size with CMD16 SET_BLOCKLEN
+//however currently I do not know how to execute single SD EMMC commands
+
+//I should also mention that not all card types support block len change
+
+int readCluster(int cluster, char* buffer)
+{
+  if(g_emmcCtxInitialized == 0)
+    return -1;
+  
+  if(g_clusterPoolInitialized == 0)
+    return -2;
+  
+  return 0;
+}
+
+//this function writes single cluster
+//number of clusters and size of sector should be taken from partition table
+//however size of sector other than 0x200 is not currently expected
+
+//to change sector size I need to set block size with CMD16 SET_BLOCKLEN
+//however currently I do not know how to execute single SD EMMC commands
+
+//I should also mention that not all card types support block len change
+
+int writeCluster(int cluster, char* buffer)
+{
+  if(g_emmcCtxInitialized == 0)
+    return -1;
+  
+  if(g_clusterPoolInitialized == 0)
+    return -2;
+  
   return 0;
 }
 
 //=================================================
 
+int initialize_emmc()
+{
+  g_emmcCtx = ksceSdifGetSdContextPartEmmc(SCE_SDIF_DEV_EMMC);
+  if(g_emmcCtx == 0)
+  {
+    if(ksceSdifInitializeSdContextPart(SCE_SDIF_DEV_EMMC, &g_emmcCtx) < 0)
+    {
+      g_emmcCtxInitialized = 0;
+      return -1;
+    }
+    else
+    {
+      g_emmcCtxInitialized = 1;
+      return 0;
+    }
+  }
+  else
+  {
+    g_emmcCtxInitialized = 1;
+    return 0;
+  }
+}
+
 int module_start(SceSize argc, const void *args) 
 {  
-  //initialize emmc card if required
+  //initialize emmc if required
+  initialize_emmc();
   
   return SCE_KERNEL_START_SUCCESS;
 }
@@ -157,6 +293,7 @@ void _start() __attribute__ ((weak, alias ("module_start")));
 int module_stop(SceSize argc, const void *args) 
 {
   //deinitialize buffers if required
+  psvemmcDeinitialize();
   
   return SCE_KERNEL_STOP_SUCCESS;
 }

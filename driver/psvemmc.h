@@ -1,9 +1,13 @@
 #pragma once
 
-int psvemmcIntialize(int sectorsPerCluster);
+int psvemmcIntialize(int bytesPerSector, int sectorsPerCluster);
 
-int readSectorAsync(int sector, char* buffer, int nSectors);
+int readSector(int sector, char* buffer, int nSectors);
 
-int writeSectorAsync(int sector, char* buffer, int nSectors);
+int writeSector(int sector, char* buffer, int nSectors);
+
+int readCluster(int cluster, char* buffer);
+
+int writeCluster(int cluster, char* buffer);
 
 int psvemmcDeinitialize();
