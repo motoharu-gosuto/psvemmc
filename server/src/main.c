@@ -275,11 +275,70 @@ int handle_command_1() //terminate
   return sceNetSend(_cli_sock, &resp, sizeof(command_1_response), 0);
 }
 
+//defalut size of sector for SD MMC protocol
+#define SD_DEFAULT_SECTOR_SIZE 0x200
+
+static int g_bytesPerSector = 0;
+static int g_sectorsPerCluster = 0;
+
+static int g_clusterPoolInitialized = 0;
+
+static SceUID g_clusterPool = 0;
+
+static void* g_clusterPoolPtr = 0;
+
+int initializePool(int bytesPerSector, int sectorsPerCluster)
+{
+  if(g_clusterPoolInitialized != 0)
+    return -1;
+  
+  if(bytesPerSector != SD_DEFAULT_SECTOR_SIZE)
+    return -2;
+  
+  g_bytesPerSector = bytesPerSector;
+  g_sectorsPerCluster = sectorsPerCluster;
+  
+  g_clusterPool = sceKernelAllocMemBlock("cluster_pool", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW, g_bytesPerSector * g_sectorsPerCluster, 0);
+  if(g_clusterPool < 0)
+    return (int)g_clusterPool;
+  
+  int res_1 = sceKernelGetMemBlockBase(g_clusterPool, &g_clusterPoolPtr);
+  if(res_1 < 0)
+    return res_1;
+  
+  g_clusterPoolInitialized = 1;
+  
+  return 0;
+}
+
+int deinitializePool()
+{
+  if(g_clusterPoolInitialized == 0)
+    return -1;
+  
+  int res_1 = sceKernelFreeMemBlock(g_clusterPool);
+  if(res_1 < 0)
+    return res_1;
+  
+  g_clusterPoolInitialized = 0;
+  
+  return 0;
+}
+
 int handle_command_2() //init
 {
   command_2_response resp;
   memset(&resp, 0, sizeof(command_2_response));
   resp.command = PSVEMMC_COMMAND_INIT;
+  
+  if(g_clusterPoolInitialized != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 2\n");
+    resp.vita_err = -2;
+    
+    sceNetSend(_cli_sock, &resp, sizeof(command_2_response), 0);
+    return -2;
+  }
   
   int expLen = sizeof(command_2_request) - sizeof(int); //receive rest of the request
   
@@ -290,7 +349,7 @@ int handle_command_2() //init
   int recvLen = sceNetRecv(_cli_sock, &req.bytesPerSector, expLen, 0);
   if(recvLen != expLen)
   {
-    psvDebugScreenPrintf("psvemmc: failed to execute command 2\n");
+    psvDebugScreenPrintf("psvemmc: failed to receive command 2\n");
     resp.vita_err = -1;
     
     sceNetSend(_cli_sock, &resp, sizeof(command_2_response), 0);
@@ -299,6 +358,15 @@ int handle_command_2() //init
   
   psvDebugScreenPrintf("psvemmc: execute command 2\n");
   
+  //initialize pool
+  resp.vita_err = initializePool(req.bytesPerSector, req.sectorsPerCluster);
+  if(resp.vita_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 2\n");
+    return sceNetSend(_cli_sock, &resp, sizeof(command_2_response), 0);
+  }
+  
+  //execute kernel function
   resp.proxy_err = psvemmcIntialize(req.bytesPerSector, req.sectorsPerCluster);
     
   if(resp.proxy_err != 0)
@@ -315,13 +383,30 @@ int handle_command_3() //deinit
   memset(&resp, 0, sizeof(command_3_response));
   resp.command = PSVEMMC_COMMAND_DEINIT;
   
+  if(g_clusterPoolInitialized == 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 3\n");
+    resp.vita_err = -2;
+    
+    sceNetSend(_cli_sock, &resp, sizeof(command_3_response), 0);
+    return -2;
+  }
+  
   psvDebugScreenPrintf("psvemmc: execute command 3\n");
   
+  //execute kernel function
   resp.proxy_err = psvemmcDeinitialize();
     
   if(resp.proxy_err != 0)
   {
     psvDebugScreenPrintf("psvemmc: failed to execute command 3\n");
+  }
+  
+  //deinitialize pool
+  resp.vita_err = deinitializePool();
+  if(resp.vita_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 2\n");
   }
 
   return sceNetSend(_cli_sock, &resp, sizeof(command_3_response), 0);
@@ -342,7 +427,7 @@ int handle_command_4() //read sector
   int recvLen = sceNetRecv(_cli_sock, &req.sector, expLen, 0);
   if(recvLen != expLen)
   {
-    psvDebugScreenPrintf("psvemmc: failed to execute command 4\n");
+    psvDebugScreenPrintf("psvemmc: failed to receive command 4\n");
     resp.vita_err = -1;
     
     sceNetSend(_cli_sock, &resp, sizeof(command_4_response), 0);
@@ -365,7 +450,7 @@ int handle_command_4() //read sector
      int sendLen = sceNetSend(_cli_sock, ((char*)&resp) + bytesWereSend, bytesToSend - bytesWereSend, 0);
      if(sendLen <= 0)
      {
-        psvDebugScreenPrintf("psvkirk: failed to send data\n");
+        psvDebugScreenPrintf("psvemmc: failed to send data\n");
         return - 1;
      }
      
@@ -382,7 +467,40 @@ int handle_command_5() //read cluster
 
 int handle_command_6() //write sector
 {
-  return 0;
+  command_6_response resp;
+  memset(&resp, 0, sizeof(command_6_response));
+  resp.command = PSVEMMC_COMMAND_WRITE_SECTOR;
+  
+  int expLen = sizeof(command_6_request) - sizeof(int); //receive rest of the request
+  
+  command_6_request req;
+  req.command = PSVEMMC_COMMAND_WRITE_SECTOR;
+  
+  int bytesToReceive = expLen;
+  int bytesWereReceived = 0;
+  while(bytesToReceive != bytesWereReceived)
+  {
+    int recvLen = sceNetRecv(_cli_sock, ((char*)&req) + sizeof(int) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+    if(recvLen <= 0)
+    {
+      psvDebugScreenPrintf("psvemmc: failed to receive command 6\n");
+      resp.vita_err = -1;
+    
+      sceNetSend(_cli_sock, &resp, sizeof(command_6_response), 0);
+      return -1;
+    }
+  }
+  
+  psvDebugScreenPrintf("psvemmc: execute command 6\n");
+
+  resp.proxy_err = writeSector(req.sector, req.data);
+    
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 6\n");
+  }
+  
+  return sceNetSend(_cli_sock, &resp, sizeof(command_6_response), 0);
 }
 
 int handle_command_7() //write cluster
