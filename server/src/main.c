@@ -251,7 +251,7 @@ typedef struct command_7_response
 
 #pragma pack(pop)
 
-int handle_command_0()
+int handle_command_0() //ping
 {
   command_0_response resp;
   memset(&resp, 0, sizeof(command_0_response));
@@ -263,7 +263,7 @@ int handle_command_0()
   return sceNetSend(_cli_sock, &resp, sizeof(command_0_response), 0);
 }
 
-int handle_command_1()
+int handle_command_1() //terminate
 {
   command_1_response resp;
   memset(&resp, 0, sizeof(command_1_response));
@@ -275,32 +275,117 @@ int handle_command_1()
   return sceNetSend(_cli_sock, &resp, sizeof(command_1_response), 0);
 }
 
-int handle_command_2()
+int handle_command_2() //init
+{
+  command_2_response resp;
+  memset(&resp, 0, sizeof(command_2_response));
+  resp.command = PSVEMMC_COMMAND_INIT;
+  
+  int expLen = sizeof(command_2_request) - sizeof(int); //receive rest of the request
+  
+  command_2_request req;
+  req.command = PSVEMMC_COMMAND_INIT;
+  
+  //TODO: I know that request should be properly received in cycle, however size of this request is small so this should be ok
+  int recvLen = sceNetRecv(_cli_sock, &req.bytesPerSector, expLen, 0);
+  if(recvLen != expLen)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 2\n");
+    resp.vita_err = -1;
+    
+    sceNetSend(_cli_sock, &resp, sizeof(command_2_response), 0);
+    return -1;
+  }
+  
+  psvDebugScreenPrintf("psvemmc: execute command 2\n");
+  
+  resp.proxy_err = psvemmcIntialize(req.bytesPerSector, req.sectorsPerCluster);
+    
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 2\n");
+  }
+
+  return sceNetSend(_cli_sock, &resp, sizeof(command_2_response), 0);
+}
+
+int handle_command_3() //deinit
+{
+  command_3_response resp;
+  memset(&resp, 0, sizeof(command_3_response));
+  resp.command = PSVEMMC_COMMAND_DEINIT;
+  
+  psvDebugScreenPrintf("psvemmc: execute command 3\n");
+  
+  resp.proxy_err = psvemmcDeinitialize();
+    
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 3\n");
+  }
+
+  return sceNetSend(_cli_sock, &resp, sizeof(command_3_response), 0);
+}
+
+int handle_command_4() //read sector
+{
+  command_4_response resp;
+  memset(&resp, 0, sizeof(command_4_response));
+  resp.command = PSVEMMC_COMMAND_READ_SECTOR;
+  
+  int expLen = sizeof(command_4_request) - sizeof(int); //receive rest of the request
+  
+  command_4_request req;
+  req.command = PSVEMMC_COMMAND_READ_SECTOR;
+  
+  //TODO: I know that request should be properly received in cycle, however size of this request is small so this should be ok
+  int recvLen = sceNetRecv(_cli_sock, &req.sector, expLen, 0);
+  if(recvLen != expLen)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 4\n");
+    resp.vita_err = -1;
+    
+    sceNetSend(_cli_sock, &resp, sizeof(command_4_response), 0);
+    return -1;
+  }
+  
+  psvDebugScreenPrintf("psvemmc: execute command 4\n");
+
+  resp.proxy_err = readSector(req.sector, resp.data);
+    
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 4\n");
+  }
+
+  int bytesToSend = sizeof(command_4_response);
+  int bytesWereSend = 0;
+  while(bytesWereSend != bytesToSend)
+  {
+     int sendLen = sceNetSend(_cli_sock, ((char*)&resp) + bytesWereSend, bytesToSend - bytesWereSend, 0);
+     if(sendLen <= 0)
+     {
+        psvDebugScreenPrintf("psvkirk: failed to send data\n");
+        return - 1;
+     }
+     
+     bytesWereSend = bytesWereSend + sendLen;
+  }
+  
+  return 0;
+}
+
+int handle_command_5() //read cluster
 {
   return 0;
 }
 
-int handle_command_3()
+int handle_command_6() //write sector
 {
   return 0;
 }
 
-int handle_command_4()
-{
-  return 0;
-}
-
-int handle_command_5()
-{
-  return 0;
-}
-
-int handle_command_6()
-{
-  return 0;
-}
-
-int handle_command_7()
+int handle_command_7() //write cluster
 {
   return 0;
 }
