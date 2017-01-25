@@ -7,7 +7,7 @@ psvemmc:
     start: module_start
     stop: module_stop
   modules:
-    psvkirk:
+    psvemmc:
       syscall: true
       functions:
         - psvemmcIntialize
