@@ -185,7 +185,9 @@ int psvemmcDeinitialize()
   
   ksceKernelMemPoolFree(g_clusterPool, g_clusterPoolPtr);
   
-  ksceKernelMemPoolDestroy(g_clusterPool);
+  int res_1 = ksceKernelMemPoolDestroy(g_clusterPool);
+  if(res_1 < 0)
+    return res_1;
   
   g_clusterPoolInitialized = 0;
   
@@ -195,10 +197,19 @@ int psvemmcDeinitialize()
 //this reads 0x200 byte sector
 //other size is not supported since this is a restriction for single packet of SD MMC protocol
 
-int readSector(int sector, char* buffer, int nSectors)
+int readSector(int sector, char* buffer)
 {
   if(g_emmcCtxInitialized == 0)
     return -1;
+  
+  char buffer_kernel[SD_DEFAULT_SECTOR_SIZE];
+  
+  int res_1 = ksceSdifReadSectorAsync(g_emmcCtx, sector, buffer_kernel, 1);
+  if(res_1 < 0)
+    return res_1;
+  
+  int res_2 = ksceKernelMemcpyKernelToUser((uintptr_t)buffer, buffer_kernel, SD_DEFAULT_SECTOR_SIZE);
+    return res_2;
   
   return 0;
 }
@@ -206,12 +217,13 @@ int readSector(int sector, char* buffer, int nSectors)
 //this writes 0x200 byte sector
 //other size is not supported since this is a restriction for single packet of SD MMC protocol
 
-int writeSector(int sector, char* buffer, int nSectors)
+int writeSector(int sector, char* buffer)
 {
   if(g_emmcCtxInitialized == 0)
     return -1;
   
-  return 0;
+  //not implemented
+  return -2;
 }
 
 //this function reads single cluster
@@ -231,6 +243,13 @@ int readCluster(int cluster, char* buffer)
   if(g_clusterPoolInitialized == 0)
     return -2;
   
+  int res_1 = ksceSdifReadSectorAsync(g_emmcCtx, g_sectorsPerCluster * cluster, g_clusterPoolPtr, g_sectorsPerCluster);
+  if(res_1 < 0)
+    return res_1;
+  
+  int res_2 = ksceKernelMemcpyKernelToUser((uintptr_t)buffer, g_clusterPoolPtr, g_bytesPerSector * g_sectorsPerCluster);
+    return res_2;
+
   return 0;
 }
 
@@ -251,7 +270,8 @@ int writeCluster(int cluster, char* buffer)
   if(g_clusterPoolInitialized == 0)
     return -2;
   
-  return 0;
+  //not implemented
+  return -3;
 }
 
 //=================================================
