@@ -253,12 +253,26 @@ typedef struct command_7_response
 
 int handle_command_0()
 {
-  return 0;
+  command_0_response resp;
+  memset(&resp, 0, sizeof(command_0_response));
+  resp.command = PSVEMMC_COMMAND_PING;
+  memcpy(resp.data, "emmcproxy", 9);
+  
+  psvDebugScreenPrintf("psvemmc: execute command 0\n");
+
+  return sceNetSend(_cli_sock, &resp, sizeof(command_0_response), 0);
 }
 
 int handle_command_1()
 {
-  return 0;
+  command_1_response resp;
+  memset(&resp, 0, sizeof(command_1_response));
+  resp.command = PSVEMMC_COMMAND_TERM;
+  memcpy(resp.data, "emmcproxy", 9);
+  
+  psvDebugScreenPrintf("psvemmc: execute command 1\n");
+
+  return sceNetSend(_cli_sock, &resp, sizeof(command_1_response), 0);
 }
 
 int handle_command_2()
