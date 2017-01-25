@@ -160,21 +160,16 @@ int psvemmcIntialize(int bytesPerSector, int sectorsPerCluster)
   g_bytesPerSector = bytesPerSector;
   g_sectorsPerCluster = sectorsPerCluster;
   
-  SceKernelMemPoolCreateOpt opt;
-  memset(&opt, 0, sizeof(opt));
-  opt.size = sizeof(opt);
-  opt.uselock = 1;
-  
-  g_clusterPool = ksceKernelMemPoolCreate("cluster_pool", g_bytesPerSector * g_sectorsPerCluster, &opt);
+  g_clusterPool = ksceKernelAllocMemBlock("cluster_pool_kernel", SCE_KERNEL_MEMBLOCK_TYPE_KERNEL_RW, g_bytesPerSector * g_sectorsPerCluster, 0);
   if(g_clusterPool < 0)
-    return (int)g_clusterPool;
+    return g_clusterPool;
   
-  g_clusterPoolPtr = ksceKernelMemPoolAlloc(g_clusterPool, g_bytesPerSector * g_sectorsPerCluster);
-  if(g_clusterPoolPtr < 0)
-    return (int)g_clusterPoolPtr;
+  int res_1 = ksceKernelGetMemBlockBase(g_clusterPool, &g_clusterPoolPtr);
+  if(res_1 < 0)
+    return res_1;
   
   g_clusterPoolInitialized = 1;
-  
+
   return 0;
 }
 
@@ -183,9 +178,7 @@ int psvemmcDeinitialize()
   if(g_clusterPoolInitialized == 0)
     return -1;
   
-  ksceKernelMemPoolFree(g_clusterPool, g_clusterPoolPtr);
-  
-  int res_1 = ksceKernelMemPoolDestroy(g_clusterPool);
+  int res_1 = ksceKernelFreeMemBlock(g_clusterPool);
   if(res_1 < 0)
     return res_1;
   

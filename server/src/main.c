@@ -300,8 +300,8 @@ int initializePool(int bytesPerSector, int sectorsPerCluster)
   
   g_clusterPool = sceKernelAllocMemBlock("cluster_pool", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW, g_bytesPerSector * g_sectorsPerCluster, 0);
   if(g_clusterPool < 0)
-    return (int)g_clusterPool;
-  
+    return g_clusterPool;
+
   int res_1 = sceKernelGetMemBlockBase(g_clusterPool, &g_clusterPoolPtr);
   if(res_1 < 0)
     return res_1;
