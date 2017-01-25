@@ -218,7 +218,7 @@ typedef struct command_5_response
     int command;
     int vita_err;
     int proxy_err;
-    //variable data length
+    //variable data length : g_bytesPerSector * g_sectorsPerCluster
 } command_5_response;
 
 typedef struct command_6_request //write sector
@@ -462,6 +462,53 @@ int handle_command_4() //read sector
 
 int handle_command_5() //read cluster
 {
+  command_5_response resp;
+  memset(&resp, 0, sizeof(command_5_response));
+  resp.command = PSVEMMC_COMMAND_READ_CLUSTER;
+  
+  int expLen = sizeof(command_5_request) - sizeof(int); //receive rest of the request
+  
+  command_5_request req;
+  req.command = PSVEMMC_COMMAND_READ_CLUSTER;
+  
+  //TODO: I know that request should be properly received in cycle, however size of this request is small so this should be ok
+  int recvLen = sceNetRecv(_cli_sock, &req.cluster, expLen, 0);
+  if(recvLen != expLen)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to receive command 5\n");
+    resp.vita_err = -1;
+    
+    sceNetSend(_cli_sock, &resp, sizeof(command_5_response), 0);
+    return -1;
+  }
+  
+  psvDebugScreenPrintf("psvemmc: execute command 5\n");
+  
+  resp.proxy_err = readCluster(req.cluster, g_clusterPoolPtr);
+  
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 5\n");
+  }
+  
+  //send header first
+  sceNetSend(_cli_sock, &resp, sizeof(command_5_response), 0);
+  
+  //send cluster data next
+  int bytesToSend = g_bytesPerSector * g_sectorsPerCluster;
+  int bytesWereSend = 0;
+  while(bytesWereSend != bytesToSend)
+  {
+     int sendLen = sceNetSend(_cli_sock, ((char*)g_clusterPoolPtr) + bytesWereSend, bytesToSend - bytesWereSend, 0);
+     if(sendLen <= 0)
+     {
+        psvDebugScreenPrintf("psvemmc: failed to send data\n");
+        return - 1;
+     }
+     
+     bytesWereSend = bytesWereSend + sendLen;
+  }
+  
   return 0;
 }
 
