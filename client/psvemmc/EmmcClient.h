@@ -52,7 +52,7 @@ struct command_2_request //init
    int sectorsPerCluster;
 };
 
-typedef struct command_2_response
+struct command_2_response
 {
    command_response_base base;
 };
