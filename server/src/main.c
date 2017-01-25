@@ -130,6 +130,167 @@ void deinit_net()
   }
 }
 
+#define PSVEMMC_COMMAND_PING 0
+#define PSVEMMC_COMMAND_TERM 1
+#define PSVEMMC_COMMAND_INIT 2
+#define PSVEMMC_COMMAND_DEINIT 3
+#define PSVEMMC_COMMAND_READ_SECTOR 4
+#define PSVEMMC_COMMAND_READ_CLUSTER 5
+#define PSVEMMC_COMMAND_WRITE_SECTOR 6
+#define PSVEMMC_COMMAND_WRITE_CLUSTER 7
+
+#pragma pack(push, 1)
+
+typedef struct command_0_request //ping
+{
+  int command;
+} command_0_request;
+ 
+typedef struct command_0_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+    char data[10];
+} command_0_response;
+
+typedef struct command_1_request //terminate
+{
+  int command;
+} command_1_request;
+
+typedef struct command_1_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+    char data[10];
+} command_1_response;
+
+typedef struct command_2_request //init
+{
+  int command;
+  int bytesPerSector;
+  int sectorsPerCluster;
+} command_2_request;
+
+typedef struct command_2_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+} command_2_response;
+
+typedef struct command_3_request //deinit
+{
+  int command;
+} command_3_request;
+
+typedef struct command_3_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+} command_3_response;
+
+typedef struct command_4_request //read sector
+{
+  int command;
+  int sector;
+} command_4_request;
+
+typedef struct command_4_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+    char data[0x200];
+} command_4_response;
+
+typedef struct command_5_request //read cluster
+{
+  int command;
+  int cluster;
+} command_5_request;
+
+typedef struct command_5_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+    //variable data length
+} command_5_response;
+
+typedef struct command_6_request //write sector
+{
+  int command;
+  int sector;
+  char data[0x200];
+} command_6_request;
+
+typedef struct command_6_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+} command_6_response;
+
+typedef struct command_7_request //write cluster
+{
+  int command;
+  int cluster;
+  //variable data length
+} command_7_request;
+
+typedef struct command_7_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+} command_7_response;
+
+#pragma pack(pop)
+
+int handle_command_0()
+{
+  return 0;
+}
+
+int handle_command_1()
+{
+  return 0;
+}
+
+int handle_command_2()
+{
+  return 0;
+}
+
+int handle_command_3()
+{
+  return 0;
+}
+
+int handle_command_4()
+{
+  return 0;
+}
+
+int handle_command_5()
+{
+  return 0;
+}
+
+int handle_command_6()
+{
+  return 0;
+}
+
+int handle_command_7()
+{
+  return 0;
+}
+
 void receive_commands()
 {
   while(1)
@@ -144,6 +305,62 @@ void receive_commands()
     
     switch(command)
     {
+    case PSVEMMC_COMMAND_PING:
+      if(handle_command_0() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 0\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_TERM:
+      if(handle_command_1() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 1\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_INIT:
+      if(handle_command_2() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 2\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_DEINIT:
+      if(handle_command_3() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 3\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_READ_SECTOR:
+      if(handle_command_4() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 4\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_READ_CLUSTER:
+      if(handle_command_5() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 5\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_WRITE_SECTOR:
+      if(handle_command_6() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 6\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_WRITE_CLUSTER:
+      if(handle_command_7() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 7\n");
+        return;
+      }
+      break;  
     default:
       psvDebugScreenPrintf("psvemmc: unknown command\n");
       return;
