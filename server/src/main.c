@@ -362,7 +362,7 @@ int handle_command_2() //init
   resp.vita_err = initializePool(req.bytesPerSector, req.sectorsPerCluster);
   if(resp.vita_err != 0)
   {
-    psvDebugScreenPrintf("psvemmc: failed to execute command 2\n");
+    psvDebugScreenPrintf("psvemmc: failed to initialize pool\n");
     return sceNetSend(_cli_sock, &resp, sizeof(command_2_response), 0);
   }
   
@@ -406,7 +406,7 @@ int handle_command_3() //deinit
   resp.vita_err = deinitializePool();
   if(resp.vita_err != 0)
   {
-    psvDebugScreenPrintf("psvemmc: failed to execute command 2\n");
+    psvDebugScreenPrintf("psvemmc: failed to deinitialize pool\n");
   }
 
   return sceNetSend(_cli_sock, &resp, sizeof(command_3_response), 0);

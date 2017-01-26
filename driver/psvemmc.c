@@ -202,6 +202,7 @@ int readSector(int sector, char* buffer)
     return res_1;
   
   int res_2 = ksceKernelMemcpyKernelToUser((uintptr_t)buffer, buffer_kernel, SD_DEFAULT_SECTOR_SIZE);
+  if(res_2 < 0)
     return res_2;
   
   return 0;
@@ -241,6 +242,7 @@ int readCluster(int cluster, char* buffer)
     return res_1;
   
   int res_2 = ksceKernelMemcpyKernelToUser((uintptr_t)buffer, g_clusterPoolPtr, g_bytesPerSector * g_sectorsPerCluster);
+  if(res_2 < 0)
     return res_2;
 
   return 0;
