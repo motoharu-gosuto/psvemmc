@@ -7,9 +7,9 @@ std::string partitionCodeToString(PartitionCodes c)
    case empty_c:
       return "empty";
    case eMMC:
-      return "eMMC";
+      return "emmc";
    case SLB2:
-      return "SLB2";
+      return "slb2";
    case os0:
       return "os0";
    case vs0:
