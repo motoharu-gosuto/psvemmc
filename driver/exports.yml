@@ -10,7 +10,7 @@ psvemmc:
     psvemmc:
       syscall: true
       functions:
-        - psvemmcIntialize
+        - psvemmcInitialize
         - readSector
         - writeSector
         - readCluster

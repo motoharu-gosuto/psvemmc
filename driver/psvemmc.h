@@ -1,6 +1,6 @@
 #pragma once
 
-int psvemmcIntialize(int bytesPerSector, int sectorsPerCluster);
+int psvemmcInitialize(int bytesPerSector, int sectorsPerCluster);
 
 int readSector(int sector, char* buffer);
 

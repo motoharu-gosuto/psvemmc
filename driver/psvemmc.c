@@ -129,18 +129,18 @@ int ksceSdifCopyCtx(sd_context_part* ctx, output_23a4ef01* unk0);
 //defalut size of sector for SD MMC protocol
 #define SD_DEFAULT_SECTOR_SIZE 0x200
 
-static sd_context_part* g_emmcCtx = 0;
+sd_context_part* g_emmcCtx = 0;
 
-static int g_emmcCtxInitialized = 0;
+int g_emmcCtxInitialized = 0;
 
-static int g_bytesPerSector = 0;
-static int g_sectorsPerCluster = 0;
+int g_bytesPerSector = 0;
+int g_sectorsPerCluster = 0;
 
-static int g_clusterPoolInitialized = 0;
+int g_clusterPoolInitialized = 0;
 
-static SceUID g_clusterPool = 0;
+SceUID g_clusterPool = 0;
 
-static void* g_clusterPoolPtr = 0;
+void* g_clusterPoolPtr = 0;
 
 //this function initializes a pool for single cluster
 //this way I hope to save some time on free/malloc operations
@@ -149,7 +149,7 @@ static void* g_clusterPoolPtr = 0;
 //this method should be called after partition table is read
 //so that we know excatly bytesPerSector and sectorsPerCluster
 
-int psvemmcIntialize(int bytesPerSector, int sectorsPerCluster)
+int psvemmcInitialize(int bytesPerSector, int sectorsPerCluster)
 {
   if(g_clusterPoolInitialized != 0)
     return -1;
@@ -293,7 +293,7 @@ int initialize_emmc()
 }
 
 int module_start(SceSize argc, const void *args) 
-{  
+{
   //initialize emmc if required
   initialize_emmc();
   

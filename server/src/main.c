@@ -367,7 +367,7 @@ int handle_command_2() //init
   }
   
   //execute kernel function
-  resp.proxy_err = psvemmcIntialize(req.bytesPerSector, req.sectorsPerCluster);
+  resp.proxy_err = psvemmcInitialize(req.bytesPerSector, req.sectorsPerCluster);
     
   if(resp.proxy_err != 0)
   {
