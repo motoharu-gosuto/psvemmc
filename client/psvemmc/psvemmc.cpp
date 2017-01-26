@@ -4,15 +4,18 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-#include "EmmcClient.h"
-
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <array>
 #include <iomanip>
 #include <vector>
 
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include "EmmcClient.h"
 #include "SceMbr.h"
 
 //defalut size of sector for SD MMC protocol
@@ -226,9 +229,9 @@ int emmc_read_cluster(SOCKET socket, int cluster, int expectedSize, char* data)
    return 0;
 }
 
-int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition)
+int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::filesystem::path dumpFilePath)
 {
-   //valid approach is to take sectorsPerCluster value from partition VBR (both fat16 and exfat have this info)
+   //TODO: valid approach is to take sectorsPerCluster value from partition VBR (both fat16 and exfat have this info)
 
    const int sectorsPerCluster = 8;
 
@@ -239,28 +242,37 @@ int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition)
    int nSectorsToRead = partition.partitionSize % sectorsPerCluster;
 
    int clusterOffset = partition.partitionOffset / sectorsPerCluster;
+   int tailOffset =  partition.partitionOffset + nClustersToRead * sectorsPerCluster;
+
+   std::ofstream outputFile(dumpFilePath.generic_string().c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
 
    std::vector<char> clusterData(SD_DEFAULT_SECTOR_SIZE * sectorsPerCluster);
    for(size_t i = 0; i < nClustersToRead; i++)
    {
       if(emmc_read_cluster(emmc_socket, clusterOffset + i, clusterData.size(), clusterData.data()) < 0)
          return -1;
-   }
 
-   int tailOffset =  partition.partitionOffset + nClustersToRead * sectorsPerCluster;
+      outputFile.write(clusterData.data(), clusterData.size());
+
+      std::cout << "cluster " << (i + 1) << " out of " << nClustersToRead << std::endl;
+   }
 
    std::array<char, SD_DEFAULT_SECTOR_SIZE> sectorData;
    for(size_t i = 0; i < nSectorsToRead; i++)
    {
       if(emmc_read_sector(emmc_socket, tailOffset + i, sectorData) < 0)
          return -1;
+
+      outputFile.write(sectorData.data(), sectorData.size());
    }
+
+   outputFile.close();
 
    if(emmc_deinit(emmc_socket) < 0)
       return -1;
 }
 
-int dump_emmc(SOCKET emmc_socket)
+int dump_emmc(SOCKET emmc_socket, int dumpPartitionIndex, boost::filesystem::path dumpFilePath)
 {
    if(emmc_ping(emmc_socket) < 0)
       return -1;
@@ -289,18 +301,46 @@ int dump_emmc(SOCKET emmc_socket)
                 << partitionCodeToString(partition.partitionCode) << std::endl;
    }
 
-   dump_partition(emmc_socket, mbr.partitions[0]);
+   if(mbr.partitions[dumpPartitionIndex].partitionType == empty_t)
+   {
+      std::cout << "trying to dump empty partition" << std::endl;
+      return -1;
+   }
+
+   dump_partition(emmc_socket, mbr.partitions[dumpPartitionIndex], dumpFilePath);
+
+   return 0;
+}
+
+int parseArgs(int argc, char* argv[], int& dumpPartitionIndex, boost::filesystem::path& dumpFilePath)
+{
+   //TODO: args should be parsed with boost
+   if(argc < 3)
+   {
+      std::cout << "Invalid number of arguments" << std::endl;
+      std::cout << "Usage: dumpPartitionIndex dumpFilePath" << std::endl;
+      return - 1;
+   }
+
+   dumpPartitionIndex = boost::lexical_cast<int, std::string>(std::string(argv[1]));
+   dumpFilePath = boost::filesystem::path (argv[2]);
 
    return 0;
 }
 
 int main(int argc, char* argv[])
 {
+   int dumpPartitionIndex;
+   boost::filesystem::path dumpFilePath;
+
+   if(parseArgs(argc, argv, dumpPartitionIndex, dumpFilePath) < 0)
+      return 1;
+
    SOCKET emmc_socket = 0;
    if(initialize_emmc_proxy_connection(emmc_socket) < 0)
       return 1;
 
-   dump_emmc(emmc_socket);
+   dump_emmc(emmc_socket, dumpPartitionIndex, dumpFilePath);
 
    if(deinitialize_emmc_proxy_connection(emmc_socket) < 0)
       return 1;
