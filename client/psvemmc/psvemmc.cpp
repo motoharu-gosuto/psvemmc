@@ -9,6 +9,12 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <array>
+
+#include "SceMbr.h"
+
+//defalut size of sector for SD MMC protocol
+#define SD_DEFAULT_SECTOR_SIZE 0x200
 
 int emmc_ping(SOCKET socket)
 {
@@ -117,12 +123,70 @@ int emmc_deinit(SOCKET socket)
    return 0;
 }
 
+int emmc_read_sector(SOCKET socket, int sector, std::array<char, SD_DEFAULT_SECTOR_SIZE>& result)
+{
+   command_4_request cmd4;
+   cmd4.command = PSVEMMC_COMMAND_READ_SECTOR;
+   cmd4.sector = sector;
+
+   int iResult = send(socket, (const char*)&cmd4, sizeof(command_4_request), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   command_4_response resp4;
+
+   int bytesToReceive = sizeof(command_4_response);
+   int bytesWereReceived = 0;
+   command_4_response* respcpy = &resp4;
+
+   while(bytesToReceive != bytesWereReceived)
+   {
+      int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+      if (iResult == SOCKET_ERROR) 
+      {
+         std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+         closesocket(socket);
+         WSACleanup();
+         return -1;
+      }
+
+      bytesWereReceived = bytesWereReceived + iResult;
+   }
+
+   if(resp4.base.command != PSVEMMC_COMMAND_READ_SECTOR || resp4.base.vita_err < 0 || resp4.base.proxy_err != 0)
+   {
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   memcpy(result.data(), resp4.data, SD_DEFAULT_SECTOR_SIZE);
+
+   return 0;
+}
+
 int dump_emmc(SOCKET emmc_socket)
 {
    if(emmc_ping(emmc_socket) < 0)
       return -1;
+   
+   std::array<char, SD_DEFAULT_SECTOR_SIZE> mbrSector;
+   if(emmc_read_sector(emmc_socket, 0, mbrSector) < 0)
+      return -1;
 
-   if(emmc_init(emmc_socket, 0x200, 1) < 0)
+   MBR mbr;
+   memcpy(&mbr, mbrSector.data(), mbrSector.size());
+   if(validateSceMbr(mbr) < 0)
+      return -1;
+
+   return 0;
+
+   if(emmc_init(emmc_socket, SD_DEFAULT_SECTOR_SIZE, 8) < 0)
       return -1;
 
    //dump code here
