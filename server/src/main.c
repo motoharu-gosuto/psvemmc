@@ -696,7 +696,7 @@ int handle_command_8() //read sector
   
   psvDebugScreenPrintf("psvemmc: execute command 8\n");
 
-  resp.proxy_err = readSector(req.sector, resp.data);
+  resp.proxy_err = readSectorMs(req.sector, resp.data);
     
   if(resp.proxy_err != 0)
   {
@@ -744,7 +744,7 @@ int handle_command_9() //read cluster
   
   psvDebugScreenPrintf("psvemmc: execute command 9\n");
   
-  resp.proxy_err = readCluster(req.cluster, g_clusterPoolPtr);
+  resp.proxy_err = readClusterMs(req.cluster, g_clusterPoolPtr);
   
   if(resp.proxy_err != 0)
   {
@@ -800,7 +800,7 @@ int handle_command_10() //write sector
   
   psvDebugScreenPrintf("psvemmc: execute command 10\n");
 
-  resp.proxy_err = writeSector(req.sector, req.data);
+  resp.proxy_err = writeSectorMs(req.sector, req.data);
     
   if(resp.proxy_err != 0)
   {
@@ -851,7 +851,7 @@ int handle_command_11() //write cluster
   
   psvDebugScreenPrintf("psvemmc: execute command 11\n");
   
-  resp.proxy_err = writeCluster(req.cluster, g_clusterPoolPtr);
+  resp.proxy_err = writeClusterMs(req.cluster, g_clusterPoolPtr);
     
   if(resp.proxy_err != 0)
   {
