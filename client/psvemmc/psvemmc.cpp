@@ -4,11 +4,22 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-#include "EmmcClient.h"
-
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
+#include <array>
+#include <iomanip>
+#include <vector>
+
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include "EmmcClient.h"
+#include "SceMbr.h"
+
+//defalut size of sector for SD MMC protocol
+#define SD_DEFAULT_SECTOR_SIZE 0x200
 
 int emmc_ping(SOCKET socket)
 {
@@ -117,29 +128,219 @@ int emmc_deinit(SOCKET socket)
    return 0;
 }
 
-int dump_emmc(SOCKET emmc_socket)
+int emmc_read_sector(SOCKET socket, int sector, std::array<char, SD_DEFAULT_SECTOR_SIZE>& result)
 {
-   if(emmc_ping(emmc_socket) < 0)
+   command_4_request cmd4;
+   cmd4.command = PSVEMMC_COMMAND_READ_SECTOR;
+   cmd4.sector = sector;
+
+   int iResult = send(socket, (const char*)&cmd4, sizeof(command_4_request), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   command_4_response resp4;
+
+   int bytesToReceive = sizeof(command_4_response);
+   int bytesWereReceived = 0;
+   command_4_response* respcpy = &resp4;
+
+   while(bytesToReceive != bytesWereReceived)
+   {
+      int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+      if (iResult == SOCKET_ERROR) 
+      {
+         std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+         closesocket(socket);
+         WSACleanup();
+         return -1;
+      }
+
+      bytesWereReceived = bytesWereReceived + iResult;
+   }
+
+   if(resp4.base.command != PSVEMMC_COMMAND_READ_SECTOR || resp4.base.vita_err < 0 || resp4.base.proxy_err != 0)
+   {
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   memcpy(result.data(), resp4.data, SD_DEFAULT_SECTOR_SIZE);
+
+   return 0;
+}
+
+int emmc_read_cluster(SOCKET socket, int cluster, int expectedSize, char* data)
+{
+   command_5_request cmd5;
+   cmd5.command = PSVEMMC_COMMAND_READ_CLUSTER;
+   cmd5.cluster = cluster;
+
+   int iResult = send(socket, (const char*)&cmd5, sizeof(command_5_request), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   command_5_response resp5;
+
+   iResult = recv(socket, (char*)&resp5, sizeof(command_5_response), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   int bytesToReceive = expectedSize;
+   int bytesWereReceived = 0;
+   char* respcpy = data;
+
+   while(bytesToReceive != bytesWereReceived)
+   {
+      int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+      if (iResult == SOCKET_ERROR) 
+      {
+         std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+         closesocket(socket);
+         WSACleanup();
+         return -1;
+      }
+
+      bytesWereReceived = bytesWereReceived + iResult;
+   }
+
+   if(resp5.base.command != PSVEMMC_COMMAND_READ_CLUSTER || resp5.base.vita_err < 0 || resp5.base.proxy_err != 0)
+   {
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   return 0;
+}
+
+int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::filesystem::path dumpFilePath)
+{
+   //TODO: valid approach is to take sectorsPerCluster value from partition VBR (both fat16 and exfat have this info)
+
+   const int sectorsPerCluster = 8;
+
+   if(emmc_init(emmc_socket, SD_DEFAULT_SECTOR_SIZE, sectorsPerCluster) < 0)
       return -1;
 
-   if(emmc_init(emmc_socket, 0x200, 1) < 0)
-      return -1;
+   int nClustersToRead = partition.partitionSize / sectorsPerCluster;
+   int nSectorsToRead = partition.partitionSize % sectorsPerCluster;
 
-   //dump code here
+   int clusterOffset = partition.partitionOffset / sectorsPerCluster;
+   int tailOffset =  partition.partitionOffset + nClustersToRead * sectorsPerCluster;
+
+   std::ofstream outputFile(dumpFilePath.generic_string().c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
+
+   std::vector<char> clusterData(SD_DEFAULT_SECTOR_SIZE * sectorsPerCluster);
+   for(size_t i = 0; i < nClustersToRead; i++)
+   {
+      if(emmc_read_cluster(emmc_socket, clusterOffset + i, clusterData.size(), clusterData.data()) < 0)
+         return -1;
+
+      outputFile.write(clusterData.data(), clusterData.size());
+
+      std::cout << "cluster " << (i + 1) << " out of " << nClustersToRead << std::endl;
+   }
+
+   std::array<char, SD_DEFAULT_SECTOR_SIZE> sectorData;
+   for(size_t i = 0; i < nSectorsToRead; i++)
+   {
+      if(emmc_read_sector(emmc_socket, tailOffset + i, sectorData) < 0)
+         return -1;
+
+      outputFile.write(sectorData.data(), sectorData.size());
+   }
+
+   outputFile.close();
 
    if(emmc_deinit(emmc_socket) < 0)
       return -1;
+}
+
+int dump_emmc(SOCKET emmc_socket, int dumpPartitionIndex, boost::filesystem::path dumpFilePath)
+{
+   if(emmc_ping(emmc_socket) < 0)
+      return -1;
+   
+   std::array<char, SD_DEFAULT_SECTOR_SIZE> mbrSector;
+   if(emmc_read_sector(emmc_socket, 0, mbrSector) < 0)
+      return -1;
+
+   MBR mbr;
+   memcpy(&mbr, mbrSector.data(), mbrSector.size());
+   if(validateSceMbr(mbr) < 0)
+      return -1;
+
+   std::cout << "Available partitions: " << std::endl;
+
+   for(size_t i = 0; i < NPartitions; i++)
+   {
+      const PartitionEntry& partition = mbr.partitions[i];
+
+      if(partition.partitionType == empty_t)
+         break;
+
+      std::cout << std::hex << std::setfill('0') << std::setw(8) << partition.partitionOffset << " " 
+                << std::hex << std::setfill('0') << std::setw(8) << partition.partitionSize << " "
+                << PartitionTypeToString(partition.partitionType) << " " 
+                << partitionCodeToString(partition.partitionCode) << std::endl;
+   }
+
+   if(mbr.partitions[dumpPartitionIndex].partitionType == empty_t)
+   {
+      std::cout << "trying to dump empty partition" << std::endl;
+      return -1;
+   }
+
+   dump_partition(emmc_socket, mbr.partitions[dumpPartitionIndex], dumpFilePath);
+
+   return 0;
+}
+
+int parseArgs(int argc, char* argv[], int& dumpPartitionIndex, boost::filesystem::path& dumpFilePath)
+{
+   //TODO: args should be parsed with boost
+   if(argc < 3)
+   {
+      std::cout << "Invalid number of arguments" << std::endl;
+      std::cout << "Usage: dumpPartitionIndex dumpFilePath" << std::endl;
+      return - 1;
+   }
+
+   dumpPartitionIndex = boost::lexical_cast<int, std::string>(std::string(argv[1]));
+   dumpFilePath = boost::filesystem::path (argv[2]);
 
    return 0;
 }
 
 int main(int argc, char* argv[])
 {
+   int dumpPartitionIndex;
+   boost::filesystem::path dumpFilePath;
+
+   if(parseArgs(argc, argv, dumpPartitionIndex, dumpFilePath) < 0)
+      return 1;
+
    SOCKET emmc_socket = 0;
    if(initialize_emmc_proxy_connection(emmc_socket) < 0)
       return 1;
 
-   dump_emmc(emmc_socket);
+   dump_emmc(emmc_socket, dumpPartitionIndex, dumpFilePath);
 
    if(deinitialize_emmc_proxy_connection(emmc_socket) < 0)
       return 1;

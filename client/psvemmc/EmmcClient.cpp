@@ -27,7 +27,7 @@
 
 int initialize_emmc_proxy_connection(SOCKET& ConnectSocket)
 {
-   std::cout << "Welcome to Emmc client" << std::endl;
+   std::cout << "Welcome to emmc client" << std::endl;
 
    // Initialize Winsock
    WSADATA wsaData;
