@@ -17,4 +17,18 @@ modules:
           ksceSdifReadSector: 0xb9593652
           ksceSdifWriteSectorAsync: 0x175543d2
           ksceSdifWriteSector: 0xe0781171
-          ksceSdifCopyCtx: 0x23a4ef01 
+          ksceSdifCopyCtx: 0x23a4ef01
+  SceMsif:
+    nid: 0x3305A0FE
+    libraries:
+      SceMsifForDriver:
+        kernel: true
+        nid: 0xB706084A
+        functions:
+          ksceMsifReadSector: 0x58654AA3
+          ksceMsifWriteSector: 0x329035EF
+          ksceMsifEnableSlowMode: 0x4B751CE6
+          ksceMsifDisableSlowMode: 0x75848756
+          ksceMsifGetSlowModeState: 0x491E25B5
+          ksceMsifInit1: 0x4EA579EF
+          ksceMsifInit2: 0xD0307849

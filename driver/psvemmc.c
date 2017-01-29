@@ -126,12 +126,25 @@ int ksceSdifCopyCtx(sd_context_part* ctx, output_23a4ef01* unk0);
 
 //=================================================
 
+int ksceMsifReadSector(int sector, char* buffer, int nSectors);
+int ksceMsifWriteSector(int sector, char* buffer, int nSectors);
+int ksceMsifEnableSlowMode();
+int ksceMsifDisableSlowMode();
+int ksceMsifGetSlowModeState();
+
+int ksceMsifInit1();
+int ksceMsifInit2(char* unk0_40);
+
+//=================================================
+
 //defalut size of sector for SD MMC protocol
 #define SD_DEFAULT_SECTOR_SIZE 0x200
 
 sd_context_part* g_emmcCtx = 0;
 
 int g_emmcCtxInitialized = 0;
+
+int g_msCtxInitialized = 0;
 
 int g_bytesPerSector = 0;
 int g_sectorsPerCluster = 0;
@@ -208,12 +221,43 @@ int readSector(int sector, char* buffer)
   return 0;
 }
 
+//this reads 0x200 byte sector
+
+int readSectorMs(int sector, char* buffer)
+{
+  if(g_msCtxInitialized == 0)
+    return -1;
+  
+  char buffer_kernel[SD_DEFAULT_SECTOR_SIZE];
+  
+  int res_1 = ksceMsifReadSector(sector, buffer_kernel, 1);
+  if(res_1 < 0)
+    return res_1;
+  
+  int res_2 = ksceKernelMemcpyKernelToUser((uintptr_t)buffer, buffer_kernel, SD_DEFAULT_SECTOR_SIZE);
+  if(res_2 < 0)
+    return res_2;
+  
+  return 0;
+}
+
 //this writes 0x200 byte sector
 //other size is not supported since this is a restriction for single packet of SD MMC protocol
 
 int writeSector(int sector, char* buffer)
 {
   if(g_emmcCtxInitialized == 0)
+    return -1;
+  
+  //not implemented
+  return -2;
+}
+
+//this writes 0x200 byte sector
+
+int writeSectorMs(int sector, char* buffer)
+{
+  if(g_msCtxInitialized == 0)
     return -1;
   
   //not implemented
@@ -248,6 +292,25 @@ int readCluster(int cluster, char* buffer)
   return 0;
 }
 
+int readClusterMs(int cluster, char* buffer)
+{
+  if(g_msCtxInitialized == 0)
+    return -1;
+  
+  if(g_clusterPoolInitialized == 0)
+    return -2;
+  
+  int res_1 = ksceMsifReadSector(g_sectorsPerCluster * cluster, g_clusterPoolPtr, g_sectorsPerCluster);
+  if(res_1 < 0)
+    return res_1;
+  
+  int res_2 = ksceKernelMemcpyKernelToUser((uintptr_t)buffer, g_clusterPoolPtr, g_bytesPerSector * g_sectorsPerCluster);
+  if(res_2 < 0)
+    return res_2;
+
+  return 0;
+}
+
 //this function writes single cluster
 //number of clusters and size of sector should be taken from partition table
 //however size of sector other than 0x200 is not currently expected
@@ -260,6 +323,18 @@ int readCluster(int cluster, char* buffer)
 int writeCluster(int cluster, char* buffer)
 {
   if(g_emmcCtxInitialized == 0)
+    return -1;
+  
+  if(g_clusterPoolInitialized == 0)
+    return -2;
+  
+  //not implemented
+  return -3;
+}
+
+int writeClusterMs(int cluster, char* buffer)
+{
+  if(g_msCtxInitialized == 0)
     return -1;
   
   if(g_clusterPoolInitialized == 0)
@@ -294,10 +369,22 @@ int initialize_emmc()
   }
 }
 
+int initialize_ms()
+{
+  //currently I do not know how to initialize ms
+  //there are at least two functions that must be called
+  
+  g_msCtxInitialized = 1;
+  return 0;
+}
+
 int module_start(SceSize argc, const void *args) 
 {
   //initialize emmc if required
   initialize_emmc();
+  
+  //initialize ms if required
+  initialize_ms();
   
   return SCE_KERNEL_START_SUCCESS;
 }

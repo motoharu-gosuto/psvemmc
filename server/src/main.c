@@ -132,12 +132,19 @@ void deinit_net()
 
 #define PSVEMMC_COMMAND_PING 0
 #define PSVEMMC_COMMAND_TERM 1
+
 #define PSVEMMC_COMMAND_INIT 2
 #define PSVEMMC_COMMAND_DEINIT 3
+
 #define PSVEMMC_COMMAND_READ_SECTOR 4
 #define PSVEMMC_COMMAND_READ_CLUSTER 5
 #define PSVEMMC_COMMAND_WRITE_SECTOR 6
 #define PSVEMMC_COMMAND_WRITE_CLUSTER 7
+
+#define PSVEMMC_COMMAND_READ_SECTOR_MS 8
+#define PSVEMMC_COMMAND_READ_CLUSTER_MS 9
+#define PSVEMMC_COMMAND_WRITE_SECTOR_MS 10
+#define PSVEMMC_COMMAND_WRITE_CLUSTER_MS 11
 
 #pragma pack(push, 1)
 
@@ -192,6 +199,8 @@ typedef struct command_3_response
     int vita_err;
     int proxy_err;
 } command_3_response;
+
+//--------------------------------------
 
 typedef struct command_4_request //read sector
 {
@@ -248,6 +257,64 @@ typedef struct command_7_response
     int vita_err;
     int proxy_err;
 } command_7_response;
+
+//--------------------------------------
+
+typedef struct command_8_request //read sector ms
+{
+  int command;
+  int sector;
+} command_8_request;
+
+typedef struct command_8_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+    char data[0x200];
+} command_8_response;
+
+typedef struct command_9_request //read cluster ms
+{
+  int command;
+  int cluster;
+} command_9_request;
+
+typedef struct command_9_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+    //variable data length : g_bytesPerSector * g_sectorsPerCluster
+} command_9_response;
+
+typedef struct command_10_request //write sector ms
+{
+  int command;
+  int sector;
+  char data[0x200];
+} command_10_request;
+
+typedef struct command_10_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+} command_10_response;
+
+typedef struct command_11_request //write cluster ms
+{
+  int command;
+  int cluster;
+  //variable data length : g_bytesPerSector * g_sectorsPerCluster
+} command_11_request;
+
+typedef struct command_11_response
+{
+    int command;
+    int vita_err;
+    int proxy_err;
+} command_11_response;
 
 #pragma pack(pop)
 
@@ -411,6 +478,8 @@ int handle_command_3() //deinit
 
   return sceNetSend(_cli_sock, &resp, sizeof(command_3_response), 0);
 }
+
+//-------------------------------------------------------------------------------
 
 int handle_command_4() //read sector
 {
@@ -601,6 +670,199 @@ int handle_command_7() //write cluster
   return sceNetSend(_cli_sock, &resp, sizeof(command_7_response), 0);
 }
 
+//-------------------------------------------------------------------------------
+
+int handle_command_8() //read sector
+{
+  command_8_response resp;
+  memset(&resp, 0, sizeof(command_8_response));
+  resp.command = PSVEMMC_COMMAND_READ_SECTOR_MS;
+  
+  int expLen = sizeof(command_8_request) - sizeof(int); //receive rest of the request
+  
+  command_8_request req;
+  req.command = PSVEMMC_COMMAND_READ_SECTOR_MS;
+  
+  //TODO: I know that request should be properly received in cycle, however size of this request is small so this should be ok
+  int recvLen = sceNetRecv(_cli_sock, &req.sector, expLen, 0);
+  if(recvLen != expLen)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to receive command 8\n");
+    resp.vita_err = -1;
+    
+    sceNetSend(_cli_sock, &resp, sizeof(command_8_response), 0);
+    return -1;
+  }
+  
+  psvDebugScreenPrintf("psvemmc: execute command 8\n");
+
+  resp.proxy_err = readSector(req.sector, resp.data);
+    
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 8\n");
+  }
+
+  int bytesToSend = sizeof(command_8_response);
+  int bytesWereSend = 0;
+  while(bytesWereSend != bytesToSend)
+  {
+     int sendLen = sceNetSend(_cli_sock, ((char*)&resp) + bytesWereSend, bytesToSend - bytesWereSend, 0);
+     if(sendLen <= 0)
+     {
+        psvDebugScreenPrintf("psvemmc: failed to send data\n");
+        return - 1;
+     }
+     
+     bytesWereSend = bytesWereSend + sendLen;
+  }
+  
+  return 0;
+}
+
+int handle_command_9() //read cluster
+{
+  command_9_response resp;
+  memset(&resp, 0, sizeof(command_9_response));
+  resp.command = PSVEMMC_COMMAND_READ_CLUSTER_MS;
+  
+  int expLen = sizeof(command_9_request) - sizeof(int); //receive rest of the request
+  
+  command_9_request req;
+  req.command = PSVEMMC_COMMAND_READ_CLUSTER_MS;
+  
+  //TODO: I know that request should be properly received in cycle, however size of this request is small so this should be ok
+  int recvLen = sceNetRecv(_cli_sock, &req.cluster, expLen, 0);
+  if(recvLen != expLen)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to receive command 9\n");
+    resp.vita_err = -1;
+    
+    sceNetSend(_cli_sock, &resp, sizeof(command_9_response), 0);
+    return -1;
+  }
+  
+  psvDebugScreenPrintf("psvemmc: execute command 9\n");
+  
+  resp.proxy_err = readCluster(req.cluster, g_clusterPoolPtr);
+  
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 9\n");
+  }
+  
+  //send header first
+  sceNetSend(_cli_sock, &resp, sizeof(command_9_response), 0);
+  
+  //send cluster data next
+  int bytesToSend = g_bytesPerSector * g_sectorsPerCluster;
+  int bytesWereSend = 0;
+  while(bytesWereSend != bytesToSend)
+  {
+     int sendLen = sceNetSend(_cli_sock, ((char*)g_clusterPoolPtr) + bytesWereSend, bytesToSend - bytesWereSend, 0);
+     if(sendLen <= 0)
+     {
+        psvDebugScreenPrintf("psvemmc: failed to send data\n");
+        return - 1;
+     }
+     
+     bytesWereSend = bytesWereSend + sendLen;
+  }
+  
+  return 0;
+}
+
+int handle_command_10() //write sector
+{
+  command_10_response resp;
+  memset(&resp, 0, sizeof(command_10_response));
+  resp.command = PSVEMMC_COMMAND_WRITE_SECTOR_MS;
+  
+  int expLen = sizeof(command_10_request) - sizeof(int); //receive rest of the request
+  
+  command_10_request req;
+  req.command = PSVEMMC_COMMAND_WRITE_SECTOR_MS;
+  
+  int bytesToReceive = expLen;
+  int bytesWereReceived = 0;
+  while(bytesToReceive != bytesWereReceived)
+  {
+    int recvLen = sceNetRecv(_cli_sock, ((char*)&req) + sizeof(int) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+    if(recvLen <= 0)
+    {
+      psvDebugScreenPrintf("psvemmc: failed to receive command 10\n");
+      resp.vita_err = -1;
+    
+      sceNetSend(_cli_sock, &resp, sizeof(command_10_response), 0);
+      return -1;
+    }
+  }
+  
+  psvDebugScreenPrintf("psvemmc: execute command 10\n");
+
+  resp.proxy_err = writeSector(req.sector, req.data);
+    
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 10\n");
+  }
+  
+  return sceNetSend(_cli_sock, &resp, sizeof(command_10_response), 0);
+}
+
+int handle_command_11() //write cluster
+{
+  command_11_response resp;
+  memset(&resp, 0, sizeof(command_11_response));
+  resp.command = PSVEMMC_COMMAND_WRITE_CLUSTER_MS;
+  
+  int expLen = sizeof(command_11_request) - sizeof(int); //receive rest of the request
+  
+  command_11_request req;
+  req.command = PSVEMMC_COMMAND_WRITE_CLUSTER_MS;
+  
+  //TODO: I know that request should be properly received in cycle, however size of this request is small so this should be ok
+  int recvLen = sceNetRecv(_cli_sock, &req.cluster, expLen, 0);
+  if(recvLen != expLen)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to receive command 11\n");
+    resp.vita_err = -1;
+    
+    sceNetSend(_cli_sock, &resp, sizeof(command_11_response), 0);
+    return -1;
+  }
+  
+  //now receive data to write into the pool
+  
+  int bytesToReceive = g_bytesPerSector * g_sectorsPerCluster;
+  int bytesWereReceived = 0;
+  while(bytesToReceive != bytesWereReceived)
+  {
+    int recvLen = sceNetRecv(_cli_sock, ((char*)g_clusterPoolPtr) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+    if(recvLen <= 0)
+    {
+      psvDebugScreenPrintf("psvemmc: failed to receive command 11\n");
+      resp.vita_err = -1;
+    
+      sceNetSend(_cli_sock, &resp, sizeof(command_11_response), 0);
+      return -1;
+    }
+  }
+  
+  psvDebugScreenPrintf("psvemmc: execute command 11\n");
+  
+  resp.proxy_err = writeCluster(req.cluster, g_clusterPoolPtr);
+    
+  if(resp.proxy_err != 0)
+  {
+    psvDebugScreenPrintf("psvemmc: failed to execute command 11\n");
+  }
+  
+  return sceNetSend(_cli_sock, &resp, sizeof(command_11_response), 0);
+}
+
+//-------------------------------------------------------------------------------
+
 void receive_commands()
 {
   while(1)
@@ -670,7 +932,35 @@ void receive_commands()
         psvDebugScreenPrintf("psvemmc: failed to handle command 7\n");
         return;
       }
-      break;  
+      break;
+    case PSVEMMC_COMMAND_READ_SECTOR_MS:
+      if(handle_command_8() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 8\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_READ_CLUSTER_MS:
+      if(handle_command_9() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 9\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_WRITE_SECTOR_MS:
+      if(handle_command_10() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 10\n");
+        return;
+      }
+      break;
+    case PSVEMMC_COMMAND_WRITE_CLUSTER_MS:
+      if(handle_command_11() < 0)
+      {
+        psvDebugScreenPrintf("psvemmc: failed to handle command 11\n");
+        return;
+      }
+      break;
     default:
       psvDebugScreenPrintf("psvemmc: unknown command\n");
       return;

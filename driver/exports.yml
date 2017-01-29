@@ -15,4 +15,8 @@ psvemmc:
         - writeSector
         - readCluster
         - writeCluster
+        - readSectorMs
+        - writeSectorMs
+        - readClusterMs
+        - writeClusterMs
         - psvemmcDeinitialize

@@ -35,6 +35,7 @@ target_link_libraries(psvemmc
   SceSysclibForDriver_stub
   SceIofilemgrForDriver_stub
   SceSdifForDriver_stub
+  SceMsifForDriver_stub
 )
 
 vita_create_self(psvemmc.skprx psvemmc
