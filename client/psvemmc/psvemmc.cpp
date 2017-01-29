@@ -330,7 +330,33 @@ int emmc_read_cluster_ms(SOCKET socket, int cluster, int expectedSize, char* dat
    return 0;
 }
 
-int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::filesystem::path dumpFilePath)
+int read_sector(SOCKET socket, int dumpMode, int sector, std::array<char, SD_DEFAULT_SECTOR_SIZE>& result)
+{
+   switch(dumpMode)
+   {
+   case 0:
+      return emmc_read_sector(socket, sector, result);
+   case 1:
+      return emmc_read_sector_ms(socket, sector, result);
+   default:
+      return -1;
+   }
+}
+
+int read_cluster(SOCKET socket, int dumpMode, int cluster, int expectedSize, char* data)
+{
+   switch(dumpMode)
+   {
+   case 0:
+      return emmc_read_cluster(socket, cluster, expectedSize, data) < 0;
+   case 1:
+      return emmc_read_cluster_ms(socket, cluster, expectedSize, data) < 0;
+   default:
+      return -1;
+   }
+}
+
+int dump_partition(SOCKET emmc_socket, int dumpMode, const PartitionEntry& partition, boost::filesystem::path dumpFilePath)
 {
    //TODO: valid approach is to take sectorsPerCluster value from partition VBR (both fat16 and exfat have this info)
 
@@ -350,7 +376,7 @@ int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::f
    std::vector<char> clusterData(SD_DEFAULT_SECTOR_SIZE * sectorsPerCluster);
    for(size_t i = 0; i < nClustersToRead; i++)
    {
-      if(emmc_read_cluster(emmc_socket, clusterOffset + i, clusterData.size(), clusterData.data()) < 0)
+      if(read_cluster(emmc_socket, dumpMode, clusterOffset + i, clusterData.size(), clusterData.data()) < 0)
          return -1;
 
       outputFile.write(clusterData.data(), clusterData.size());
@@ -361,7 +387,7 @@ int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::f
    std::array<char, SD_DEFAULT_SECTOR_SIZE> sectorData;
    for(size_t i = 0; i < nSectorsToRead; i++)
    {
-      if(emmc_read_sector(emmc_socket, tailOffset + i, sectorData) < 0)
+      if(read_sector(emmc_socket, dumpMode, tailOffset + i, sectorData) < 0)
          return -1;
 
       outputFile.write(sectorData.data(), sectorData.size());
@@ -373,24 +399,12 @@ int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::f
       return -1;
 }
 
-int parse_sce_mbr(SOCKET emmc_socket, int mode, MBR& mbr)
+int parse_sce_mbr(SOCKET emmc_socket, int dumpMode, MBR& mbr)
 {
    std::array<char, SD_DEFAULT_SECTOR_SIZE> mbrSector;
 
-   if(mode == 0)
-   {
-      if(emmc_read_sector(emmc_socket, 0, mbrSector) < 0)
-         return -1;
-   }
-   else if(mode == 1)
-   {
-      if(emmc_read_sector_ms(emmc_socket, 0, mbrSector) < 0)
-         return -1;
-   }
-   else
-   {
+   if(read_sector(emmc_socket, dumpMode, 0, mbrSector) < 0)
       return -1;
-   }
 
    memcpy(&mbr, mbrSector.data(), mbrSector.size());
    if(validateSceMbr(mbr) < 0)
@@ -426,7 +440,7 @@ int dump_device(SOCKET emmc_socket, int dumpMode, int dumpPartitionIndex, boost:
       return -1;
    }
 
-   dump_partition(emmc_socket, mbr.partitions[dumpPartitionIndex], dumpFilePath);
+   dump_partition(emmc_socket, dumpMode, mbr.partitions[dumpPartitionIndex], dumpFilePath);
 
    return 0;
 }
