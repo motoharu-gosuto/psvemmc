@@ -31,7 +31,7 @@ std::string partitionCodeToString(PartitionCodes c)
    case sa0:
       return "sa0";
    case cardsExt:
-      return "cardsExt";
+      return "ext";
    case pd0:
       return "pd0";
    default:
