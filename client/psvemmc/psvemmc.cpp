@@ -29,7 +29,7 @@ int emmc_ping(SOCKET socket)
    int iResult = send(socket, (const char*)&cmd0, sizeof(command_0_request), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -39,7 +39,7 @@ int emmc_ping(SOCKET socket)
    iResult = recv(socket, (char*)&resp0, sizeof(command_0_response), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -68,7 +68,7 @@ int emmc_init(SOCKET socket, int bytesPerSector, int sectorsPerCluster)
    int iResult = send(socket, (const char*)&cmd2, sizeof(command_2_request), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -78,7 +78,7 @@ int emmc_init(SOCKET socket, int bytesPerSector, int sectorsPerCluster)
    iResult = recv(socket, (char*)&resp2, sizeof(command_2_response), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -102,7 +102,7 @@ int emmc_deinit(SOCKET socket)
    int iResult = send(socket, (const char*)&cmd3, sizeof(command_3_request), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -112,7 +112,7 @@ int emmc_deinit(SOCKET socket)
    iResult = recv(socket, (char*)&resp3, sizeof(command_3_response), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -137,7 +137,7 @@ int emmc_read_sector(SOCKET socket, int sector, std::array<char, SD_DEFAULT_SECT
    int iResult = send(socket, (const char*)&cmd4, sizeof(command_4_request), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -154,7 +154,7 @@ int emmc_read_sector(SOCKET socket, int sector, std::array<char, SD_DEFAULT_SECT
       int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
       if (iResult == SOCKET_ERROR) 
       {
-         std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+         std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
          closesocket(socket);
          WSACleanup();
          return -1;
@@ -184,7 +184,7 @@ int emmc_read_cluster(SOCKET socket, int cluster, int expectedSize, char* data)
    int iResult = send(socket, (const char*)&cmd5, sizeof(command_5_request), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -195,7 +195,7 @@ int emmc_read_cluster(SOCKET socket, int cluster, int expectedSize, char* data)
    iResult = recv(socket, (char*)&resp5, sizeof(command_5_response), 0);
    if (iResult == SOCKET_ERROR) 
    {
-      std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
       closesocket(socket);
       WSACleanup();
       return -1;
@@ -210,7 +210,7 @@ int emmc_read_cluster(SOCKET socket, int cluster, int expectedSize, char* data)
       int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
       if (iResult == SOCKET_ERROR) 
       {
-         std::cout << "send failed with error: %d\n" << WSAGetLastError() << std::endl;
+         std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
          closesocket(socket);
          WSACleanup();
          return -1;
@@ -229,7 +229,134 @@ int emmc_read_cluster(SOCKET socket, int cluster, int expectedSize, char* data)
    return 0;
 }
 
-int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::filesystem::path dumpFilePath)
+int emmc_read_sector_ms(SOCKET socket, int sector, std::array<char, SD_DEFAULT_SECTOR_SIZE>& result)
+{
+   command_8_request cmd8;
+   cmd8.command = PSVEMMC_COMMAND_READ_SECTOR_MS;
+   cmd8.sector = sector;
+
+   int iResult = send(socket, (const char*)&cmd8, sizeof(command_8_request), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   command_8_response resp8;
+
+   int bytesToReceive = sizeof(command_8_response);
+   int bytesWereReceived = 0;
+   command_8_response* respcpy = &resp8;
+
+   while(bytesToReceive != bytesWereReceived)
+   {
+      int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+      if (iResult == SOCKET_ERROR) 
+      {
+         std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+         closesocket(socket);
+         WSACleanup();
+         return -1;
+      }
+
+      bytesWereReceived = bytesWereReceived + iResult;
+   }
+
+   if(resp8.base.command != PSVEMMC_COMMAND_READ_SECTOR_MS || resp8.base.vita_err < 0 || resp8.base.proxy_err != 0)
+   {
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   memcpy(result.data(), resp8.data, SD_DEFAULT_SECTOR_SIZE);
+
+   return 0;
+}
+
+int emmc_read_cluster_ms(SOCKET socket, int cluster, int expectedSize, char* data)
+{
+   command_9_request cmd9;
+   cmd9.command = PSVEMMC_COMMAND_READ_CLUSTER_MS;
+   cmd9.cluster = cluster;
+
+   int iResult = send(socket, (const char*)&cmd9, sizeof(command_9_request), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   command_9_response resp9;
+
+   iResult = recv(socket, (char*)&resp9, sizeof(command_9_response), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   int bytesToReceive = expectedSize;
+   int bytesWereReceived = 0;
+   char* respcpy = data;
+
+   while(bytesToReceive != bytesWereReceived)
+   {
+      int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+      if (iResult == SOCKET_ERROR) 
+      {
+         std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+         closesocket(socket);
+         WSACleanup();
+         return -1;
+      }
+
+      bytesWereReceived = bytesWereReceived + iResult;
+   }
+
+   if(resp9.base.command != PSVEMMC_COMMAND_READ_CLUSTER_MS || resp9.base.vita_err < 0 || resp9.base.proxy_err != 0)
+   {
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   return 0;
+}
+
+int read_sector(SOCKET socket, int dumpMode, int sector, std::array<char, SD_DEFAULT_SECTOR_SIZE>& result)
+{
+   switch(dumpMode)
+   {
+   case 0:
+      return emmc_read_sector(socket, sector, result);
+   case 1:
+      return emmc_read_sector_ms(socket, sector, result);
+   default:
+      return -1;
+   }
+}
+
+int read_cluster(SOCKET socket, int dumpMode, int cluster, int expectedSize, char* data)
+{
+   switch(dumpMode)
+   {
+   case 0:
+      return emmc_read_cluster(socket, cluster, expectedSize, data) < 0;
+   case 1:
+      return emmc_read_cluster_ms(socket, cluster, expectedSize, data) < 0;
+   default:
+      return -1;
+   }
+}
+
+int dump_partition(SOCKET emmc_socket, int dumpMode, const PartitionEntry& partition, boost::filesystem::path dumpFilePath)
 {
    //TODO: valid approach is to take sectorsPerCluster value from partition VBR (both fat16 and exfat have this info)
 
@@ -249,7 +376,7 @@ int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::f
    std::vector<char> clusterData(SD_DEFAULT_SECTOR_SIZE * sectorsPerCluster);
    for(size_t i = 0; i < nClustersToRead; i++)
    {
-      if(emmc_read_cluster(emmc_socket, clusterOffset + i, clusterData.size(), clusterData.data()) < 0)
+      if(read_cluster(emmc_socket, dumpMode, clusterOffset + i, clusterData.size(), clusterData.data()) < 0)
          return -1;
 
       outputFile.write(clusterData.data(), clusterData.size());
@@ -260,7 +387,7 @@ int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::f
    std::array<char, SD_DEFAULT_SECTOR_SIZE> sectorData;
    for(size_t i = 0; i < nSectorsToRead; i++)
    {
-      if(emmc_read_sector(emmc_socket, tailOffset + i, sectorData) < 0)
+      if(read_sector(emmc_socket, dumpMode, tailOffset + i, sectorData) < 0)
          return -1;
 
       outputFile.write(sectorData.data(), sectorData.size());
@@ -272,16 +399,13 @@ int dump_partition(SOCKET emmc_socket, const PartitionEntry& partition, boost::f
       return -1;
 }
 
-int dump_emmc(SOCKET emmc_socket, int dumpPartitionIndex, boost::filesystem::path dumpFilePath)
+int parse_sce_mbr(SOCKET emmc_socket, int dumpMode, MBR& mbr)
 {
-   if(emmc_ping(emmc_socket) < 0)
-      return -1;
-   
    std::array<char, SD_DEFAULT_SECTOR_SIZE> mbrSector;
-   if(emmc_read_sector(emmc_socket, 0, mbrSector) < 0)
+
+   if(read_sector(emmc_socket, dumpMode, 0, mbrSector) < 0)
       return -1;
 
-   MBR mbr;
    memcpy(&mbr, mbrSector.data(), mbrSector.size());
    if(validateSceMbr(mbr) < 0)
       return -1;
@@ -300,6 +424,15 @@ int dump_emmc(SOCKET emmc_socket, int dumpPartitionIndex, boost::filesystem::pat
                 << PartitionTypeToString(partition.partitionType) << " " 
                 << partitionCodeToString(partition.partitionCode) << std::endl;
    }
+}
+
+int dump_device(SOCKET emmc_socket, int dumpMode, int dumpPartitionIndex, boost::filesystem::path dumpFilePath)
+{
+   if(emmc_ping(emmc_socket) < 0)
+      return -1;
+
+   MBR mbr;
+   parse_sce_mbr(emmc_socket, dumpMode,  mbr);
 
    if(mbr.partitions[dumpPartitionIndex].partitionType == empty_t)
    {
@@ -307,40 +440,54 @@ int dump_emmc(SOCKET emmc_socket, int dumpPartitionIndex, boost::filesystem::pat
       return -1;
    }
 
-   dump_partition(emmc_socket, mbr.partitions[dumpPartitionIndex], dumpFilePath);
+   dump_partition(emmc_socket, dumpMode, mbr.partitions[dumpPartitionIndex], dumpFilePath);
 
    return 0;
 }
 
-int parseArgs(int argc, char* argv[], int& dumpPartitionIndex, boost::filesystem::path& dumpFilePath)
+int parseArgs(int argc, char* argv[], int& dumpMode, int& dumpPartitionIndex, boost::filesystem::path& dumpFilePath)
 {
    //TODO: args should be parsed with boost
-   if(argc < 3)
+   if(argc < 4)
    {
       std::cout << "Invalid number of arguments" << std::endl;
-      std::cout << "Usage: dumpPartitionIndex dumpFilePath" << std::endl;
+      std::cout << "Usage: dumpMode dumpPartitionIndex dumpFilePath" << std::endl;
       return - 1;
    }
 
-   dumpPartitionIndex = boost::lexical_cast<int, std::string>(std::string(argv[1]));
-   dumpFilePath = boost::filesystem::path (argv[2]);
+   dumpMode = dumpPartitionIndex = boost::lexical_cast<int, std::string>(std::string(argv[1]));
+   dumpPartitionIndex = boost::lexical_cast<int, std::string>(std::string(argv[2]));
+   dumpFilePath = boost::filesystem::path (argv[3]);
+
+   if(dumpMode >= 2)
+   {
+      std::cout << "dump mode index is invalid" << std::endl;
+      return -1;
+   }
+
+   if(dumpPartitionIndex >= NPartitions)
+   {
+      std::cout << "partition index is invalid" << std::endl;
+      return -1;
+   }
 
    return 0;
 }
 
 int main(int argc, char* argv[])
 {
+   int dumpMode;
    int dumpPartitionIndex;
    boost::filesystem::path dumpFilePath;
 
-   if(parseArgs(argc, argv, dumpPartitionIndex, dumpFilePath) < 0)
+   if(parseArgs(argc, argv, dumpMode, dumpPartitionIndex, dumpFilePath) < 0)
       return 1;
 
    SOCKET emmc_socket = 0;
    if(initialize_emmc_proxy_connection(emmc_socket) < 0)
       return 1;
 
-   dump_emmc(emmc_socket, dumpPartitionIndex, dumpFilePath);
+   dump_device(emmc_socket, dumpMode, dumpPartitionIndex, dumpFilePath);
 
    if(deinitialize_emmc_proxy_connection(emmc_socket) < 0)
       return 1;
