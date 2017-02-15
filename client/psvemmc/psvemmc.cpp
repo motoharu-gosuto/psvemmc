@@ -21,6 +21,10 @@
 //defalut size of sector for SD MMC protocol
 #define SD_DEFAULT_SECTOR_SIZE 0x200
 
+#define DUMP_MODE_EMMC 0
+#define DUMP_MODE_MS 1
+#define DUMP_MODE_GC 2
+
 int emmc_ping(SOCKET socket)
 {
    command_0_request cmd0;
@@ -330,14 +334,119 @@ int emmc_read_cluster_ms(SOCKET socket, int cluster, int expectedSize, char* dat
    return 0;
 }
 
+int emmc_read_sector_gc(SOCKET socket, int sector, std::array<char, SD_DEFAULT_SECTOR_SIZE>& result)
+{
+   command_12_request cmd12;
+   cmd12.command = PSVEMMC_COMMAND_READ_SECTOR_GC;
+   cmd12.sector = sector;
+
+   int iResult = send(socket, (const char*)&cmd12, sizeof(command_12_request), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   command_12_response resp12;
+
+   int bytesToReceive = sizeof(command_12_response);
+   int bytesWereReceived = 0;
+   command_12_response* respcpy = &resp12;
+
+   while(bytesToReceive != bytesWereReceived)
+   {
+      int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+      if (iResult == SOCKET_ERROR) 
+      {
+         std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+         closesocket(socket);
+         WSACleanup();
+         return -1;
+      }
+
+      bytesWereReceived = bytesWereReceived + iResult;
+   }
+
+   if(resp12.base.command != PSVEMMC_COMMAND_READ_SECTOR_GC || resp12.base.vita_err < 0 || resp12.base.proxy_err != 0)
+   {
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   memcpy(result.data(), resp12.data, SD_DEFAULT_SECTOR_SIZE);
+
+   return 0;
+}
+
+int emmc_read_cluster_gc(SOCKET socket, int cluster, int expectedSize, char* data)
+{
+   command_13_request cmd13;
+   cmd13.command = PSVEMMC_COMMAND_READ_CLUSTER_GC;
+   cmd13.cluster = cluster;
+
+   int iResult = send(socket, (const char*)&cmd13, sizeof(command_13_request), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   command_13_response resp13;
+
+   iResult = recv(socket, (char*)&resp13, sizeof(command_13_response), 0);
+   if (iResult == SOCKET_ERROR) 
+   {
+      std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   int bytesToReceive = expectedSize;
+   int bytesWereReceived = 0;
+   char* respcpy = data;
+
+   while(bytesToReceive != bytesWereReceived)
+   {
+      int iResult = recv(socket, ((char*)respcpy) + bytesWereReceived, bytesToReceive - bytesWereReceived, 0);
+      if (iResult == SOCKET_ERROR) 
+      {
+         std::cout << "send failed with error: " << WSAGetLastError() << std::endl;
+         closesocket(socket);
+         WSACleanup();
+         return -1;
+      }
+
+      bytesWereReceived = bytesWereReceived + iResult;
+   }
+
+   if(resp13.base.command != PSVEMMC_COMMAND_READ_CLUSTER_GC || resp13.base.vita_err < 0 || resp13.base.proxy_err != 0)
+   {
+      closesocket(socket);
+      WSACleanup();
+      return -1;
+   }
+
+   return 0;
+}
+
+//--------------
+
 int read_sector(SOCKET socket, int dumpMode, int sector, std::array<char, SD_DEFAULT_SECTOR_SIZE>& result)
 {
    switch(dumpMode)
    {
-   case 0:
+   case DUMP_MODE_EMMC:
       return emmc_read_sector(socket, sector, result);
-   case 1:
+   case DUMP_MODE_MS:
       return emmc_read_sector_ms(socket, sector, result);
+   case DUMP_MODE_GC:
+      return emmc_read_sector_gc(socket, sector, result);
    default:
       return -1;
    }
@@ -347,14 +456,18 @@ int read_cluster(SOCKET socket, int dumpMode, int cluster, int expectedSize, cha
 {
    switch(dumpMode)
    {
-   case 0:
-      return emmc_read_cluster(socket, cluster, expectedSize, data) < 0;
-   case 1:
-      return emmc_read_cluster_ms(socket, cluster, expectedSize, data) < 0;
+   case DUMP_MODE_EMMC:
+      return emmc_read_cluster(socket, cluster, expectedSize, data);
+   case DUMP_MODE_MS:
+      return emmc_read_cluster_ms(socket, cluster, expectedSize, data);
+   case DUMP_MODE_GC:
+      return emmc_read_cluster_gc(socket, cluster, expectedSize, data);
    default:
       return -1;
    }
 }
+
+//--------------
 
 int dump_partition(SOCKET emmc_socket, int dumpMode, const PartitionEntry& partition, boost::filesystem::path dumpFilePath)
 {
@@ -459,7 +572,7 @@ int parseArgs(int argc, char* argv[], int& dumpMode, int& dumpPartitionIndex, bo
    dumpPartitionIndex = boost::lexical_cast<int, std::string>(std::string(argv[2]));
    dumpFilePath = boost::filesystem::path (argv[3]);
 
-   if(dumpMode >= 2)
+   if(dumpMode >= 3)
    {
       std::cout << "dump mode index is invalid" << std::endl;
       return -1;

@@ -21,6 +21,11 @@
 #define PSVEMMC_COMMAND_WRITE_SECTOR_MS 10
 #define PSVEMMC_COMMAND_WRITE_CLUSTER_MS 11
 
+#define PSVEMMC_COMMAND_READ_SECTOR_GC 12
+#define PSVEMMC_COMMAND_READ_CLUSTER_GC 13
+#define PSVEMMC_COMMAND_WRITE_SECTOR_GC 14
+#define PSVEMMC_COMMAND_WRITE_CLUSTER_GC 15
+
 #pragma pack(push, 1)
 
 struct command_response_base
@@ -130,49 +135,99 @@ typedef struct command_8_request //read sector ms
 {
    int command;
    int sector;
-} command_8_request;
+};
 
 typedef struct command_8_response
 {
    command_response_base base;
    char data[0x200];
-} command_8_response;
+};
 
 typedef struct command_9_request //read cluster ms
 {
    int command;
    int cluster;
-} command_9_request;
+};
 
 typedef struct command_9_response
 {
    command_response_base base;
    //variable data length : g_bytesPerSector * g_sectorsPerCluster
-} command_9_response;
+};
 
 typedef struct command_10_request //write sector ms
 {
    int command;
    int sector;
    char data[0x200];
-} command_10_request;
+};
 
 typedef struct command_10_response
 {
    command_response_base base;
-} command_10_response;
+};
 
 typedef struct command_11_request //write cluster ms
 {
    int command;
    int cluster;
    //variable data length : g_bytesPerSector * g_sectorsPerCluster
-} command_11_request;
+};
 
 typedef struct command_11_response
 {
    command_response_base base;
-} command_11_response;
+};
+
+//--------------------------------------
+
+typedef struct command_12_request //read sector gc
+{
+   int command;
+   int sector;
+};
+
+typedef struct command_12_response
+{
+   command_response_base base;
+   char data[0x200];
+};
+
+typedef struct command_13_request //read cluster gc
+{
+   int command;
+   int cluster;
+};
+
+typedef struct command_13_response
+{
+   command_response_base base;
+   //variable data length : g_bytesPerSector * g_sectorsPerCluster
+};
+
+typedef struct command_14_request //write sector gc
+{
+   int command;
+   int sector;
+   char data[0x200];
+};
+
+typedef struct command_14_response
+{
+   command_response_base base;
+};
+
+typedef struct command_15_request //write cluster gc
+{
+   int command;
+   int cluster;
+   //variable data length : g_bytesPerSector * g_sectorsPerCluster
+};
+
+typedef struct command_15_response
+{
+   command_response_base base;
+};
 
 #pragma pack(pop)
 
