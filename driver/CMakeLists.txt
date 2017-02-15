@@ -16,6 +16,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -nostdlib")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -fno-exceptions")
 
 include_directories(
+ .
 )
 
 link_directories(
@@ -27,6 +28,7 @@ add_definitions(-DNO_PTHREADS)
 
 add_executable(psvemmc
   psvemmc.c
+  qsort.c
 )
 
 target_link_libraries(psvemmc
@@ -36,6 +38,11 @@ target_link_libraries(psvemmc
   SceIofilemgrForDriver_stub
   SceSdifForDriver_stub
   SceMsifForDriver_stub
+  SceThreadmgrForKernel_stub
+  SceThreadmgrForDriver_stub
+  SceModulemgrForKernel_stub
+  taihenForKernel_stub
+  taihenModuleUtils_stub
 )
 
 vita_create_self(psvemmc.skprx psvemmc

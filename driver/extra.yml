@@ -7,12 +7,13 @@ modules:
         nid: 0x96D306FA
         functions:
           ksceSdifGetSdContextGlobal: 0xdc8f52f8
-          ksceSdifGetSdContextPartEmmc: 0x6a71987f
-          ksceSdifGetSdContextPartGameCard: 0xb9ea5b1e
-          ksceSdifGetSdContextPartWlanBt: 0x6a8235fc
+          ksceSdifGetSdContextPartMmc: 0x6a71987f
+          ksceSdifGetSdContextPartSd: 0xb9ea5b1e
+          ksceSdifGetSdContextPartSdio: 0x6a8235fc
           ksceSdifGetCardInsertState1: 0x36a2b01b
           ksceSdifGetCardInsertState2: 0xfd9e5cfa
-          ksceSdifInitializeSdContextPart: 0x22c82e79  
+          ksceSdifInitializeSdContextPartMmc: 0x22c82e79
+          ksceSdifInitializeSdContextPartSd: 0xC1271539
           ksceSdifReadSectorAsync: 0x6f8d529b
           ksceSdifReadSector: 0xb9593652
           ksceSdifWriteSectorAsync: 0x175543d2
