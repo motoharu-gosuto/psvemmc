@@ -945,7 +945,7 @@ int sysroot_zero_hook()
   }
   close_global_log();
   
-  return res;
+  //return res;
   
   //returning 1 here enables sd init
   //however it breaks existing functionality, including:
@@ -1031,7 +1031,104 @@ void close_sdstor_dev_fs_log()
     ksceIoClose(sdstor_dev_fs_log_fd);
 }
 
-#define SIZE_OF_STACKTRACE 100
+//Read Privileged only Thread and Process ID Register
+SceUID get_currentThreadId()
+{
+  int TPIDRPRW = 0;
+  
+  asm volatile ("mrc p15, 0, %0, c13, c0, 4" : "=r" (TPIDRPRW)); //Read TPIDRPRW into Rt
+  
+  /*
+  {
+    open_global_log();
+    char buffer[100];
+    snprintf(buffer, 100, "TPIDRPRW %x\n", TPIDRPRW);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+    close_global_log();
+  }
+  */
+  
+  if(TPIDRPRW > 0)
+  {
+    int* dataPtr = (int*)(((char*)TPIDRPRW) + 0x8);
+    int value = *dataPtr;
+    
+    /*
+    {
+      open_global_log();
+      char buffer[100];
+      snprintf(buffer, 100, "value %x\n", value);
+      FILE_WRITE_LEN(global_log_fd, buffer);
+      close_global_log();
+    }
+    */
+    
+    return value;
+  }
+  
+  return -1;
+}
+
+typedef int (ksceKernelGetThreadInfo_func)(SceUID thid, SceKernelThreadInfo *info);
+
+int get_current_thread_info(SceKernelThreadInfo* t_info)
+{
+  SceUID thid = get_currentThreadId();
+  
+  memset(t_info, 0, sizeof(SceKernelThreadInfo));
+  t_info->size = sizeof(SceKernelThreadInfo);
+ 
+  //need to call function dynamically because it is not defined yet
+  
+  tai_module_info_t m_info;
+  m_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceKernelThreadMgr", &m_info) >= 0) 
+  {
+    uintptr_t addr = 0;
+    //int ofstRes = module_get_offset(KERNEL_PID, m_info.modid, 0, 0x5964, &addr);
+    int ofstRes = module_get_offset(KERNEL_PID, m_info.modid, 0, 0x5965, &addr);
+    if(ofstRes == 0)
+    {
+      /*
+      open_global_log();
+      FILE_WRITE(global_log_fd, "ready to call ksceKernelGetThreadInfo\n");
+      close_global_log();
+      */
+      
+      ksceKernelGetThreadInfo_func* fptr = (ksceKernelGetThreadInfo_func*)addr;
+      
+      int gtiRes = fptr(thid, t_info);
+      /*
+      if(gtiRes >= 0)
+      {
+	open_global_log();
+	FILE_WRITE(global_log_fd, "ksceKernelGetThreadInfo success\n");
+	close_global_log();
+      }
+      */
+      
+      return gtiRes;
+    }
+  }
+  
+  return -1;
+}
+
+int print_current_thread_info()
+{
+  SceKernelThreadInfo t_info;
+  get_current_thread_info(&t_info);
+  
+  {
+    open_sdstor_dev_fs_log();
+    char buffer[200];
+    snprintf(buffer, 200, "process: %08x thread: %s\nstack: %08x stackSize: %08x\n", t_info.processId, t_info.name, t_info.stack, t_info.stackSize);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    close_sdstor_dev_fs_log();
+  }
+  
+  return 0;
+}
 
 int stacktrace_from_here(char* moduleNameSearch, int segIndexSearch)
 {
@@ -1041,6 +1138,9 @@ int stacktrace_from_here(char* moduleNameSearch, int segIndexSearch)
   volatile int mark0 = 0xA0A0A0A0;
   volatile int mark1 = 0x05050505;
   volatile int mark2 = 0x37373737;
+  
+  SceKernelThreadInfo t_info;
+  get_current_thread_info(&t_info);
 
   //------------------------
   //unless modules are reloaded, which is most likely not happening, we can do it once during this module load
@@ -1050,7 +1150,11 @@ int stacktrace_from_here(char* moduleNameSearch, int segIndexSearch)
 
   volatile int* stackPtr = &mark0;
 
-  for(int i = 0; i < SIZE_OF_STACKTRACE; i++)
+  //for(int i = 0; stackPtr < (volatile int*)t_info.stack; i++)
+  
+  int traceSize = 100 + sizeof(SceKernelThreadInfo) / 4;
+  
+  for(int i = 0; i < traceSize; i++)
   {
     int curValue = *stackPtr;
     int segidx = find_in_segments(curValue);
@@ -1063,7 +1167,7 @@ int stacktrace_from_here(char* moduleNameSearch, int segIndexSearch)
           open_sdstor_dev_fs_log();
           {
             char buffer[100];
-            snprintf(buffer, 100, "%08x %s %d %08x %08x\n", curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
+            snprintf(buffer, 100, "%08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
             FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
           }
           close_sdstor_dev_fs_log();
@@ -1099,6 +1203,11 @@ int vfs_func1(void* ctx) //00C17015
   #endif
 
   stacktrace_from_here("SceIofilemgr", 0);
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
@@ -1125,6 +1234,11 @@ int vfs_func3(void* ctx) //00C1703D
   #endif
 
   stacktrace_from_here("SceIofilemgr", 0);
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
@@ -1164,6 +1278,11 @@ int vfs_func12(void* ctx) //00C175D1
   #endif
 
   stacktrace_from_here("SceIofilemgr", 0);
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
@@ -1195,17 +1314,293 @@ int vfs_func13(void* ctx) //00C17551
   open_sdstor_dev_fs_log();
   {
     char buffer[100];
-    snprintf(buffer, 100, "vfs_func13: %x %s\n", ctx, ((ctx_C17550*)ctx)->blockDeviceName);
+    snprintf(buffer, 100, "vfs_func13: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    snprintf(buffer, 100, "dev: %s res: %x\n", ((ctx_C17550*)ctx)->blockDeviceName, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
   }
   close_sdstor_dev_fs_log();
   vfs_func13_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here("SceIofilemgr", 0);
+  */
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
+
+//==============================================
+
+int print_bytes(char* bytes, int size)
+{ 
+  open_sdstor_dev_fs_log();
+  for(int i = 0; i < size; i++)
+  {
+    char buffer[4];
+    snprintf(buffer, 4, "%02x ", bytes[i]);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+  }
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
+
+  return 0;
+}
+
+//probably vnodeops
+typedef struct node_ops2 // size is 0x74 (29 pointers)
+{
+  int (*func1)(void* ctx); // sceIoOpenForDriver
+  int (*func2)(void* ctx); // sceIoOpenForDriver (another one ?)
+  int (*func3)(void* ctx); // ?
+  int (*func4)(void* ctx); // ?
+  int (*func5)(void* ctx); // sceIoReadForDriver
+  int (*func6)(void* ctx); // sceIoWriteForDriver
+  int (*func7)(void* ctx); // sceIoLseekForDriver or sceIoLseek32?
+  int (*func8)(void* ctx); // sceIoIoctlForDriver
+  int (*func9)(void* ctx); // ?
+  int (*func10)(void* ctx); // sceIoMkdirForDriver
+  int (*func11)(void* ctx); // sceIoRmdirForDriver
+  int (*func12)(void* ctx); // sceIoDopenForDriver
+  int (*func13)(void* ctx); // sceIoDcloseForDriver
+  int (*func14)(void* ctx); // sceIoDreadForDriver
+  int (*func15)(void* ctx); // sceIoGetstatForDriver or sceIoGetstatByFdForDriver
+  int (*func16)(void* ctx); // sceIoChstatForDriver or sceIoChstatByFdForDriver
+  int (*func17)(void* ctx); // sceIoRenameForDriver
+  int (*func18)(void* ctx); // not implemented by all
+  int (*func19)(void* ctx); // sceIoPreadForDriver
+  int (*func20)(void* ctx); // sceIoPwriteForDriver
+  int (*func21)(void* ctx); // ?
+  int (*func22)(void* ctx); // not referenced
+  int (*func23)(void* ctx); // not referenced
+  int (*func24)(void* ctx); // sceIoSyncForDriver or sceIoSyncByFdForDriver
+  int (*func25)(void* ctx); // sceIoGetstatByFdForDriver
+  int (*func26)(void* ctx); // sceIoChstatByFdForDriver
+  int (*func27)(void* ctx); // ?
+  int (*func28)(void* ctx); // ?
+  int (*func29)(void* ctx); // not implemented by all
+} node_ops2;
+
+typedef struct vfs_node_unk_48_unk_0
+{
+  uint32_t unk_0;
+  uint32_t unk_4;
+  uint32_t unk_8; //not a pointer
+  uint32_t unk_C;  //not a pointer
+
+  //can be more bytes
+
+}vfs_node_unk_48_unk_0;
+
+typedef struct vfs_node_unk_48_unk_4_2
+{
+  //same pointers?
+  void* unk_0;
+  void* unk_4;
+
+  uint32_t unk_8;
+  uint32_t unk_C;
+} vfs_node_unk_48_unk_4_2;
+
+typedef struct vfs_node_unk_48_unk_4_1
+{
+  //same pointers?
+  void* unk_0;
+  void* unk_4;
+
+  void* unk_8;
+  void* unk_C;
+} vfs_node_unk_48_unk_4_1;
+
+typedef struct vfs_node_unk_48_unk_4
+{
+  //same pointers?
+  vfs_node_unk_48_unk_4_1* unk_0;
+  vfs_node_unk_48_unk_4_1* unk_4;
+
+  uint32_t unk_8; //not a pointer
+  vfs_node_unk_48_unk_4_2* unk_C;
+
+  //can be more bytes
+
+}vfs_node_unk_48_unk_4;
+
+typedef struct vfs_node_unk_48
+{
+  vfs_node_unk_48_unk_0* unk_0;
+  vfs_node_unk_48_unk_4* unk_4;
+
+  //can be more bytes
+}vfs_node_unk_48;
+
+typedef struct vfs_node_unk_50
+{
+  //same pointers?
+  void* unk_0;
+  void* unk_4;
+
+  uint32_t unk_8;
+  void* unk_C;
+
+  //can be more bytes
+} vfs_node_unk_50;
+
+typedef struct vfs_node_unk_54
+{
+  uint32_t unk_0;
+  uint32_t unk_4;
+
+  uint32_t unk_8;
+  uint32_t unk_C;
+
+  //can be more bytes
+} vfs_node_unk_54;
+
+typedef struct vfs_node_unk_70_1
+{
+  void* unk_0;
+  void* unk_4;
+
+  void* unk_8;
+  uint32_t unk_C;
+
+  //can be more bytes
+} vfs_node_unk_70_1;
+
+typedef struct vfs_node_unk_70_3
+{
+  void* unk_0;
+  void* unk_4;
+
+  void* unk_8;
+  uint32_t unk_C;
+
+  //can be more bytes
+} vfs_node_unk_70_3;
+
+typedef struct vfs_node_unk_70_2
+{
+  uint32_t unk_0;
+  uint32_t unk_4;
+
+  uint32_t unk_8;
+  vfs_node_unk_70_3* unk_C;
+
+  //can be more bytes
+} vfs_node_unk_70_2;
+
+typedef struct vfs_node_unk_70_4
+{
+  void* unk_0;
+  void* unk_4;
+
+  void* unk_8;
+  uint32_t unk_C;
+
+  //can be more bytes
+} vfs_node_unk_70_4;
+
+typedef struct vfs_node_unk_70
+{
+  vfs_node_unk_70_1* unk_0;
+  vfs_node_unk_70_2* unk_4;
+
+  vfs_node_unk_70_4* unk_8;
+  uint32_t unk_C;
+
+  //can be more bytes
+} vfs_node_unk_70;
+
+typedef struct vfs_node
+{
+   uint32_t unk_0;
+   uint32_t unk_4; //uid ?, not ptr
+   uint32_t unk_8;
+   uint32_t unk_C; //uid ?, not ptr
+
+   uint32_t unk_10; //num
+   uint32_t unk_14;
+   uint32_t unk_18;
+   uint32_t unk_1C;
+
+   uint32_t unk_20;
+   uint32_t unk_24;
+   uint32_t unk_28;
+   uint32_t unk_2C;
+
+   uint32_t unk_30;
+   uint32_t unk_34;
+   uint32_t unk_38;
+   uint32_t unk_3C;
+
+   node_ops2 *ops;
+   uint32_t unk_44;
+   vfs_node_unk_48* unk_48; //ptr ?
+   uint32_t unk_4C; // not a pointer
+
+   vfs_node_unk_50* unk_50; //ptr
+   vfs_node_unk_54* unk_54; //ptr
+   uint32_t unk_58; //num
+   uint32_t unk_5C;
+
+   uint32_t unk_60;
+   uint32_t unk_64;
+   uint32_t unk_68;
+   SceUID pool_uid;
+
+   vfs_node_unk_70* unk_70; //ptr
+   uint32_t unk_74; //num
+   uint32_t unk_78; //num
+   uint32_t unk_7C;
+
+   uint32_t unk_80; //ptr ?
+   uint32_t unk_84;
+   uint32_t unk_88; //num
+   uint32_t unk_8C;
+
+   uint32_t unk_90; //num
+   uint32_t unk_94; //num
+   uint32_t unk_98;
+   uint32_t unk_9C;
+
+   uint32_t unk_A0;
+   uint32_t unk_A4;
+   uint32_t unk_A8;
+   uint32_t unk_AC;
+
+   uint32_t unk_B0;
+   uint32_t unk_B4;
+   uint32_t unk_B8;
+   uint32_t unk_BC;
+
+   uint32_t unk_C0;
+   uint32_t unk_C4;
+   uint32_t unk_C8;
+   uint32_t unk_CC;
+
+   uint32_t unk_D0; //num
+}vfs_node;
+
+typedef struct vnf_arg1
+{
+  char* blockDevice;
+  uint32_t nameLength;
+  char* unixMount;
+}vnf_arg1;
+
+typedef struct vfs_node_func1_args
+{
+   struct vfs_node* node;
+   struct vnf_arg1* arg1;
+   uint32_t arg2;
+   uint32_t arg3;
+}vfs_node_func1_args;
 
 int vfs_node_func1_entered = 0;
 
@@ -1216,19 +1611,37 @@ int vfs_node_func1(void* ctx) //00C17465
 
   int res = TAI_CONTINUE(int, sdstor_dev_fs_refs[4], ctx);
 
+  vfs_node_func1_args* args = (vfs_node_func1_args*)ctx;
+
   #ifdef ENABLE_LOG_VFS_SD_NODE
   vfs_node_func1_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func1: %x\n", ctx);
+    char buffer[120];
+    snprintf(buffer, 120, "vfs_node_func1: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    /*
+    snprintf(buffer, 120, "node: %08x\narg1: %08x\narg2: %08x\narg3: %08x\nret:%08x\n", args->node, args->arg1, args->arg2, args->arg3, res);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    */
+
+    snprintf(buffer, 120, "dev: %s mount: %s res: %x\n", args->arg1->blockDevice, args->arg1->unixMount, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
   }
   close_sdstor_dev_fs_log();
+
   vfs_node_func1_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here("SceIofilemgr", 0);
+  */
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
@@ -1255,60 +1668,28 @@ int vfs_node_func3(void* ctx) //00C17459
   #endif
 
   stacktrace_from_here("SceIofilemgr", 0);
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
 
-typedef struct pair_C172E0
+typedef struct vnf_arg2
 {
    char* blockDeviceName;
    int nameLength;
-} pair_C172E0;
+} vnf_arg2;
 
-typedef struct data_C172E0
+typedef struct vfs_node_func4_args
 {
-   int unk_0;
-   int unk_4;
-   int unk_8;
-   int unk_C;
-   
-   int unk_10;
-   int unk_14;
-   int unk_18;
-   int unk_1C;
-   
-   int unk_20;
-   int unk_24;
-   int unk_28;
-   int unk_2C;
-   
-   int unk_30;
-   int unk_34;
-   int unk_38;
-   int unk_3C;
-   
-   int unk_40;
-   int unk_44;
-   int unk_48;
-   int unk_4C;
-   
-   int unk_50;
-   int unk_54;
-   int unk_58;
-   int unk_5C;
-   
-   int unk_60;
-   int unk_64;
-   int unk_68;
-   SceUID pool_uid;
-}data_C172E0;
-
-typedef struct ctx_C172E0
-{
-   data_C172E0* data;
-   int* result;
-   pair_C172E0* mount;
-}ctx_C172E0;
+   vfs_node* node;
+   int* arg1; //result
+   vnf_arg2* arg2; //mount
+   uint32_t arg3;
+}vfs_node_func4_args;
 
 int vfs_node_func4_entered = 0;
 
@@ -1319,19 +1700,31 @@ int vfs_node_func4(void* ctx) //00C172E1
 
   int res = TAI_CONTINUE(int, sdstor_dev_fs_refs[6], ctx);
 
+  vfs_node_func4_args* args = (vfs_node_func4_args*)ctx;
+
   #ifdef ENABLE_LOG_VFS_SD_NODE
   vfs_node_func4_entered = 1;
   open_sdstor_dev_fs_log();
   {
     char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func4: %x %s\n", ctx, ((ctx_C172E0*)ctx)->mount->blockDeviceName);
+    snprintf(buffer, 100, "vfs_node_func4: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    snprintf(buffer, 100, "node: %x dev: %s arg1: %x arg3: %x res: %x\n", args->node, args->arg2->blockDeviceName, *args->arg1, args->arg3, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func4_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here("SceIofilemgr", 0);
+  */
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
@@ -1388,7 +1781,18 @@ int vfs_node_func6(void* ctx) //00C1717D - HOOK DOES NOT WORK when writing to fi
   return res;
 }
 
+typedef struct vfs_node_func7_args
+{
+   struct vfs_node* node;
+   char* arg1; //some ptr
+   uint32_t arg2; //0x200 or 0 (size?)
+   uint32_t arg3; 
+   uint32_t arg_0; //0x1 or 0x0
+}vfs_node_func7_args;
+
 int vfs_node_func7_entered = 0;
+
+//this function returns arg2 (size?) on success
 
 int vfs_node_func7(void* ctx) //00C170C5
 {
@@ -1397,22 +1801,50 @@ int vfs_node_func7(void* ctx) //00C170C5
 
   int res = TAI_CONTINUE(int, sdstor_dev_fs_refs[9], ctx);
 
+  vfs_node_func7_args* args = (vfs_node_func7_args*)ctx;
+
   #ifdef ENABLE_LOG_VFS_SD_NODE
   vfs_node_func7_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func7: %x\n", ctx);
+    char buffer[120];
+    snprintf(buffer, 120, "vfs_node_func7: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    snprintf(buffer, 120, "node: %08x arg1: %08x arg2: %08x arg3: %08x arg_0: %08x res:%08x\n", args->node, args->arg1, args->arg2, args->arg3, args->arg_0, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func7_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here("SceIofilemgr", 0);
+  */
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
+
+typedef struct vnf_arg9
+{
+   char* blockDeviceName;
+   int nameLength;
+
+   //can be more bytes
+}vnf_arg9;
+
+typedef struct vfs_node_func9_args
+{
+   struct vfs_node* node0;
+   struct vfs_node* node1;
+   vnf_arg9* arg2;
+   uint32_t arg3;
+}vfs_node_func9_args;
 
 int vfs_node_func9_entered = 0;
 
@@ -1423,19 +1855,31 @@ int vfs_node_func9(void* ctx) //00C17291
 
   int res = TAI_CONTINUE(int, sdstor_dev_fs_refs[10], ctx);
 
+  vfs_node_func9_args* args = (vfs_node_func9_args*)ctx;
+
   #ifdef ENABLE_LOG_VFS_SD_NODE
   vfs_node_func9_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func9: %x\n", ctx);
+    char buffer[140];
+    snprintf(buffer, 140, "vfs_node_func9: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    snprintf(buffer, 140, "node0: %08x node1: %08x dev: %s arg3: %08x res:%08x\n", args->node0, args->node1, args->arg2->blockDeviceName, args->arg3, res);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);    
   }
   close_sdstor_dev_fs_log();
   vfs_node_func9_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here("SceIofilemgr", 0);
+  */
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
@@ -1462,6 +1906,11 @@ int vfs_node_func19(void* ctx) //00C171DD
   #endif
 
   stacktrace_from_here("SceIofilemgr", 0);
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
@@ -1488,6 +1937,11 @@ int vfs_node_func20(void* ctx) //00C17071
   #endif
 
   stacktrace_from_here("SceIofilemgr", 0);
+  print_current_thread_info();
+
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  close_sdstor_dev_fs_log();
 
   return res;
 }
@@ -2092,6 +2546,80 @@ int dump_sdif_data()
   return 0;
 }
 
+//Read User read-only Thread and Process ID Register
+int print_TPIDRURO()
+{
+  int TPIDRURO = 0;
+  
+  asm volatile ("mrc p15, 0, %0, c13, c0, 3" : "=r" (TPIDRURO)); //Read TPIDRURO into Rt
+  
+  {
+    open_global_log();
+    char buffer[100];
+    snprintf(buffer, 100, "TPIDRURO %x\n", TPIDRURO);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+    close_global_log();
+  }
+  
+  return 0;
+}
+
+int TestThread(SceSize args, void *argp)
+{
+  open_global_log();
+  FILE_WRITE(global_log_fd, "message from thread\n");
+  close_global_log();
+  
+  //get_currentThreadId();
+  //print_TPIDRURO();
+  
+  print_current_thread_info();
+  
+  return 0;  
+}
+
+int print_thread_info()
+{
+  SceUID newThid = ksceKernelCreateThread("TestThread", &TestThread, 0x64, 0x1000, 0, 0, 0);
+  if(newThid < 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to create thread\n");
+    close_global_log();
+    return -1;
+  }
+  
+  {
+    open_global_log();
+    char buffer[100];
+    snprintf(buffer, 100, "created thread %x\n", newThid);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+    close_global_log();
+  }
+  
+  int ret = ksceKernelStartThread(newThid, 0, 0);
+  
+  int waitRet = 0;
+  ksceKernelWaitThreadEnd(newThid, &waitRet, 0);
+  
+  int delret = ksceKernelDeleteThread(newThid);
+  if(delret < 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to delete thread\n");
+    close_global_log();
+  }
+  
+  open_global_log();
+  FILE_WRITE(global_log_fd, "deleted thread\n");
+  close_global_log();
+  
+  //get_currentThreadId();
+  //print_TPIDRURO();
+    
+  return 0;
+}
+
 int module_start(SceSize argc, const void *args) 
 {
   //initialize emmc if required
@@ -2108,7 +2636,9 @@ int module_start(SceSize argc, const void *args)
   //deal with module table
   construct_module_range_table();
   sort_segment_table();
-  print_segment_table();
+  //print_segment_table();
+  
+  //print_thread_info();
   
   //dump_device_context_mem_blocks_1000();
   
