@@ -1,2 +1,2 @@
 # psvemmc
-emmc dumping driver and server
+emmc dumping driver, server and client
