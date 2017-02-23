@@ -36,6 +36,11 @@ void close_global_log()
 }
 
 //=================================================
+
+#define MSG_SIZE 256
+int send_message_to_client(char* msg, int size);
+
+//=================================================
  
 #pragma pack(push, 1)
 
@@ -958,7 +963,7 @@ int sysroot_zero_hook()
   }
   close_global_log();
   
-  //return res;
+  return res;
   
   //returning 1 here enables sd init
   //however it breaks existing functionality, including:
@@ -1330,8 +1335,12 @@ int vfs_func13(void* ctx) //00C17551
     snprintf(buffer, 100, "vfs_func13: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
 
+    send_message_to_client(buffer, 100);
+
     snprintf(buffer, 100, "dev: %s res: %x\n", ((ctx_C17550*)ctx)->blockDeviceName, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    send_message_to_client(buffer, 100);
   }
   close_sdstor_dev_fs_log();
   vfs_func13_entered = 0;
@@ -1634,6 +1643,8 @@ int vfs_node_func1(void* ctx) //00C17465
     snprintf(buffer, 120, "vfs_node_func1: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
 
+    send_message_to_client(buffer, 120);
+
     /*
     snprintf(buffer, 120, "node: %08x\narg1: %08x\narg2: %08x\narg3: %08x\nret:%08x\n", args->node, args->arg1, args->arg2, args->arg3, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
@@ -1641,6 +1652,8 @@ int vfs_node_func1(void* ctx) //00C17465
 
     snprintf(buffer, 120, "dev: %s mount: %s res: %x\n", args->arg1->blockDevice, args->arg1->unixMount, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    send_message_to_client(buffer, 120);
   }
   close_sdstor_dev_fs_log();
 
@@ -1723,8 +1736,12 @@ int vfs_node_func4(void* ctx) //00C172E1
     snprintf(buffer, 100, "vfs_node_func4: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
 
+    send_message_to_client(buffer, 100);
+
     snprintf(buffer, 100, "node: %x dev: %s arg1: %x arg3: %x res: %x\n", args->node, args->arg2->blockDeviceName, *args->arg1, args->arg3, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    send_message_to_client(buffer, 100);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func4_entered = 0;
@@ -1824,8 +1841,12 @@ int vfs_node_func7(void* ctx) //00C170C5
     snprintf(buffer, 120, "vfs_node_func7: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
 
+    send_message_to_client(buffer, 120);
+
     snprintf(buffer, 120, "node: %08x arg1: %08x arg2: %08x arg3: %08x arg_0: %08x res:%08x\n", args->node, args->arg1, args->arg2, args->arg3, args->arg_0, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    send_message_to_client(buffer, 120);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func7_entered = 0;
@@ -1878,8 +1899,12 @@ int vfs_node_func9(void* ctx) //00C17291
     snprintf(buffer, 140, "vfs_node_func9: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
 
+    send_message_to_client(buffer, 140);
+
     snprintf(buffer, 140, "node0: %08x node1: %08x dev: %s arg3: %08x res:%08x\n", args->node0, args->node1, args->arg2->blockDeviceName, args->arg3, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);    
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+
+    send_message_to_client(buffer, 140);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func9_entered = 0;
@@ -2024,9 +2049,10 @@ int sceVfsMount_hook(vfs_mount_point_info_base* data)
   int res = TAI_CONTINUE(int, sceVfsMount_hook_ref, data);
 
   /*
-  open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsMount\n");
-  close_sdstor_dev_fs_log();
+  char msg_buffer[MSG_SIZE];
+  memset(msg_buffer, 0, MSG_SIZE);
+  snprintf(msg_buffer, MSG_SIZE, "called sceVfsMount");
+  send_message_to_client(msg_buffer, MSG_SIZE);
   */
 
   return res;
@@ -2037,9 +2063,10 @@ int sceVfsAddVfs_hook(vfs_add_data* data)
   int res = TAI_CONTINUE(int, sceVfsAddVfs_hook_ref, data);
 
   /*
-  open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsAddVfs\n");
-  close_sdstor_dev_fs_log();
+  char msg_buffer[MSG_SIZE];
+  memset(msg_buffer, 0, MSG_SIZE);
+  snprintf(msg_buffer, MSG_SIZE, "called sceVfsAddVfs");
+  send_message_to_client(msg_buffer, MSG_SIZE);
   */
 
   return res;
@@ -2050,9 +2077,10 @@ int sceVfsUnmount_hook(vfs_unmount_data* data)
   int res = TAI_CONTINUE(int, sceVfsUnmount_hook_ref, data);
 
   /*
-  open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsUnmount\n");
-  close_sdstor_dev_fs_log();
+  char msg_buffer[MSG_SIZE];
+  memset(msg_buffer, 0, MSG_SIZE);
+  snprintf(msg_buffer, MSG_SIZE, "called sceVfsUnmount");
+  send_message_to_client(msg_buffer, MSG_SIZE);
   */
 
   return res;
@@ -2063,9 +2091,10 @@ int sceVfsDeleteVfs_hook(const char* name, void** deleted_node)
   int res = TAI_CONTINUE(int, sceVfsDeleteVfs_hook_ref, name, deleted_node);
 
   /*
-  open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsDeleteVfs\n");
-  close_sdstor_dev_fs_log();
+  char msg_buffer[MSG_SIZE];
+  memset(msg_buffer, 0, MSG_SIZE);
+  snprintf(msg_buffer, MSG_SIZE, "called sceVfsDeleteVfs");
+  send_message_to_client(msg_buffer, MSG_SIZE);
   */
 
   return res;
@@ -2076,9 +2105,10 @@ int sceVfsGetNewNode_hook(void* ctx, node_ops2* ops, int unused, vfs_node** node
   int res = TAI_CONTINUE(int, sceVfsGetNewNode_hook_ref, ctx, ops, unused, node);
 
   /*
-  open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsGetNewNode\n");
-  close_sdstor_dev_fs_log();
+  char msg_buffer[MSG_SIZE];
+  memset(msg_buffer, 0, MSG_SIZE);
+  snprintf(msg_buffer, MSG_SIZE, "called sceVfsGetNewNode");
+  send_message_to_client(msg_buffer, MSG_SIZE);
   */
 
   return res;
@@ -2942,6 +2972,14 @@ int unlock_listen_mutex()
   return 0;
 }
 
+void ping_debug_client()
+{
+  char msg_buffer[100];
+  memset(msg_buffer, 0, 100);
+  snprintf(msg_buffer, 100, "ping debug client\n");
+  send_message_to_client(msg_buffer, 100);
+}
+
 void accept_single_connection()
 {
   while(1)
@@ -2950,7 +2988,7 @@ void accept_single_connection()
 
     if(g_connInitialized == 1)
     {
-      ksceKernelDelayThread(5000); //delay for 1 second
+      ksceKernelDelayThread(5000); //delay for 5 seconds
 
       unlock_listen_mutex();
 
@@ -2985,7 +3023,7 @@ void accept_single_connection()
     open_global_log();
     {
       char buffer[100];
-      snprintf(buffer, 100, "Accepted connection from %s:%d", ksceNetInetNtop(SCE_NET_AF_INET, &client.sin_addr, ipstr, 16), ksceNetNtohs(client.sin_port));
+      snprintf(buffer, 100, "Accepted connection from %s:%d\n", ksceNetInetNtop(SCE_NET_AF_INET, &client.sin_addr, ipstr, 16), ksceNetNtohs(client.sin_port));
       FILE_WRITE_LEN(global_log_fd, buffer);    
     }
     close_global_log();
@@ -2997,6 +3035,10 @@ void accept_single_connection()
     g_connInitialized = 1;
 
     unlock_listen_mutex();
+
+    //try to send message to client
+
+    ping_debug_client();
   }
 }
 
@@ -3143,7 +3185,7 @@ int init_net()
   if(init_listen_thread() < 0)
     return -1;
 
-  int ret = ksceKernelStartThread(g_connListenThid, 0, 0);
+  int ret = ksceKernelStartThread(g_connListenThid, 0, 0);  
 
   return 0;
 }
@@ -3234,16 +3276,55 @@ void deinit_net()
 
 //========================
 
-int send_message_to_client(char* msg)
+//message send is locked with mutex so this buffer should be safe
+
+char message_buffer[MSG_SIZE];
+
+int send_message(char* msg_raw, int size)
 {
+  if(size > MSG_SIZE)
+     return 0;
+
+  memset(message_buffer, 0, MSG_SIZE);
+  memcpy(message_buffer, msg_raw, size);
+
+  int bytesToSend = MSG_SIZE;
+  int bytesWereSend = 0;
+  while(bytesWereSend != bytesToSend)
+  {
+     int sendLen = ksceNetSend(_client_sock, message_buffer + bytesWereSend, bytesToSend - bytesWereSend, 0);
+     if(sendLen <= 0)
+     {
+        open_global_log();
+        FILE_WRITE(global_log_fd, "failed to send data\n");
+        close_global_log();
+        return - 1;
+     }
+     
+     bytesWereSend = bytesWereSend + sendLen;
+  }
+
+  return 0;
+}
+
+int send_message_to_client(char* msg, int size)
+{
+  if(size > MSG_SIZE)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to send data: msg size is invalid\n");
+    close_global_log();
+    return -1;
+  }
+
   //message should only be sent if connection is initialized
 
   unsigned int timeout = 0;
   int lockRes = ksceKernelLockMutex(g_connInitMutexId, 1, &timeout);
 
-  if(g_connInitialized)
+  if(g_connInitialized == 1)
   {
-    int res = ksceNetSend(_client_sock, msg, strlen(msg), 0);
+    int res = send_message(msg, size);
     if(res < 0)
     {
       open_global_log();
@@ -3257,6 +3338,12 @@ int send_message_to_client(char* msg)
       //need to close socket as well
       close_client_sock();
     }
+  }
+  else
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to send message to client: connection is not initialized\n");
+    close_global_log();
   }
 
   int unlockRes = ksceKernelUnlockMutex(g_connInitMutexId, 1);
