@@ -108,14 +108,14 @@ void deinit_net()
   if(_cli_sock)
   {
     if(sceNetSocketClose(_cli_sock) < 0)
-    psvDebugScreenPrintf("psvemmc: failed to close client socket\n");
+      psvDebugScreenPrintf("psvemmc: failed to close client socket\n");
     _cli_sock = 0;
   }
  
   if (_emmc_sock) 
   {
     if(sceNetSocketClose(_emmc_sock) < 0)
-    psvDebugScreenPrintf("psvemmc: failed to close server socket\n");
+      psvDebugScreenPrintf("psvemmc: failed to close server socket\n");
     _emmc_sock = 0;
   }
   
@@ -670,6 +670,8 @@ int handle_command_6() //write sector
       sceNetSend(_cli_sock, &resp, sizeof(command_6_response), 0);
       return -1;
     }
+
+    bytesWereReceived = bytesWereReceived + recvLen;
   }
   
   psvDebugScreenPrintf("psvemmc: execute command 6\n");
@@ -721,6 +723,8 @@ int handle_command_7() //write cluster
       sceNetSend(_cli_sock, &resp, sizeof(command_7_response), 0);
       return -1;
     }
+
+    bytesWereReceived = bytesWereReceived + recvLen;
   }
   
   psvDebugScreenPrintf("psvemmc: execute command 7\n");
@@ -861,6 +865,8 @@ int handle_command_10() //write sector
       sceNetSend(_cli_sock, &resp, sizeof(command_10_response), 0);
       return -1;
     }
+
+    bytesWereReceived = bytesWereReceived + recvLen;
   }
   
   psvDebugScreenPrintf("psvemmc: execute command 10\n");
@@ -912,6 +918,8 @@ int handle_command_11() //write cluster
       sceNetSend(_cli_sock, &resp, sizeof(command_11_response), 0);
       return -1;
     }
+
+    bytesWereReceived = bytesWereReceived + recvLen;
   }
   
   psvDebugScreenPrintf("psvemmc: execute command 11\n");
@@ -1052,6 +1060,8 @@ int handle_command_14() //write sector
       sceNetSend(_cli_sock, &resp, sizeof(command_14_response), 0);
       return -1;
     }
+
+    bytesWereReceived = bytesWereReceived + recvLen;
   }
   
   psvDebugScreenPrintf("psvemmc: execute command 14\n");
@@ -1103,6 +1113,8 @@ int handle_command_15() //write cluster
       sceNetSend(_cli_sock, &resp, sizeof(command_15_response), 0);
       return -1;
     }
+
+    bytesWereReceived = bytesWereReceived + recvLen;
   }
   
   psvDebugScreenPrintf("psvemmc: execute command 15\n");
