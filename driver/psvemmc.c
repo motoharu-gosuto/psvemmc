@@ -2880,20 +2880,22 @@ unsigned short int ksceNetNtohs(unsigned short int net16)
   return r0;
 }
 
-//===============
+//==========================================
 
-typedef struct conn_listen_args
-{
-   SceUID connInitMutexId;
-   int* connInitialized;
-   int server_sock;
-   int* client_sock;
-}conn_listen_args;
+SceUID g_connListenThid = -1;
+SceUID g_connInitMutexId = -1;
+int g_connInitialized = 0;
 
-int lock_listen_mutex(conn_listen_args* args)
+int _server_sock = 0;
+int serv_port = 1332;
+char* serv_sock_name = "emmcdebug";
+int _client_sock = 0;
+
+int lock_listen_mutex()
 {
   unsigned int timeout = 0;
-  int lockRes = ksceKernelLockMutex(args->connInitMutexId, 1, &timeout);
+  int lockRes = ksceKernelLockMutex(g_connInitMutexId, 1, &timeout);
+  /*
   if(lockRes >= 0)
   {
     open_global_log();
@@ -2910,13 +2912,15 @@ int lock_listen_mutex(conn_listen_args* args)
     }
     close_global_log();
   }
+  */
 
   return 0;
 }
 
-int unlock_listen_mutex(conn_listen_args* args)
+int unlock_listen_mutex()
 {
-  int unlockRes = ksceKernelUnlockMutex(args->connInitMutexId, 1);
+  int unlockRes = ksceKernelUnlockMutex(g_connInitMutexId, 1);
+  /*
   if(unlockRes >= 0)
   {
     open_global_log();
@@ -2933,33 +2937,34 @@ int unlock_listen_mutex(conn_listen_args* args)
     }
     close_global_log();
   }
+  */
 
   return 0;
 }
 
-int accept_connections(conn_listen_args* args)
+void accept_single_connection()
 {
   while(1)
   {
-    lock_listen_mutex(args);
+    lock_listen_mutex();
 
-    if(*(args->connInitialized) == 1)
+    if(g_connInitialized == 1)
     {
       ksceKernelDelayThread(5000); //delay for 1 second
 
-      unlock_listen_mutex(args);
+      unlock_listen_mutex();
 
       continue;
     }
 
-    unlock_listen_mutex(args);
+    unlock_listen_mutex();
 
     SceNetSockaddrIn client;
     memset(&client, 0, sizeof(client));
     client.sin_len = sizeof(client);
 
     unsigned int sin_size = sizeof(client);
-    int clsock = ksceNetAccept(args->server_sock, (SceNetSockaddr*)&client, &sin_size);
+    int clsock = ksceNetAccept(_server_sock, (SceNetSockaddr*)&client, &sin_size);
     if(clsock < 0)
     {
       open_global_log();
@@ -2970,10 +2975,10 @@ int accept_connections(conn_listen_args* args)
       }
       close_global_log();
 
-      return -1;
+      return;
     }
 
-    *(args->client_sock) = clsock;
+    _client_sock = clsock;
 
     char ipstr[16];
 
@@ -2987,98 +2992,12 @@ int accept_connections(conn_listen_args* args)
 
     //connection is now initialized 
 
-    lock_listen_mutex(args);
+    lock_listen_mutex();
 
-    *(args->connInitialized) = 1;
+    g_connInitialized = 1;
 
-    unlock_listen_mutex(args);
+    unlock_listen_mutex();
   }
-}
-
-int ConnListenThread(SceSize args, void *argp)
-{
-  conn_listen_args* ctx = (conn_listen_args*)argp;
-  accept_connections(ctx);
-  return 0;
-}
-
-//==========================================
-
-//none of the variables should be directly accessable by listen thread
-
-conn_listen_args g_conn_args;
-
-SceUID g_connListenThid = -1;
-SceUID g_connInitMutexId = -1;
-int g_connInitialized = 0;
-
-int init_listen_mutex()
-{
-  g_connInitMutexId = ksceKernelCreateMutex("ConnInitMutex", 0, 0, 0);
-
-  if(g_connInitMutexId < 0)
-  {
-    open_global_log();
-    {
-      char buffer[100];
-      snprintf(buffer, 100, "failed to create conn init mutex %x\n", g_connInitMutexId);
-      FILE_WRITE_LEN(global_log_fd, buffer); 
-    }
-    close_global_log();
-
-    return -1;
-  }
-  else
-  {
-    open_global_log();
-    FILE_WRITE(global_log_fd, "created conn init mutex\n");
-    close_global_log();
-  }
-
-  return 0;
-}
-
-int init_listen_thread()
-{
-  g_connListenThid = ksceKernelCreateThread("ConnListenThread", &ConnListenThread, 0x64, 0x1000, 0, 0, 0);
-  if(g_connListenThid < 0)
-  {
-    open_global_log();
-    FILE_WRITE(global_log_fd, "failed to create thread\n");
-    close_global_log();
-    return -1;
-  }
-  
-  open_global_log();
-  {
-    char buffer[100];
-    snprintf(buffer, 100, "created thread %x\n", g_connListenThid);
-    FILE_WRITE_LEN(global_log_fd, buffer);
-  }
-  close_global_log();
-
-  return 0;
-}
-
-int _server_sock = 0;
-int serv_port = 1332;
-char* serv_sock_name = "emmcdebug";
-int _client_sock = 0;
-
-void accept_single_connection()
-{
-  if(init_listen_mutex() < 0)
-     return;
-
-  if(init_listen_thread() < 0)
-    return;
-
-  g_conn_args.connInitMutexId = g_connInitMutexId;
-  g_conn_args.connInitialized = &g_connInitialized;
-  g_conn_args.server_sock = _server_sock;
-  g_conn_args.client_sock = &_client_sock;   
-
-  int ret = ksceKernelStartThread(g_connListenThid, sizeof(conn_listen_args), &g_conn_args);
 }
 
 int get_current_ip(char dest[16])
@@ -3091,7 +3010,7 @@ int get_current_ip(char dest[16])
   return 0;
 }
 
-int init_net()
+int init_net_internal()
 {
   SceNetSockaddrIn server;
     
@@ -3146,7 +3065,86 @@ int init_net()
   open_global_log();
   FILE_WRITE(global_log_fd, "listening for connection\n");
   close_global_log();
+
+  return 0;
+}
+
+//=============================
+
+//by some reason both client and server socket should be created in one thread
+//if not then ksceNetAccept fails
+//that is why all initialization is performed in separate thread
+
+int ConnListenThread()
+{
+  if(init_net_internal() >= 0)
+  {
+    accept_single_connection();
+  }
+
+  return 0;
+}
+
+//=============================
+
+int init_listen_mutex()
+{
+  g_connInitMutexId = ksceKernelCreateMutex("ConnInitMutex", 0, 0, 0);
+
+  if(g_connInitMutexId < 0)
+  {
+    open_global_log();
+    {
+      char buffer[100];
+      snprintf(buffer, 100, "failed to create conn init mutex %x\n", g_connInitMutexId);
+      FILE_WRITE_LEN(global_log_fd, buffer); 
+    }
+    close_global_log();
+
+    return -1;
+  }
+  else
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "created conn init mutex\n");
+    close_global_log();
+  }
+
+  return 0;
+}
+
+int init_listen_thread()
+{
+  g_connListenThid = ksceKernelCreateThread("ConnListenThread", &ConnListenThread, 0x64, 0x1000, 0, 0, 0);
+  if(g_connListenThid < 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to create thread\n");
+    close_global_log();
+    return -1;
+  }
   
+  open_global_log();
+  {
+    char buffer[100];
+    snprintf(buffer, 100, "created thread %x\n", g_connListenThid);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+  }
+  close_global_log();
+
+  return 0;
+}
+
+int init_net()
+{
+  if(init_listen_mutex() < 0)
+     return -1;
+
+  if(init_listen_thread() < 0)
+    return -1;
+
+  int ret = ksceKernelStartThread(g_connListenThid, 0, 0);
+
   return 0;
 }
 
@@ -3288,10 +3286,7 @@ int module_start(SceSize argc, const void *args)
   
   //print_thread_info();
 
-  if(init_net() >= 0)
-  {
-    accept_single_connection();
-  }
+  init_net();
   
   //dump_device_context_mem_blocks_1000();
   
