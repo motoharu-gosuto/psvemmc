@@ -8,6 +8,7 @@
 #include <psp2kern/kernel/sysmem.h>
 #include <psp2kern/kernel/threadmgr.h>
 #include <psp2kern/io/fcntl.h>
+#include <psp2kern/net/net.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -586,6 +587,18 @@ SceUID sysroot_zero_hook_id = -1;
 
 tai_hook_ref_t sdstor_dev_fs_refs[13];
 SceUID sdstor_dev_fs_ids[13] = {-1};
+
+tai_hook_ref_t sceVfsMount_hook_ref;
+tai_hook_ref_t sceVfsAddVfs_hook_ref;
+tai_hook_ref_t sceVfsUnmount_hook_ref;
+tai_hook_ref_t sceVfsDeleteVfs_hook_ref;
+tai_hook_ref_t sceVfsGetNewNode_hook_ref;
+
+SceUID sceVfsMount_hook_id = -1;
+SceUID sceVfsAddVfs_hook_id = -1;
+SceUID sceVfsUnmount_hook_id = -1;
+SceUID sceVfsDeleteVfs_hook_id = -1;
+SceUID sceVfsGetNewNode_hook_id = -1;
 
 //==================================
 
@@ -1587,17 +1600,17 @@ typedef struct vfs_node
    uint32_t unk_D0; //num
 }vfs_node;
 
-typedef struct vnf_arg1
+typedef struct vnf1_arg1
 {
   char* blockDevice;
   uint32_t nameLength;
   char* unixMount;
-}vnf_arg1;
+}vnf1_arg1;
 
 typedef struct vfs_node_func1_args
 {
    struct vfs_node* node;
-   struct vnf_arg1* arg1;
+   struct vnf1_arg1* arg1;
    uint32_t arg2;
    uint32_t arg3;
 }vfs_node_func1_args;
@@ -1677,17 +1690,17 @@ int vfs_node_func3(void* ctx) //00C17459
   return res;
 }
 
-typedef struct vnf_arg2
+typedef struct vnf4_arg2
 {
    char* blockDeviceName;
    int nameLength;
-} vnf_arg2;
+} vnf4_arg2;
 
 typedef struct vfs_node_func4_args
 {
    vfs_node* node;
    int* arg1; //result
-   vnf_arg2* arg2; //mount
+   vnf4_arg2* arg2; //mount
    uint32_t arg3;
 }vfs_node_func4_args;
 
@@ -1784,7 +1797,7 @@ int vfs_node_func6(void* ctx) //00C1717D - HOOK DOES NOT WORK when writing to fi
 typedef struct vfs_node_func7_args
 {
    struct vfs_node* node;
-   char* arg1; //some ptr
+   void* arg1; //some ptr
    uint32_t arg2; //0x200 or 0 (size?)
    uint32_t arg3; 
    uint32_t arg_0; //0x1 or 0x0
@@ -1830,19 +1843,19 @@ int vfs_node_func7(void* ctx) //00C170C5
   return res;
 }
 
-typedef struct vnf_arg9
+typedef struct vnf9_arg2
 {
    char* blockDeviceName;
    int nameLength;
 
    //can be more bytes
-}vnf_arg9;
+}vnf9_arg2;
 
 typedef struct vfs_node_func9_args
 {
    struct vfs_node* node0;
    struct vfs_node* node1;
-   vnf_arg9* arg2;
+   struct vnf9_arg2* arg2;
    uint32_t arg3;
 }vfs_node_func9_args;
 
@@ -1946,6 +1959,133 @@ int vfs_node_func20(void* ctx) //00C17071
   return res;
 }
 
+//=====================================================
+
+typedef struct node_ops1 // size is 0x34 (13 pointers)
+{
+  int (*func1)(void* ctx);
+  int (*func2)(void* ctx); // ?
+  int (*func3)(void* ctx);
+  int (*func4)(void* ctx);
+  int (*func5)(void* ctx); // not implemented by all
+  int (*func6)(void* ctx); // not implemented by all
+  int (*func7)(void* ctx);
+  int (*func8)(void* ctx); // not implemented by all
+  int (*func9)(void* ctx); // called by sceVfsAddVfs
+  int (*func10)(void* ctx); // called by sceVfsDeleteVfs
+  int (*func11)(void* ctx); // not implemented by all
+  int (*func12)(void* ctx); // sceIoDevctlForDriver
+  int (*func13)(void* ctx); // ?
+} node_ops1;
+
+typedef struct vfs_add_data
+{
+    struct node_ops1* funcs1;
+    const char *name; //max size is 0x20
+    int flags; //0x0E
+    int unk_C; //0x01 / 0x00 (root, leaf ?)
+    
+    int unk_10; //0x10
+    struct node_ops2* funcs2;
+    int unk_18; //0x00
+    struct vfs_add_data* next_element; //ptr to next element, confirmed
+} vfs_add_data;
+
+typedef struct vfs_block_dev_info //size is 0x14
+{
+  char* vitaMount;
+  char* filesystem; // Some name, I guess it is filesystem
+  char* blockDevicePrimary;
+  char* blockDeviceSecondary; // can be 0
+  uint32_t vshMountId; //must be same as in mount_point_info
+}vfs_block_dev_info;
+
+typedef struct vfs_mount_point_info_base
+{
+  char* unixMount;
+  uint32_t unk_4; //zero
+  uint32_t devMajor;
+  uint32_t devMinor;
+
+  char* filesystem;
+  uint32_t unk_14; //zero
+  struct vfs_block_dev_info* blockDev1;
+  uint32_t unk_1C; //zero
+} vfs_mount_point_info_base;
+
+typedef struct vfs_unmount_data
+{
+    const char *mountpoint;
+    int flags;
+}vfs_unmount_data;
+
+int sceVfsMount_hook(vfs_mount_point_info_base* data)
+{
+  int res = TAI_CONTINUE(int, sceVfsMount_hook_ref, data);
+
+  /*
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsMount\n");
+  close_sdstor_dev_fs_log();
+  */
+
+  return res;
+}
+
+int sceVfsAddVfs_hook(vfs_add_data* data)
+{
+  int res = TAI_CONTINUE(int, sceVfsAddVfs_hook_ref, data);
+
+  /*
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsAddVfs\n");
+  close_sdstor_dev_fs_log();
+  */
+
+  return res;
+}
+
+int sceVfsUnmount_hook(vfs_unmount_data* data)
+{
+  int res = TAI_CONTINUE(int, sceVfsUnmount_hook_ref, data);
+
+  /*
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsUnmount\n");
+  close_sdstor_dev_fs_log();
+  */
+
+  return res;
+}
+
+int sceVfsDeleteVfs_hook(const char* name, void** deleted_node)
+{
+  int res = TAI_CONTINUE(int, sceVfsDeleteVfs_hook_ref, name, deleted_node);
+
+  /*
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsDeleteVfs\n");
+  close_sdstor_dev_fs_log();
+  */
+
+  return res;
+}
+
+int sceVfsGetNewNode_hook(void* ctx, node_ops2* ops, int unused, vfs_node** node)
+{
+  int res = TAI_CONTINUE(int, sceVfsGetNewNode_hook_ref, ctx, ops, unused, node);
+
+  /*
+  open_sdstor_dev_fs_log();
+  FILE_WRITE(sdstor_dev_fs_log_fd, "called sceVfsGetNewNode\n");
+  close_sdstor_dev_fs_log();
+  */
+
+  return res;
+}
+
+//=====================================================
+
 typedef int(vfs_func)(void* ctx);
 
 vfs_func* sdstor_dev_fs_functions[13] = {
@@ -1986,6 +2126,7 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
 #define SceSblGcAuthMgrGcAuthForDriver_NID 0xC6627F5E
 #define SceSdifForDriver_NID 0x96D306FA
 #define SceSysrootForDriver_NID 0x2ED7F97A
+#define SceIofilemgrForDriver_NID 0x40FD29C7
 
 int initialize_all_hooks()
 {
@@ -2029,8 +2170,6 @@ int initialize_all_hooks()
     cmd55_41_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &cmd55_41_hook_ref, sdif_info.modid, 0, 0x35E8, 1, cmd55_41_hook);
   }
   
-  //SceSysmem.SceSysrootForDriver._exp_f804f761
-  
   tai_module_info_t sysroot_info;
   sysroot_info.size = sizeof(tai_module_info_t);
   if (taiGetModuleInfoForKernel(KERNEL_PID, "SceSysmem", &sysroot_info) >= 0)
@@ -2039,6 +2178,20 @@ int initialize_all_hooks()
     
     //by some reason only import hook worked
     sysroot_zero_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &sysroot_zero_hook_ref, "SceSdstor", SceSysrootForDriver_NID, 0xf804f761, sysroot_zero_hook);
+  }
+
+  tai_module_info_t iofilemgr_info;
+  iofilemgr_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceIofilemgr", &iofilemgr_info) >= 0)
+  {
+    sceVfsMount_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceVfsMount_hook_ref, "SceIofilemgr", SceIofilemgrForDriver_NID, 0xB62DE9A6, sceVfsMount_hook);
+    sceVfsAddVfs_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceVfsAddVfs_hook_ref, "SceIofilemgr", SceIofilemgrForDriver_NID, 0x673D2FCD, sceVfsAddVfs_hook);
+
+    //by some reason this hook fails with TAI_ERROR_HOOK_ERROR
+    sceVfsUnmount_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceVfsUnmount_hook_ref, "SceIofilemgr", SceIofilemgrForDriver_NID, 0x9C7E7B76, sceVfsUnmount_hook);
+
+    sceVfsDeleteVfs_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceVfsDeleteVfs_hook_ref, "SceIofilemgr", SceIofilemgrForDriver_NID, 0x9CBFA725, sceVfsDeleteVfs_hook);
+    sceVfsGetNewNode_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceVfsGetNewNode_hook_ref, "SceIofilemgr", SceIofilemgrForDriver_NID, 0xD60B5C63, sceVfsGetNewNode_hook);
   }
   
   open_global_log();
@@ -2179,6 +2332,61 @@ int initialize_all_hooks()
     }
   }
 
+  if(sceVfsMount_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceVfsMount hook\n");
+  }
+  else
+  {
+    char buffer[100];
+    snprintf(buffer, 100, "failed to set sceVfsMount hook: %x\n", sceVfsMount_hook_id);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+  }
+
+  if(sceVfsAddVfs_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceVfsAddVfs hook\n");
+  }
+  else
+  {
+    char buffer[100];
+    snprintf(buffer, 100, "failed to set sceVfsAddVfs hook: %x\n", sceVfsAddVfs_hook_id);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+  }
+
+  if(sceVfsUnmount_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceVfsUnmount hook\n");
+  }
+  else
+  {
+    char buffer[100];
+    snprintf(buffer, 100, "failed to set sceVfsUnmount hook: %x\n", sceVfsUnmount_hook_id);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+  }
+
+  if(sceVfsDeleteVfs_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceVfsDeleteVfs hook\n");
+  }
+  else
+  {
+    char buffer[100];
+    snprintf(buffer, 100, "failed to set sceVfsDeleteVfs hook: %x\n", sceVfsDeleteVfs_hook_id);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+  }
+  
+  if(sceVfsGetNewNode_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceVfsGetNewNode hook\n");
+  }
+  else
+  {
+    char buffer[100];
+    snprintf(buffer, 100, "failed to set sceVfsGetNewNode hook: %x\n", sceVfsGetNewNode_hook_id);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+  }
+
   close_global_log();
   
   return 0;
@@ -2234,6 +2442,21 @@ int deinitialize_all_hooks()
       taiHookReleaseForKernel(sdstor_dev_fs_ids[f], sdstor_dev_fs_refs[f]);
   }
   
+  if(sceVfsMount_hook_id >= 0)
+    taiHookReleaseForKernel(sceVfsMount_hook_id, sceVfsMount_hook_ref);
+
+  if(sceVfsAddVfs_hook_id >= 0)
+    taiHookReleaseForKernel(sceVfsAddVfs_hook_id, sceVfsAddVfs_hook_ref);
+
+  if(sceVfsUnmount_hook_id >= 0)
+    taiHookReleaseForKernel(sceVfsUnmount_hook_id, sceVfsUnmount_hook_ref);
+  
+  if(sceVfsDeleteVfs_hook_id >= 0)
+    taiHookReleaseForKernel(sceVfsDeleteVfs_hook_id, sceVfsDeleteVfs_hook_ref);
+
+  if(sceVfsGetNewNode_hook_id >= 0)
+    taiHookReleaseForKernel(sceVfsGetNewNode_hook_id, sceVfsGetNewNode_hook_ref);
+
   return 0;
 }
 
@@ -2598,6 +2821,8 @@ int print_thread_info()
   }
   
   int ret = ksceKernelStartThread(newThid, 0, 0);
+
+  //----------------
   
   int waitRet = 0;
   ksceKernelWaitThreadEnd(newThid, &waitRet, 0);
@@ -2620,6 +2845,429 @@ int print_thread_info()
   return 0;
 }
 
+//===============
+
+//since there are no exports in netps for ksceNetInetNtop and ksceNetNtohs I had to figure smth else
+
+const char* inet_ntop4(const struct SceNetInAddr* addr, char* buf, unsigned int len)
+{
+	const uint8_t *ap = (const uint8_t *)&addr->s_addr;
+	char tmp[16];
+	int fulllen;
+	 
+	fulllen = snprintf(tmp, sizeof(tmp), "%d.%d.%d.%d", ap[0], ap[1], ap[2], ap[3]);
+	if (fulllen >= (int)len) 
+	   return NULL;
+	
+  memcpy(buf, tmp, fulllen + 1);
+	
+	return buf;
+}
+
+const char* ksceNetInetNtop(int af, const void *src, char *dst, unsigned int size)
+{
+  if(af==SCE_NET_AF_INET)
+		return inet_ntop4(src, dst, size);
+	return NULL;
+}
+
+unsigned short int ksceNetNtohs(unsigned short int net16)
+{
+  //implementation is copied from sceNetNtohs
+
+  int r3 = net16 << 8;
+  int r0 = r3 | (net16 >> 8);
+  return r0;
+}
+
+//===============
+
+typedef struct conn_listen_args
+{
+   SceUID connInitMutexId;
+   int* connInitialized;
+   int server_sock;
+   int* client_sock;
+}conn_listen_args;
+
+int lock_listen_mutex(conn_listen_args* args)
+{
+  unsigned int timeout = 0;
+  int lockRes = ksceKernelLockMutex(args->connInitMutexId, 1, &timeout);
+  if(lockRes >= 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "conn init mutex locked\n");
+    close_global_log();
+  }
+  else
+  {
+    open_global_log();
+    {
+      char buffer[100];
+      snprintf(buffer, 100, "failed to lock mutex %x\n", lockRes);
+      FILE_WRITE_LEN(global_log_fd, buffer);    
+    }
+    close_global_log();
+  }
+
+  return 0;
+}
+
+int unlock_listen_mutex(conn_listen_args* args)
+{
+  int unlockRes = ksceKernelUnlockMutex(args->connInitMutexId, 1);
+  if(unlockRes >= 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "conn init mutex unlocked\n");
+    close_global_log();
+  }
+  else
+  {
+    open_global_log();
+    {
+      char buffer[100];
+      snprintf(buffer, 100, "failed to unlock mutex %x\n", unlockRes);
+      FILE_WRITE_LEN(global_log_fd, buffer);    
+    }
+    close_global_log();
+  }
+
+  return 0;
+}
+
+int accept_connections(conn_listen_args* args)
+{
+  while(1)
+  {
+    lock_listen_mutex(args);
+
+    if(*(args->connInitialized) == 1)
+    {
+      ksceKernelDelayThread(5000); //delay for 1 second
+
+      unlock_listen_mutex(args);
+
+      continue;
+    }
+
+    unlock_listen_mutex(args);
+
+    SceNetSockaddrIn client;
+    memset(&client, 0, sizeof(client));
+    client.sin_len = sizeof(client);
+
+    unsigned int sin_size = sizeof(client);
+    int clsock = ksceNetAccept(args->server_sock, (SceNetSockaddr*)&client, &sin_size);
+    if(clsock < 0)
+    {
+      open_global_log();
+      {
+        char buffer[100];
+        snprintf(buffer, 100, "failed to accept socket %x\n", clsock);
+        FILE_WRITE_LEN(global_log_fd, buffer);    
+      }
+      close_global_log();
+
+      return -1;
+    }
+
+    *(args->client_sock) = clsock;
+
+    char ipstr[16];
+
+    open_global_log();
+    {
+      char buffer[100];
+      snprintf(buffer, 100, "Accepted connection from %s:%d", ksceNetInetNtop(SCE_NET_AF_INET, &client.sin_addr, ipstr, 16), ksceNetNtohs(client.sin_port));
+      FILE_WRITE_LEN(global_log_fd, buffer);    
+    }
+    close_global_log();
+
+    //connection is now initialized 
+
+    lock_listen_mutex(args);
+
+    *(args->connInitialized) = 1;
+
+    unlock_listen_mutex(args);
+  }
+}
+
+int ConnListenThread(SceSize args, void *argp)
+{
+  conn_listen_args* ctx = (conn_listen_args*)argp;
+  accept_connections(ctx);
+  return 0;
+}
+
+//==========================================
+
+//none of the variables should be directly accessable by listen thread
+
+conn_listen_args g_conn_args;
+
+SceUID g_connListenThid = -1;
+SceUID g_connInitMutexId = -1;
+int g_connInitialized = 0;
+
+int init_listen_mutex()
+{
+  g_connInitMutexId = ksceKernelCreateMutex("ConnInitMutex", 0, 0, 0);
+
+  if(g_connInitMutexId < 0)
+  {
+    open_global_log();
+    {
+      char buffer[100];
+      snprintf(buffer, 100, "failed to create conn init mutex %x\n", g_connInitMutexId);
+      FILE_WRITE_LEN(global_log_fd, buffer); 
+    }
+    close_global_log();
+
+    return -1;
+  }
+  else
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "created conn init mutex\n");
+    close_global_log();
+  }
+
+  return 0;
+}
+
+int init_listen_thread()
+{
+  g_connListenThid = ksceKernelCreateThread("ConnListenThread", &ConnListenThread, 0x64, 0x1000, 0, 0, 0);
+  if(g_connListenThid < 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to create thread\n");
+    close_global_log();
+    return -1;
+  }
+  
+  open_global_log();
+  {
+    char buffer[100];
+    snprintf(buffer, 100, "created thread %x\n", g_connListenThid);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+  }
+  close_global_log();
+
+  return 0;
+}
+
+int _server_sock = 0;
+int serv_port = 1332;
+char* serv_sock_name = "emmcdebug";
+int _client_sock = 0;
+
+void accept_single_connection()
+{
+  if(init_listen_mutex() < 0)
+     return;
+
+  if(init_listen_thread() < 0)
+    return;
+
+  g_conn_args.connInitMutexId = g_connInitMutexId;
+  g_conn_args.connInitialized = &g_connInitialized;
+  g_conn_args.server_sock = _server_sock;
+  g_conn_args.client_sock = &_client_sock;   
+
+  int ret = ksceKernelStartThread(g_connListenThid, sizeof(conn_listen_args), &g_conn_args);
+}
+
+int get_current_ip(char dest[16])
+{
+  //in userspace current ip can be retrieved with SceNetCtlInfo and sceNetCtlInetGetInfo
+  //however I do not know how this can be done in kernel since these functions are not exported in kernel
+  //for now I can only hardcode the value in this placeholder procedure
+
+  memcpy(dest, "192.168.0.34", sizeof("192.168.0.34"));
+  return 0;
+}
+
+int init_net()
+{
+  SceNetSockaddrIn server;
+    
+  server.sin_len = sizeof(server);
+  server.sin_family = SCE_NET_AF_INET;
+  server.sin_addr.s_addr = SCE_NET_INADDR_ANY;
+  server.sin_port = ksceNetHtons(serv_port);
+  
+  memset(server.sin_zero, 0, sizeof(server.sin_zero));
+
+  _server_sock = ksceNetSocket(serv_sock_name, SCE_NET_AF_INET, SCE_NET_SOCK_STREAM, 0);
+  if(_server_sock < 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to create socket\n");
+    close_global_log();
+    return -1;
+  }
+
+  open_global_log();
+  FILE_WRITE(global_log_fd, "server socket created\n");
+  close_global_log();
+
+  int bind_res = ksceNetBind(_server_sock, (SceNetSockaddr*)&server, sizeof(server));
+  if(bind_res < 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to bind socket\n");
+    close_global_log();
+    return -1;
+  }
+
+  char ip_address[16];
+  get_current_ip(ip_address);
+
+  open_global_log();
+  {
+    char buffer[100];
+    snprintf(buffer, 100, "server socket binded %s:%d\n", ip_address, serv_port);
+    FILE_WRITE_LEN(global_log_fd, buffer);    
+  }
+  close_global_log();
+
+  if(ksceNetListen(_server_sock, 128) < 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to listen socket\n");
+    close_global_log();
+    return -1;
+  }
+  
+  open_global_log();
+  FILE_WRITE(global_log_fd, "listening for connection\n");
+  close_global_log();
+  
+  return 0;
+}
+
+void deinit_listen_mutex()
+{
+  int mutexRes = ksceKernelDeleteMutex(g_connInitMutexId);
+  if(mutexRes < 0)
+  {
+    open_global_log();
+    {
+      char buffer[100];
+      snprintf(buffer, 100, "failed to delete conn init mutex %x\n", mutexRes);
+      FILE_WRITE_LEN(global_log_fd, buffer); 
+    }
+    close_global_log();    
+  }
+  else
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "deleted conn init mutex\n");
+    close_global_log();
+  }
+}
+
+void deinit_listen_thread()
+{
+  int waitRet = 0;
+  ksceKernelWaitThreadEnd(g_connListenThid, &waitRet, 0);
+  
+  int delret = ksceKernelDeleteThread(g_connListenThid);
+  if(delret < 0)
+  {
+    open_global_log();
+    FILE_WRITE(global_log_fd, "failed to delete conn listen thread\n");
+    close_global_log();
+  }
+  
+  open_global_log();
+  FILE_WRITE(global_log_fd, "deleted conn listen thread\n");
+  close_global_log();
+}
+
+void close_client_sock()
+{
+  if(_client_sock)
+  {
+    if(ksceNetSocketClose(_client_sock) < 0)
+    {
+      open_global_log();
+      FILE_WRITE(global_log_fd, "failed to close client socket\n");
+      close_global_log();
+    }
+    _client_sock = 0;
+  }
+  
+  open_global_log();
+  FILE_WRITE(global_log_fd, "closed client socket\n");
+  close_global_log();
+}
+
+void close_server_sock()
+{
+  if(_server_sock)
+  {
+    if(ksceNetSocketClose(_server_sock) < 0)
+    {
+      open_global_log();
+      FILE_WRITE(global_log_fd, "failed to close server socket\n");
+      close_global_log();
+    }
+    _server_sock = 0;
+  }
+  
+  open_global_log();
+  FILE_WRITE(global_log_fd, "closed server socket\n");
+  close_global_log();
+}
+
+void deinit_net()
+{
+  deinit_listen_mutex();
+  deinit_listen_thread();
+
+  close_client_sock();
+  close_server_sock();
+}
+
+//========================
+
+int send_message_to_client(char* msg)
+{
+  //message should only be sent if connection is initialized
+
+  unsigned int timeout = 0;
+  int lockRes = ksceKernelLockMutex(g_connInitMutexId, 1, &timeout);
+
+  if(g_connInitialized)
+  {
+    int res = ksceNetSend(_client_sock, msg, strlen(msg), 0);
+    if(res < 0)
+    {
+      open_global_log();
+      FILE_WRITE(global_log_fd, "failed to send message to client\n");
+      close_global_log();
+
+      //if failed to send message this means that most likely connection was terminated
+      //we need to reinitialize connection then (mutex is already locked)
+      g_connInitialized = 0;
+
+      //need to close socket as well
+      close_client_sock();
+    }
+  }
+
+  int unlockRes = ksceKernelUnlockMutex(g_connInitMutexId, 1);
+
+  return 0;
+}
+
+//========================
+
 int module_start(SceSize argc, const void *args) 
 {
   //initialize emmc if required
@@ -2639,6 +3287,11 @@ int module_start(SceSize argc, const void *args)
   //print_segment_table();
   
   //print_thread_info();
+
+  if(init_net() >= 0)
+  {
+    accept_single_connection();
+  }
   
   //dump_device_context_mem_blocks_1000();
   
@@ -2667,6 +3320,8 @@ void _start() __attribute__ ((weak, alias ("module_start")));
  
 int module_stop(SceSize argc, const void *args) 
 {
+  deinit_net();
+
   deinitialize_all_hooks();
   
   //deinitialize buffers if required

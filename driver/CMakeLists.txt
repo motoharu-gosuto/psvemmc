@@ -43,6 +43,7 @@ target_link_libraries(psvemmc
   SceModulemgrForKernel_stub
   taihenForKernel_stub
   taihenModuleUtils_stub
+  SceNetPsForDriver_stub
 )
 
 vita_create_self(psvemmc.skprx psvemmc
