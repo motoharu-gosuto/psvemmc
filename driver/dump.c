@@ -15,6 +15,8 @@
 #include "glog.h"
 #include "sector_api.h"
 
+char sprintfBuffer[256];
+
 int dump_memblock_1000(SceUID uid, void* membase)
 {
   SceUID file = ksceIoOpen("ux0:dump/psvemmc_memblock_1000.bin", SCE_O_CREAT | SCE_O_APPEND | SCE_O_WRONLY, 0777);  
@@ -40,9 +42,8 @@ int validate_dump_memblock_1000(int index, SceUID uid, void* membase)
       if(membase == membaseCheck)
       {
         open_global_log();
-        char buffer[100];
-        snprintf(buffer, 100, "device:%x membase 1000 OK\n", index);
-        FILE_WRITE_LEN(global_log_fd, buffer);
+        snprintf(sprintfBuffer, 256, "device:%x membase 1000 OK\n", index);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
         close_global_log();
         
         dump_memblock_1000(uid, membase);
@@ -52,9 +53,8 @@ int validate_dump_memblock_1000(int index, SceUID uid, void* membase)
       else
       {
         open_global_log();
-        char buffer[100];
-        snprintf(buffer, 100, "device:%x membase 1000 does not match\n", index);
-        FILE_WRITE_LEN(global_log_fd, buffer);
+        snprintf(sprintfBuffer, 256, "device:%x membase 1000 does not match\n", index);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
         close_global_log();
         return -1;
       }
@@ -62,9 +62,8 @@ int validate_dump_memblock_1000(int index, SceUID uid, void* membase)
     else
     {
       open_global_log();
-      char buffer[100];
-      snprintf(buffer, 100, "device:%x failed to get membase 1000, error:%x\n", index, res_1);
-      FILE_WRITE_LEN(global_log_fd, buffer);
+      snprintf(sprintfBuffer, 256, "device:%x failed to get membase 1000, error:%x\n", index, res_1);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
       close_global_log();
       return -1;
     }
@@ -72,9 +71,8 @@ int validate_dump_memblock_1000(int index, SceUID uid, void* membase)
   else
   {
     open_global_log();
-    char buffer[100];
-    snprintf(buffer, 100, "device:%x membase 1000 is empty\n", index);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "device:%x membase 1000 is empty\n", index);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     close_global_log();
     return -1;
   }
@@ -122,9 +120,8 @@ int validate_dump_memblock_10000(int index, SceUID uid, void* membase)
       if(membase == membaseCheck)
       {
         open_global_log();
-        char buffer[100];
-        snprintf(buffer, 100, "device:%x membase 10000 OK\n", index);
-        FILE_WRITE_LEN(global_log_fd, buffer);
+        snprintf(sprintfBuffer, 256, "device:%x membase 10000 OK\n", index);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
         close_global_log();
         
         dump_memblock_10000(uid, membase);
@@ -134,9 +131,8 @@ int validate_dump_memblock_10000(int index, SceUID uid, void* membase)
       else
       {
         open_global_log();
-        char buffer[100];
-        snprintf(buffer, 100, "device:%x membase 10000 does not match\n", index);
-        FILE_WRITE_LEN(global_log_fd, buffer);
+        snprintf(sprintfBuffer, 256, "device:%x membase 10000 does not match\n", index);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
         close_global_log();
         return -1;
       }
@@ -144,9 +140,8 @@ int validate_dump_memblock_10000(int index, SceUID uid, void* membase)
     else
     {
       open_global_log();
-      char buffer[100];
-      snprintf(buffer, 100, "device:%x failed to get membase 10000, error:%x\n", index, res_1);
-      FILE_WRITE_LEN(global_log_fd, buffer);
+      snprintf(sprintfBuffer, 256, "device:%x failed to get membase 10000, error:%x\n", index, res_1);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
       close_global_log();
       return -1;
     }
@@ -154,9 +149,8 @@ int validate_dump_memblock_10000(int index, SceUID uid, void* membase)
   else
   {
     open_global_log();
-    char buffer[100];
-    snprintf(buffer, 100, "device:%x membase 10000 is empty\n", index);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "device:%x membase 10000 is empty\n", index);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     close_global_log();
     return -1;
   }
@@ -194,9 +188,8 @@ int dumpSegment(SceKernelModuleInfo* minfo, int index)
   
   {
     open_global_log();
-    char buffer[100];
-    snprintf(buffer, 100, "%d %x %x\n", index, minfo->segments[index].vaddr, minfo->segments[index].memsz);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "%d %x %x\n", index, minfo->segments[index].vaddr, minfo->segments[index].memsz);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     close_global_log();
   }
   
@@ -207,9 +200,8 @@ int dumpSegment(SceKernelModuleInfo* minfo, int index)
 
   {
     open_global_log();
-    char buffer[100];
-    snprintf(buffer, 100, "%s\n", filename);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "%s\n", filename);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     close_global_log();
   }
   
@@ -292,9 +284,8 @@ int print_ctx(int sd_index)
   
   open_global_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "type:%x ctx:%x\n", idx, pctx);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "type:%x ctx:%x\n", idx, pctx);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
   
@@ -310,9 +301,8 @@ int initialize_gc_sd()
     
     open_global_log();
     {
-      char buffer[100];
-      snprintf(buffer, 100, "res:%x \n", res);
-      FILE_WRITE_LEN(global_log_fd, buffer);
+      snprintf(sprintfBuffer, 256, "res:%x \n", res);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     }
     close_global_log();
   }

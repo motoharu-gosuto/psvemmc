@@ -21,6 +21,8 @@ int serv_port = 1332;
 char* serv_sock_name = "emmcdebug";
 int _client_sock = 0;
 
+char sprintfBuffer[256];
+
 //=============================
 
 //since there are no exports in netps for ksceNetInetNtop and ksceNetNtohs I had to figure smth else
@@ -73,9 +75,8 @@ int lock_listen_mutex()
   {
     open_global_log();
     {
-      char buffer[100];
-      snprintf(buffer, 100, "failed to lock mutex %x\n", lockRes);
-      FILE_WRITE_LEN(global_log_fd, buffer);    
+      snprintf(sprintfBuffer, 256, "failed to lock mutex %x\n", lockRes);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
     }
     close_global_log();
   }
@@ -98,9 +99,8 @@ int unlock_listen_mutex()
   {
     open_global_log();
     {
-      char buffer[100];
-      snprintf(buffer, 100, "failed to unlock mutex %x\n", unlockRes);
-      FILE_WRITE_LEN(global_log_fd, buffer);    
+      snprintf(sprintfBuffer, 256, "failed to unlock mutex %x\n", unlockRes);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
     }
     close_global_log();
   }
@@ -140,9 +140,8 @@ void accept_single_connection()
     {
       open_global_log();
       {
-        char buffer[100];
-        snprintf(buffer, 100, "failed to accept socket %x\n", clsock);
-        FILE_WRITE_LEN(global_log_fd, buffer);    
+        snprintf(sprintfBuffer, 256, "failed to accept socket %x\n", clsock);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
       }
       close_global_log();
 
@@ -155,9 +154,8 @@ void accept_single_connection()
 
     open_global_log();
     {
-      char buffer[100];
-      snprintf(buffer, 100, "Accepted connection from %s:%d\n", ksceNetInetNtop(SCE_NET_AF_INET, &client.sin_addr, ipstr, 16), ksceNetNtohs(client.sin_port));
-      FILE_WRITE_LEN(global_log_fd, buffer);    
+      snprintf(sprintfBuffer, 256, "Accepted connection from %s:%d\n", ksceNetInetNtop(SCE_NET_AF_INET, &client.sin_addr, ipstr, 16), ksceNetNtohs(client.sin_port));
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
     }
     close_global_log();
 
@@ -223,9 +221,8 @@ int init_net_internal()
 
   open_global_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "server socket binded %s:%d\n", ip_address, serv_port);
-    FILE_WRITE_LEN(global_log_fd, buffer);    
+    snprintf(sprintfBuffer, 256, "server socket binded %s:%d\n", ip_address, serv_port);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
   }
   close_global_log();
 
@@ -255,6 +252,10 @@ int ConnListenThread()
     accept_single_connection();
   }
 
+  open_global_log();
+  FILE_WRITE(global_log_fd, "exit listen thread\n");
+  close_global_log();
+
   return 0;
 }
 
@@ -269,9 +270,8 @@ int init_listen_mutex()
   {
     open_global_log();
     {
-      char buffer[100];
-      snprintf(buffer, 100, "failed to create conn init mutex %x\n", g_connInitMutexId);
-      FILE_WRITE_LEN(global_log_fd, buffer); 
+      snprintf(sprintfBuffer, 256, "failed to create conn init mutex %x\n", g_connInitMutexId);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer); 
     }
     close_global_log();
 
@@ -300,9 +300,8 @@ int init_listen_thread()
   
   open_global_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "created thread %x\n", g_connListenThid);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "created thread %x\n", g_connListenThid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
 
@@ -331,9 +330,8 @@ void deinit_listen_mutex()
   {
     open_global_log();
     {
-      char buffer[100];
-      snprintf(buffer, 100, "failed to delete conn init mutex %x\n", mutexRes);
-      FILE_WRITE_LEN(global_log_fd, buffer); 
+      snprintf(sprintfBuffer, 256, "failed to delete conn init mutex %x\n", mutexRes);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer); 
     }
     close_global_log();    
   }
@@ -427,10 +425,11 @@ int send_message(char* msg_raw, int size)
   while(bytesWereSend != bytesToSend)
   {
      int sendLen = ksceNetSend(_client_sock, message_buffer + bytesWereSend, bytesToSend - bytesWereSend, 0);
-     if(sendLen <= 0)
+     if(sendLen < 0)
      {
         open_global_log();
-        FILE_WRITE(global_log_fd, "failed to send data\n");
+        snprintf(sprintfBuffer, 256, "failed to send data %x\n", sendLen);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
         close_global_log();
         return -1;
      }

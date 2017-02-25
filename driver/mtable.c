@@ -16,6 +16,8 @@
 
 #include "glog.h"
 
+char sprintfBuffer[256];
+
 SceUID g_modlist[MOD_LIST_SIZE];
 
 int moduleListIsConstructed = 0;
@@ -42,9 +44,8 @@ int construct_module_range_table()
     return ret;
 
   open_global_log();
-  char buffer[100];
-  snprintf(buffer, 100, "number of modules: %d\n", count);
-  FILE_WRITE_LEN(global_log_fd, buffer);
+  snprintf(sprintfBuffer, 256, "number of modules: %d\n", count);
+  FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   close_global_log();
 
   int segInfoIndex = 0;
@@ -128,9 +129,8 @@ int print_segment_table()
       break;
 
     open_global_log();
-    char buffer[100];
-    snprintf(buffer, 100, "%s %d %08x %08x\n", g_segList[s].moduleName, g_segList[s].seg, g_segList[s].range.start, g_segList[s].range.end);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "%s %d %08x %08x\n", g_segList[s].moduleName, g_segList[s].seg, g_segList[s].range.start, g_segList[s].range.end);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     close_global_log();
   }
 

@@ -24,6 +24,8 @@
 
 #include "hooks_vfs_funcs.h" 
 
+char msg_buffer[MSG_SIZE];
+
 tai_hook_ref_t sceVfsMount_hook_ref;
 tai_hook_ref_t sceVfsAddVfs_hook_ref;
 tai_hook_ref_t sceVfsUnmount_hook_ref;
@@ -41,7 +43,6 @@ int sceVfsMount_hook(vfs_mount_point_info_base* data)
   int res = TAI_CONTINUE(int, sceVfsMount_hook_ref, data);
 
   /*
-  char msg_buffer[MSG_SIZE];
   memset(msg_buffer, 0, MSG_SIZE);
   snprintf(msg_buffer, MSG_SIZE, "called sceVfsMount");
   send_message_to_client(msg_buffer, MSG_SIZE);
@@ -55,7 +56,6 @@ int sceVfsAddVfs_hook(vfs_add_data* data)
   int res = TAI_CONTINUE(int, sceVfsAddVfs_hook_ref, data);
 
   /*
-  char msg_buffer[MSG_SIZE];
   memset(msg_buffer, 0, MSG_SIZE);
   snprintf(msg_buffer, MSG_SIZE, "called sceVfsAddVfs");
   send_message_to_client(msg_buffer, MSG_SIZE);
@@ -69,7 +69,6 @@ int sceVfsUnmount_hook(vfs_unmount_data* data)
   int res = TAI_CONTINUE(int, sceVfsUnmount_hook_ref, data);
 
   /*
-  char msg_buffer[MSG_SIZE];
   memset(msg_buffer, 0, MSG_SIZE);
   snprintf(msg_buffer, MSG_SIZE, "called sceVfsUnmount");
   send_message_to_client(msg_buffer, MSG_SIZE);
@@ -83,7 +82,6 @@ int sceVfsDeleteVfs_hook(const char* name, void** deleted_node)
   int res = TAI_CONTINUE(int, sceVfsDeleteVfs_hook_ref, name, deleted_node);
 
   /*
-  char msg_buffer[MSG_SIZE];
   memset(msg_buffer, 0, MSG_SIZE);
   snprintf(msg_buffer, MSG_SIZE, "called sceVfsDeleteVfs");
   send_message_to_client(msg_buffer, MSG_SIZE);
@@ -97,7 +95,6 @@ int sceVfsGetNewNode_hook(void* ctx, node_ops2* ops, int unused, vfs_node** node
   int res = TAI_CONTINUE(int, sceVfsGetNewNode_hook_ref, ctx, ops, unused, node);
 
   /*
-  char msg_buffer[MSG_SIZE];
   memset(msg_buffer, 0, MSG_SIZE);
   snprintf(msg_buffer, MSG_SIZE, "called sceVfsGetNewNode");
   send_message_to_client(msg_buffer, MSG_SIZE);

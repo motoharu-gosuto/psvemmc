@@ -17,6 +17,8 @@
 #include "sdstor_log.h"
 #include "mtable.h"
 
+char sprintfBuffer[256];
+
 //Read Privileged only Thread and Process ID Register
 SceUID get_currentThreadId()
 {
@@ -27,9 +29,8 @@ SceUID get_currentThreadId()
   /*
   {
     open_global_log();
-    char buffer[100];
-    snprintf(buffer, 100, "TPIDRPRW %x\n", TPIDRPRW);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "TPIDRPRW %x\n", TPIDRPRW);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     close_global_log();
   }
   */
@@ -42,9 +43,8 @@ SceUID get_currentThreadId()
     /*
     {
       open_global_log();
-      char buffer[100];
-      snprintf(buffer, 100, "value %x\n", value);
-      FILE_WRITE_LEN(global_log_fd, buffer);
+      snprintf(sprintfBuffer, 256, "value %x\n", value);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
       close_global_log();
     }
     */
@@ -107,9 +107,8 @@ int print_current_thread_info()
   
   {
     open_sdstor_dev_fs_log();
-    char buffer[200];
-    snprintf(buffer, 200, "process: %08x thread: %s\nstack: %08x stackSize: %08x\n", t_info.processId, t_info.name, t_info.stack, t_info.stackSize);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "process: %08x thread: %s\nstack: %08x stackSize: %08x\n", t_info.processId, t_info.name, t_info.stack, t_info.stackSize);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
     close_sdstor_dev_fs_log();
   }
   
@@ -152,9 +151,8 @@ int stacktrace_from_here(char* moduleNameSearch, int segIndexSearch)
         {
           open_sdstor_dev_fs_log();
           {
-            char buffer[100];
-            snprintf(buffer, 100, "%08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
-            FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+            snprintf(sprintfBuffer, 256, "%08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
+            FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
           }
           close_sdstor_dev_fs_log();
         }

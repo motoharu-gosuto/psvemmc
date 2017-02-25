@@ -24,6 +24,8 @@
 
 #include "hooks_misc.h"
 
+char sprintfBuffer[256];
+
 //========================================
 
 tai_hook_ref_t gc_hook_ref;
@@ -84,20 +86,18 @@ int clear_device_info_arrays()
 
 int print_device_info_arrays()
 {
-  char buffer[100];
-  
   open_global_log();
   FILE_WRITE(global_log_fd, "------ mmc -------\n");
   for(int i = 0; i < DEVICE_INFO_SIZE; i++)
   {  
-    snprintf(buffer, 100, "idx:%x ctx:%x\n", last_mmc_inits[i].sd_ctx_index, last_mmc_inits[i].ctx);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "idx:%x ctx:%x\n", last_mmc_inits[i].sd_ctx_index, last_mmc_inits[i].ctx);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   FILE_WRITE(global_log_fd, "------ sd  -------\n");
   for(int i = 0; i < DEVICE_INFO_SIZE; i++)
   {  
-    snprintf(buffer, 100, "idx:%x ctx:%x\n", last_sd_inits[i].sd_ctx_index, last_sd_inits[i].ctx);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "idx:%x ctx:%x\n", last_sd_inits[i].sd_ctx_index, last_sd_inits[i].ctx);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
   
@@ -129,9 +129,8 @@ int gc_patch(int param0)
   
   open_global_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "call gc auth res:%x\n", res);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "call gc auth res:%x\n", res);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
   
@@ -170,9 +169,8 @@ int init_mmc_hook(int sd_ctx_index, sd_context_part** result)
   
   open_global_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "init mmc - idx:%x ctx:%x res:%x\n", sd_ctx_index, *result, res);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "init mmc - idx:%x ctx:%x res:%x\n", sd_ctx_index, *result, res);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
 
@@ -195,9 +193,8 @@ int init_sd_hook(int sd_ctx_index, sd_context_part** result)
   
   open_global_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "init sd - idx:%x ctx:%x res:%x\n", sd_ctx_index, *result, res);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "init sd - idx:%x ctx:%x res:%x\n", sd_ctx_index, *result, res);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
   
@@ -213,9 +210,8 @@ int cmd55_41_hook(sd_context_global* ctx)
   /*
   open_global_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "res cmd55_41:%x\n", res);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "res cmd55_41:%x\n", res);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
   */
@@ -288,9 +284,8 @@ int load_mbr_hook(int ctx_index)
   
   open_global_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "called load_mbr_hook: %x\n", ctx_index);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "called load_mbr_hook: %x\n", ctx_index);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
   
@@ -309,9 +304,8 @@ int mnt_pnt_chk_hook(char* blockDeviceName, int mountNum, int* mountData)
     }
     else
     {
-      char buffer[200];
-      snprintf(buffer, 200, "called mnt_pnt_chk_hook: %s %08x %08x %08x\n", blockDeviceName, mountNum, *mountData, res);
-      FILE_WRITE_LEN(global_log_fd, buffer);
+      snprintf(sprintfBuffer, 256, "called mnt_pnt_chk_hook: %s %08x %08x %08x\n", blockDeviceName, mountNum, *mountData, res);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     }
   }
   close_global_log();
@@ -331,9 +325,8 @@ int mbr_table_init_hook(char* blockDeviceName, int mountNum)
     }
     else
     {
-      char buffer[200];
-      snprintf(buffer, 200, "called mbr_table_init_hook: %s %08x %08x\n", blockDeviceName, mountNum, res);
-      FILE_WRITE_LEN(global_log_fd, buffer);
+      snprintf(sprintfBuffer, 256, "called mbr_table_init_hook: %s %08x %08x\n", blockDeviceName, mountNum, res);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     }
   }
   close_global_log();

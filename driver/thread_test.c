@@ -14,6 +14,8 @@
 #include "glog.h"
 #include "stacktrace.h"
 
+char sprintfBuffer[256];
+
 //Read User read-only Thread and Process ID Register
 int print_TPIDRURO()
 {
@@ -23,9 +25,8 @@ int print_TPIDRURO()
   
   {
     open_global_log();
-    char buffer[100];
-    snprintf(buffer, 100, "TPIDRURO %x\n", TPIDRURO);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "TPIDRURO %x\n", TPIDRURO);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     close_global_log();
   }
   
@@ -59,9 +60,8 @@ int print_thread_info()
   
   {
     open_global_log();
-    char buffer[100];
-    snprintf(buffer, 100, "created thread %x\n", newThid);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "created thread %x\n", newThid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     close_global_log();
   }
   

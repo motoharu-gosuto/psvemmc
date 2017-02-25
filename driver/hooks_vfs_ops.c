@@ -24,6 +24,8 @@
 
 #include "hooks_vfs_ops.h" 
 
+char sprintfBuffer[256];
+
 tai_hook_ref_t sdstor_dev_fs_refs[13];
 SceUID sdstor_dev_fs_ids[13] = {-1};
 
@@ -46,9 +48,8 @@ int vfs_func1(void* ctx) //00C17015
   vfs_func1_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_func1: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_func1: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_func1_entered = 0;
@@ -77,9 +78,8 @@ int vfs_func3(void* ctx) //00C1703D
   vfs_func3_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_func3: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_func3: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_func3_entered = 0;
@@ -108,9 +108,8 @@ int vfs_func12(void* ctx) //00C175D1
   vfs_func12_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_func12: %x %s\n", ctx, ((ctx_C175D0*)ctx)->blockDeviceName);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_func12: %x %s\n", ctx, ((ctx_C175D0*)ctx)->blockDeviceName);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_func12_entered = 0;
@@ -139,16 +138,15 @@ int vfs_func13(void* ctx) //00C17551
   vfs_func13_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_func13: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_func13: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 100);
+    send_message_to_client(sprintfBuffer, 256);
 
-    snprintf(buffer, 100, "dev: %s res: %x\n", ((ctx_C17550*)ctx)->blockDeviceName, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "dev: %s res: %x\n", ((ctx_C17550*)ctx)->blockDeviceName, res);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 100);
+    send_message_to_client(sprintfBuffer, 256);
   }
   close_sdstor_dev_fs_log();
   vfs_func13_entered = 0;
@@ -181,21 +179,20 @@ int vfs_node_func1(void* ctx) //00C17465
   vfs_node_func1_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[120];
-    snprintf(buffer, 120, "vfs_node_func1: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func1: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 120);
+    send_message_to_client(sprintfBuffer, 256);
 
     /*
-    snprintf(buffer, 120, "node: %08x\narg1: %08x\narg2: %08x\narg3: %08x\nret:%08x\n", args->node, args->arg1, args->arg2, args->arg3, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "node: %08x\narg1: %08x\narg2: %08x\narg3: %08x\nret:%08x\n", args->node, args->arg1, args->arg2, args->arg3, res);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
     */
 
-    snprintf(buffer, 120, "dev: %s mount: %s res: %x\n", args->arg1->blockDevice, args->arg1->unixMount, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "dev: %s mount: %s res: %x\n", args->arg1->blockDevice, args->arg1->unixMount, res);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 120);
+    send_message_to_client(sprintfBuffer, 256);
   }
   close_sdstor_dev_fs_log();
 
@@ -227,9 +224,8 @@ int vfs_node_func3(void* ctx) //00C17459
   vfs_node_func3_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func3: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func3: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func3_entered = 0;
@@ -260,16 +256,15 @@ int vfs_node_func4(void* ctx) //00C172E1
   vfs_node_func4_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func4: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func4: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 100);
+    send_message_to_client(sprintfBuffer, 256);
 
-    snprintf(buffer, 100, "node: %x dev: %s arg1: %x arg3: %x res: %x\n", args->node, args->arg2->blockDeviceName, *args->arg1, args->arg3, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "node: %x dev: %s arg1: %x arg3: %x res: %x\n", args->node, args->arg2->blockDeviceName, *args->arg1, args->arg3, res);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 100);
+    send_message_to_client(sprintfBuffer, 256);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func4_entered = 0;
@@ -301,9 +296,8 @@ int vfs_node_func5(void* ctx) //00C17231 - HOOK DOES NOT WORK when writing to fi
   /*
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func5: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func5: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   */
@@ -327,9 +321,8 @@ int vfs_node_func6(void* ctx) //00C1717D - HOOK DOES NOT WORK when writing to fi
   /*
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func6: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func6: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   */
@@ -356,16 +349,17 @@ int vfs_node_func7(void* ctx) //00C170C5
   vfs_node_func7_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[120];
-    snprintf(buffer, 120, "vfs_node_func7: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func7: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 120);
+    send_message_to_client(sprintfBuffer, 256);
 
-    snprintf(buffer, 120, "node: %08x arg1: %08x arg2: %08x arg3: %08x arg_0: %08x res:%08x\n", args->node, args->arg1, args->arg2, args->arg3, args->arg_0, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "node: %08x arg1: %08x arg2: %08x arg3: %08x arg_0: %08x res:%08x\n", args->node, args->arg1, args->arg2, args->arg3, args->arg_0, res);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 120);
+    send_message_to_client(sprintfBuffer, 256);
+
+    send_message_to_client("vfs_node_func7", sizeof("vfs_node_func7"));
   }
   close_sdstor_dev_fs_log();
   vfs_node_func7_entered = 0;
@@ -398,16 +392,15 @@ int vfs_node_func9(void* ctx) //00C17291
   vfs_node_func9_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[140];
-    snprintf(buffer, 140, "vfs_node_func9: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func9: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 140);
+    send_message_to_client(sprintfBuffer, 256);
 
-    snprintf(buffer, 140, "node0: %08x node1: %08x dev: %s arg3: %08x res:%08x\n", args->node0, args->node1, args->arg2->blockDeviceName, args->arg3, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "node0: %08x node1: %08x dev: %s arg3: %08x res:%08x\n", args->node0, args->node1, args->arg2->blockDeviceName, args->arg3, res);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(buffer, 140);
+    send_message_to_client(sprintfBuffer, 256);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func9_entered = 0;
@@ -438,9 +431,8 @@ int vfs_node_func19(void* ctx) //00C171DD
   vfs_node_func19_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func19: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func19: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func19_entered = 0;
@@ -469,9 +461,8 @@ int vfs_node_func20(void* ctx) //00C17071
   vfs_node_func20_entered = 1;
   open_sdstor_dev_fs_log();
   {
-    char buffer[100];
-    snprintf(buffer, 100, "vfs_node_func20: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "vfs_node_func20: %x\n", ctx);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func20_entered = 0;
