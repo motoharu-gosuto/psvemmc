@@ -29,6 +29,14 @@ add_definitions(-DNO_PTHREADS)
 add_executable(psvemmc
   psvemmc.c
   qsort.c
+  debug.c
+  dump.c
+  glog.c
+  mtable.c
+  net.c
+  sdstor_log.c
+  stacktrace.c
+  thread_test.c
 )
 
 target_link_libraries(psvemmc
