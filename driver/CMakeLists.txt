@@ -30,6 +30,9 @@ add_executable(psvemmc
   psvemmc.c
   qsort.c
   debug.c
+  hooks_misc.c
+  hooks_vfs_ops.c
+  hooks_vfs_funcs.c
   dump.c
   glog.c
   mtable.c
