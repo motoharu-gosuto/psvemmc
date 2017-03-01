@@ -42,7 +42,7 @@ int TestThread(SceSize args, void *argp)
   //get_currentThreadId();
   //print_TPIDRURO();
   
-  print_current_thread_info();
+  print_current_thread_info_global();
   
   return 0;  
 }

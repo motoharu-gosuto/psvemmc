@@ -431,7 +431,10 @@ int send_message(char* msg_raw, int size)
         snprintf(sprintfBuffer, 256, "failed to send data %x\n", sendLen);
         FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
         close_global_log();
-        return -1;
+        
+        //return -1;
+        
+        return 0; // for debuging purpose. by unknown reason send_message fails from some hooks
      }
      
      bytesWereSend = bytesWereSend + sendLen;

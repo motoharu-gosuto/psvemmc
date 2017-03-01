@@ -26,22 +26,7 @@
 #include "hooks_vfs_ops.h"
 #include "hooks_vfs_funcs.h"
 
-//==============================================
-
-int print_bytes(char* bytes, int size)
-{ 
-  open_sdstor_dev_fs_log();
-  for(int i = 0; i < size; i++)
-  {
-    char buffer[4];
-    snprintf(buffer, 4, "%02x ", bytes[i]);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, buffer);
-  }
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
-  close_sdstor_dev_fs_log();
-
-  return 0;
-}
+char sprintfBuffer[256];
 
 //=====================================================
 
@@ -111,6 +96,25 @@ int initialize_all_hooks()
       {
         sdstor_dev_fs_ids[f] = taiHookFunctionOffsetForKernel(KERNEL_PID, &sdstor_dev_fs_refs[f], sdstor_info.modid, 0, sdstor_dev_fs_function_offsets[f], 1, sdstor_dev_fs_functions[f]);
       }
+
+      char zeroCallPatch[4] = {0x01, 0x20, 0x00, 0xBF};
+
+      gen_init_2_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x2498, zeroCallPatch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP)
+
+      gen_read_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &gen_read_hook_ref, sdstor_info.modid, 0, 0x2AF4, 1, gen_read_hook); //0xC16AF4
+
+      sd_read_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &sd_read_hook_ref, "SceSdstor", SceSdifForDriver_NID, 0xb9593652, sd_read_hook);
+
+      char zeroCallSupressPatch[4] = {0x00, 0x20, 0x00, 0xBF};
+      
+      //this patch is not required but it is much easier to replace BLX with this code that does not do anything
+      //since BLX call of zero proc is logged, and I want to identify other places that might require patching
+      mbr_init_zero_patch1_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x10B0, zeroCallSupressPatch, 4); //patch of zero proc call inside mbr init function
+      mbr_init_zero_patch2_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x10C0, zeroCallSupressPatch, 4); //patch of zero proc call inside mbr init function
+
+      init_partition_table_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &init_partition_table_hook_ref, sdstor_info.modid, 0, 0x36C, 1, init_partition_table_hook); //0xC1436C
+
+      create_device_handle_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &create_device_handle_hook_ref, sdstor_info.modid, 0, 0x80, 1, create_device_handle); //0xC14080
   }
   
   tai_module_info_t sdif_info;
@@ -122,11 +126,20 @@ int initialize_all_hooks()
     
     char iterations[1] = {20};
       
-    patch_uids[0] = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x349A, iterations, 1); //patch MOVS R2, 5 to MOVS R2, 10
-    patch_uids[1] = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x34B8, iterations, 1); //patch MOVS R2, 5 to MOVS R2, 10
-    patch_uids[2] = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x359A, iterations, 1); //patch MOVS R2, 5 to MOVS R2, 10
+    patch_uids[0] = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x349A, iterations, 1); //patch (MOVS R2, 5) to (MOVS R2, 10)
+    patch_uids[1] = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x34B8, iterations, 1); //patch (MOVS R2, 5) to (MOVS R2, 10)
+    patch_uids[2] = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x359A, iterations, 1); //patch (MOVS R2, 5) to (MOVS R2, 10)
     
     cmd55_41_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &cmd55_41_hook_ref, sdif_info.modid, 0, 0x35E8, 1, cmd55_41_hook);
+
+    char lowSpeed[1] = {0xF0};
+
+    hs_dis_patch1_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B34, lowSpeed, 1); //data:00C6EB30 data_CMD6_06000000_00FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x00
+    hs_dis_patch2_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B54, lowSpeed, 1); //data:00C6EB50 data_CMD6_06000000_80FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x80
+
+    char busWidth[1] = {0x02}; // for now - leaving it as it is 2 (4 bit transfer). 0 (1 bit transfer) does not work
+
+    bus_size_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6826, busWidth, 1); //patch (MOVS R3, #2) to (MOVS R3, #0)
   }
   
   tai_module_info_t sysroot_info;
@@ -160,9 +173,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set gc init hook: %x\n", gc_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set gc init hook: %x\n", gc_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(init_mmc_hook_id >= 0)
@@ -171,9 +183,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set mmc init hook: %x\n", init_mmc_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set mmc init hook: %x\n", init_mmc_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(init_sd_hook_id >= 0)
@@ -182,9 +193,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set sd init hook: %x\n", init_sd_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set sd init hook: %x\n", init_sd_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(cmd55_41_hook_id >= 0)
@@ -193,9 +203,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set cmd55_41_hook_id hook: %x\n", cmd55_41_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set cmd55_41_hook_id hook: %x\n", cmd55_41_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(gen_init_hook_uids[0] >= 0)
@@ -204,9 +213,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set gen init 1 hook: %x\n", gen_init_hook_uids[0]);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set gen init 1 hook: %x\n", gen_init_hook_uids[0]);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(gen_init_hook_uids[1] >= 0)
@@ -215,9 +223,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set gen init 2 hook: %x\n", gen_init_hook_uids[1]);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set gen init 2 hook: %x\n", gen_init_hook_uids[1]);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(gen_init_hook_uids[2] >= 0)
@@ -226,9 +233,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set gen init 3 hook: %x\n", gen_init_hook_uids[2]);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set gen init 3 hook: %x\n", gen_init_hook_uids[2]);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(sysroot_zero_hook_id >= 0)
@@ -237,9 +243,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set sysroot zero hook: %x\n", sysroot_zero_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set sysroot zero hook: %x\n", sysroot_zero_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(load_mbr_hook_id >= 0)
@@ -248,9 +253,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set load mbr hook: %x\n", load_mbr_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set load mbr hook: %x\n", load_mbr_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
   if(mnt_pnt_chk_hook_id >= 0)
@@ -259,9 +263,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set mnt ptr chk hook: %x\n", mnt_pnt_chk_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set mnt ptr chk hook: %x\n", mnt_pnt_chk_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
   if(mbr_table_init_hook_id >= 0)
@@ -270,24 +273,21 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set mbr table init hook: %x\n", mbr_table_init_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set mbr table init hook: %x\n", mbr_table_init_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
   for(int f = 0; f < 13; f++)
   {
     if(sdstor_dev_fs_ids[f] >= 0)
     {
-      char buffer[100];
-      snprintf(buffer, 100, "set sdstor_dev_fs function %d hook\n", (f + 1));
-      FILE_WRITE_LEN(global_log_fd, buffer);
+      snprintf(sprintfBuffer, 256, "set sdstor_dev_fs function %d hook\n", (f + 1));
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     }
     else
     {
-      char buffer[100];
-      snprintf(buffer, 100, "failed to set sdstor_dev_fs function %d hook: %x\n", (f + 1), sdstor_dev_fs_ids[f]);
-      FILE_WRITE_LEN(global_log_fd, buffer);
+      snprintf(sprintfBuffer, 256, "failed to set sdstor_dev_fs function %d hook: %x\n", (f + 1), sdstor_dev_fs_ids[f]);
+      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
     }
   }
 
@@ -297,9 +297,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set sceVfsMount hook: %x\n", sceVfsMount_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set sceVfsMount hook: %x\n", sceVfsMount_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
   if(sceVfsAddVfs_hook_id >= 0)
@@ -308,9 +307,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set sceVfsAddVfs hook: %x\n", sceVfsAddVfs_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set sceVfsAddVfs hook: %x\n", sceVfsAddVfs_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
   if(sceVfsUnmount_hook_id >= 0)
@@ -319,9 +317,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set sceVfsUnmount hook: %x\n", sceVfsUnmount_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set sceVfsUnmount hook: %x\n", sceVfsUnmount_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
   if(sceVfsDeleteVfs_hook_id >= 0)
@@ -330,9 +327,8 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set sceVfsDeleteVfs hook: %x\n", sceVfsDeleteVfs_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set sceVfsDeleteVfs hook: %x\n", sceVfsDeleteVfs_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   
   if(sceVfsGetNewNode_hook_id >= 0)
@@ -341,9 +337,108 @@ int initialize_all_hooks()
   }
   else
   {
-    char buffer[100];
-    snprintf(buffer, 100, "failed to set sceVfsGetNewNode hook: %x\n", sceVfsGetNewNode_hook_id);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    snprintf(sprintfBuffer, 256, "failed to set sceVfsGetNewNode hook: %x\n", sceVfsGetNewNode_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(gen_init_2_patch_uid >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set gen_init_2_patch hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set gen_init_2_patch hook: %x\n", gen_init_2_patch_uid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(gen_read_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set gen_read hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set gen_read hook: %x\n", gen_read_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(sd_read_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sd_read hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set sd_read hook: %x\n", sd_read_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(hs_dis_patch1_uid >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set hs_dis_patch1\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set hs_dis_patch1: %x\n", hs_dis_patch1_uid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(hs_dis_patch2_uid >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set hs_dis_patch2\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set hs_dis_patch2: %x\n", hs_dis_patch2_uid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(bus_size_patch_uid >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set bus_size_patch\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set bus_size_patch: %x\n", bus_size_patch_uid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(mbr_init_zero_patch1_uid >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set mbr_init_zero_patch1\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set mbr_init_zero_patch1: %x\n", mbr_init_zero_patch1_uid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(mbr_init_zero_patch2_uid >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set mbr_init_zero_patch2\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set mbr_init_zero_patch2: %x\n", mbr_init_zero_patch2_uid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(init_partition_table_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set init_partition_table_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set init_partition_table_hook: %x\n", init_partition_table_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(create_device_handle_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set create_device_handle_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set create_device_handle_hook: %x\n", create_device_handle_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
   close_global_log();
@@ -415,6 +510,36 @@ int deinitialize_all_hooks()
 
   if(sceVfsGetNewNode_hook_id >= 0)
     taiHookReleaseForKernel(sceVfsGetNewNode_hook_id, sceVfsGetNewNode_hook_ref);
+
+  if(gen_init_2_patch_uid >= 0)
+    taiInjectReleaseForKernel(gen_init_2_patch_uid);
+
+  if(gen_read_hook_id >= 0)
+    taiHookReleaseForKernel(gen_read_hook_id, gen_read_hook_ref);
+
+  if(sd_read_hook_id >= 0)
+    taiHookReleaseForKernel(sd_read_hook_id, sd_read_hook_ref);
+
+  if(hs_dis_patch1_uid >= 0)
+    taiInjectReleaseForKernel(hs_dis_patch1_uid);
+
+  if(hs_dis_patch2_uid >= 0)
+    taiInjectReleaseForKernel(hs_dis_patch2_uid);
+
+  if(bus_size_patch_uid >= 0)
+    taiInjectReleaseForKernel(bus_size_patch_uid);
+
+  if(mbr_init_zero_patch1_uid >= 0)
+    taiInjectReleaseForKernel(mbr_init_zero_patch1_uid);
+
+  if(mbr_init_zero_patch2_uid >= 0)
+    taiInjectReleaseForKernel(mbr_init_zero_patch2_uid);
+
+  if(init_partition_table_hook_id >= 0)
+    taiHookReleaseForKernel(init_partition_table_hook_id, init_partition_table_hook_ref);
+
+  if(create_device_handle_hook_id >= 0)
+    taiHookReleaseForKernel(create_device_handle_hook_id, create_device_handle_hook_ref);
 
   return 0;
 }

@@ -100,22 +100,39 @@ int get_current_thread_info(SceKernelThreadInfo* t_info)
   return -1;
 }
 
-int print_current_thread_info()
+int print_current_thread_info_global()
 {
   SceKernelThreadInfo t_info;
   get_current_thread_info(&t_info);
   
+  open_global_log();
   {
-    open_sdstor_dev_fs_log();
     snprintf(sprintfBuffer, 256, "process: %08x thread: %s\nstack: %08x stackSize: %08x\n", t_info.processId, t_info.name, t_info.stack, t_info.stackSize);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
-    close_sdstor_dev_fs_log();
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
+  close_global_log();
   
   return 0;
 }
 
-int stacktrace_from_here(char* moduleNameSearch, int segIndexSearch)
+//TODO: this is copypaste
+
+int print_current_thread_info_sd()
+{
+  SceKernelThreadInfo t_info;
+  get_current_thread_info(&t_info);
+  
+  open_sdstor_dev_fs_log();
+  {
+    snprintf(sprintfBuffer, 256, "process: %08x thread: %s\nstack: %08x stackSize: %08x\n", t_info.processId, t_info.name, t_info.stack, t_info.stackSize);
+    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+  }
+  close_sdstor_dev_fs_log();
+  
+  return 0;
+}
+
+int stacktrace_from_here_global(char* moduleNameSearch, int segIndexSearch, int stackSize, int verbose)
 {
   //must be specified volatile or optimizer will do what it likes
 
@@ -137,7 +154,7 @@ int stacktrace_from_here(char* moduleNameSearch, int segIndexSearch)
 
   //for(int i = 0; stackPtr < (volatile int*)t_info.stack; i++)
   
-  int traceSize = 100 + sizeof(SceKernelThreadInfo) / 4;
+  int traceSize = stackSize + sizeof(SceKernelThreadInfo) / 4;
   
   for(int i = 0; i < traceSize; i++)
   {
@@ -145,18 +162,94 @@ int stacktrace_from_here(char* moduleNameSearch, int segIndexSearch)
     int segidx = find_in_segments(curValue);
     if(segidx >= 0)
     {
-      if(g_segList[segidx].seg == segIndexSearch)
+      if(verbose == 1)
       {
-        if(strcmp(moduleNameSearch, g_segList[segidx].moduleName) == 0)
+        open_global_log();
         {
-          open_sdstor_dev_fs_log();
-          {
-            snprintf(sprintfBuffer, 256, "%08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
-            FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
-          }
-          close_sdstor_dev_fs_log();
+          snprintf(sprintfBuffer, 256, "%08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
+          FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
         }
-      }      
+        close_global_log();
+      }
+      else
+      {
+        if(g_segList[segidx].seg == segIndexSearch)
+        {
+          if(strcmp(moduleNameSearch, g_segList[segidx].moduleName) == 0)
+          {
+            open_global_log();
+            {
+              snprintf(sprintfBuffer, 256, "%08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
+              FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+            }
+            close_global_log();
+          }
+        } 
+      }    
+    }
+
+    stackPtr++;
+  }
+
+  return 0;
+} 
+
+//TODO: this is copypaste
+
+int stacktrace_from_here_sd(char* moduleNameSearch, int segIndexSearch, int stackSize, int verbose)
+{
+  //must be specified volatile or optimizer will do what it likes
+
+  //I use this variables just for marking to see that stack data that I get is adequate
+  volatile int mark0 = 0xA0A0A0A0;
+  volatile int mark1 = 0x05050505;
+  volatile int mark2 = 0x37373737;
+  
+  SceKernelThreadInfo t_info;
+  get_current_thread_info(&t_info);
+
+  //------------------------
+  //unless modules are reloaded, which is most likely not happening, we can do it once during this module load
+  //construct_module_range_table();
+  //sort_segment_table();
+  //print_segment_table();
+
+  volatile int* stackPtr = &mark0;
+
+  //for(int i = 0; stackPtr < (volatile int*)t_info.stack; i++)
+  
+  int traceSize = stackSize + sizeof(SceKernelThreadInfo) / 4;
+  
+  for(int i = 0; i < traceSize; i++)
+  {
+    int curValue = *stackPtr;
+    int segidx = find_in_segments(curValue);
+    if(segidx >= 0)
+    {
+      if(verbose == 1)
+      {
+        open_sdstor_dev_fs_log();
+        {
+          snprintf(sprintfBuffer, 256, "%08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
+          FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+        }
+        close_sdstor_dev_fs_log();
+      }
+      else
+      {
+        if(g_segList[segidx].seg == segIndexSearch)
+        {
+          if(strcmp(moduleNameSearch, g_segList[segidx].moduleName) == 0)
+          {
+            open_sdstor_dev_fs_log();
+            {
+              snprintf(sprintfBuffer, 256, "%08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
+              FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+            }
+            close_sdstor_dev_fs_log();
+          }
+        } 
+      }    
     }
 
     stackPtr++;

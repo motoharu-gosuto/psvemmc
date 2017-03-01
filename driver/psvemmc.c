@@ -392,6 +392,473 @@ int initialize_ms_globals()
 
 //==============================================
 
+int dump_block_devices()
+{
+  call_proc_get_mount_data_C15B80("ext-pp-act-a");       // 1 1 0 1  : sd0:  
+  call_proc_get_mount_data_C15B80("ext-lp-act-entire");  // 1 0 f 1  : sd0:
+
+  call_proc_get_mount_data_C15B80("int-lp-act-os");      // 0 0 3 1  : os0: 0x3 - 003
+
+  call_proc_get_mount_data_C15B80("int-lp-ign-vsh");     // 0 0 4 2  : vs0: 0x4 - 007
+
+  call_proc_get_mount_data_C15B80("int-lp-ign-vshdata"); // 0 0 5 2  : vd0: 0x5 - 008
+  call_proc_get_mount_data_C15B80("int-lp-ign-vtrm");    // 0 0 6 2  : tm0: 0x6 - 006
+  call_proc_get_mount_data_C15B80("int-lp-ign-user");    // 0 0 7 2  : ur0: 0x7 - 011
+  call_proc_get_mount_data_C15B80("int-lp-ign-updater"); // 0 0 b 2  : ud0: 0xB - 009
+  call_proc_get_mount_data_C15B80("xmc-lp-ign-userext"); // ff 0 8 2 : ux0: 0x8 - 
+  call_proc_get_mount_data_C15B80("int-lp-ign-userext"); // 0 0 8 2  : ux0: 0x8 - 012
+
+  call_proc_get_mount_data_C15B80("gcd-lp-ign-gamero");  // 1 0 9 2  : gro0: 0x9 - 
+  call_proc_get_mount_data_C15B80("gcd-lp-ign-gamerw");  // 1 0 a 2  : grw0: 0xA - 
+
+  call_proc_get_mount_data_C15B80("int-lp-ign-sysdata"); // 0 0 c 2  : sa0: 0xC - 005
+  call_proc_get_mount_data_C15B80("int-lp-ign-pidata");  // 0 0 e 2  : pd0: 0xE - 010
+
+  call_proc_get_mount_data_C15B80("uma-pp-act-a");       // 3 1 0 1  : uma0:
+  call_proc_get_mount_data_C15B80("uma-lp-act-entire");  // 3 0 f 1  : uma0:
+  
+  call_proc_get_mount_data_C15B80("gcd-lp-act-mediaid"); // 1 0 d 1  : external : 0xD - 
+  call_proc_get_mount_data_C15B80("int-lp-act-entire");  // 0 0 f 1  :  ?       : ?   - 016
+
+  call_proc_get_mount_data_C15B80("mcd-lp-act-mediaid"); // 2 0 d 1  : external : 0xD - 200
+
+  call_proc_get_mount_data_C15B80("mcd-lp-act-entire");  // 2 0 f 1 : ?
+
+  call_proc_get_mount_data_C15B80("int-lp-ina-os");      // 0 0 3 0 : os0: 0x3 - 003
+  call_proc_get_mount_data_C15B80("int-lp-ign-os");      // 0 0 3 2 : os0: 0x3 - 003
+
+  call_proc_get_mount_data_C15B80("int-lp-ign-idstor");  // 0 0 1 2 : ?    0x1 - 000
+  call_proc_get_mount_data_C15B80("int-lp-ign-sloader"); // 0 0 2 2 : ?    0x2 - 001
+
+  return 0;
+
+  //second level
+
+  /*
+  str_ptr_00C1A238 DCD 0xC1A318 ;	"lp-"
+  str_ptr_00C1A23C DCD 0xC1A31C ;	"pp-"
+  */
+
+  //forth level
+
+  /*
+  str_ptr_00C1A240 DCD 0xC1A320 ;	"unused"
+  str_ptr_00C1A244 DCD 0xC1A328 ;	"idstor"
+  str_ptr_00C1A248 DCD 0xC1A330 ;	"sloader"
+  str_ptr_00C1A24C DCD 0xC1A338 ;	"os"
+  str_ptr_00C1A250 DCD 0xC1A33C ;	"vsh"
+  str_ptr_00C1A254 DCD 0xC1A340 ;	"vshdata"
+  str_ptr_00C1A258 DCD 0xC1A348 ;	"vtrm"
+  str_ptr_00C1A25C DCD 0xC1A350 ;	"user"
+  str_ptr_00C1A260 DCD 0xC1A358 ;	"userext"
+  str_ptr_00C1A264 DCD 0xC1A360 ;	"gamero"
+  str_ptr_00C1A268 DCD 0xC1A368 ;	"gamerw"
+  str_ptr_00C1A26C DCD 0xC1A370 ;	"updater"
+  str_ptr_00C1A270 DCD 0xC1A378 ;	"sysdata"
+  str_ptr_00C1A274 DCD 0xC1A380 ;	"mediaid"
+  str_ptr_00C1A278 DCD 0xC1A388 ;	"pidata"
+  str_ptr_00C1A27C DCD 0xC1A390 ;	"entire"
+  */
+
+  //third level
+
+  /*
+  aIna DCB "ina-"
+  aAct DCB "act-"
+  aIgn DCB "ign-"
+  */
+
+  //first level
+
+  /*
+  str_ptr_C1A2C0 DCD 0xC1A2E0 ; "int-"
+  str_ptr_C1A2C4 DCD 0xC1A2E8 ; "ext-"
+  str_ptr_C1A2C8 DCD 0xC1A2F0 ; "gcd-"
+  str_ptr_C1A2CC DCD 0xC1A2F8 ; "mcd-"
+  str_ptr_C1A2D0 DCD 0xC1A300 ; "uma-"
+  str_ptr_C1A2D4 DCD 0xC1A308 ; "usd-"
+  str_ptr_C1A2D8 DCD 0xC1A310 ; "xmc-"
+  */
+
+  /*
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A2E0
+  aInt DCB "int-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A2E4
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A2E8
+  aExt DCB "ext-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A2EC
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A2F0
+  aGcd DCB "gcd-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A2F4
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A2F8
+  aMcd DCB "mcd-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A2FC
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A300
+  aUma DCB "uma-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A304
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A308
+  aUsd DCB "usd-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A30C
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A310
+  aXmc DCB "xmc-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A314
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A318
+  aLp DCB	"lp-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A31B
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A31C
+  aPp DCB	"pp-"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A31F
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A320
+  aUnused	DCB "unused"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A326
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A328
+  aIdstor	DCB "idstor"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A32E
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A330
+  aSloader DCB "sloader"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A337
+  DCB    0
+  aOs DCB	"os",0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A33C
+  aVsh DCB "vsh"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A33F
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A340
+  aVshdata DCB "vshdata"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A347
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A348
+  aVtrm DCB "vtrm"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A34C
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A350
+  aUser DCB "user"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A354
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A358
+  aUserext DCB "userext"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A35F
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A360
+  aGamero	DCB "gamero"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A366
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A368
+  aGamerw	DCB "gamerw"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A36E
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A370
+  aUpdater DCB "updater"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A377
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A378
+  aSysdata DCB "sysdata"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A37F
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A380
+  aMediaid DCB "mediaid"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A387
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A388
+  aPidata	DCB "pidata"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A38E
+  DCB    0
+  DCB    0
+  ; unknown ends
+
+
+  ; Segment type:	Pure data
+  AREA string, DATA, ABS
+  ORG 0xC1A390
+  aEntire	DCB "entire"
+  ; string ends
+
+
+  ; Segment type:	Regular
+  AREA unknown, DATA, ABS
+  ORG 0xC1A396
+  DCB    0
+  DCB    0
+  str_ptr_00C1A398 DCD 0xC1A288 ;	"ina-"
+  str_ptr_00C1A39C DCD 0xC1A290 ;	"act-"
+  str_ptr_00C1A3A0 DCD 0xC1A298 ;	"ign-"
+  DCB    0
+  DCB    0
+  DCB    0
+  DCB    0
+  */
+}
+
 int module_start(SceSize argc, const void *args) 
 {
   //initialize emmc if required
@@ -410,9 +877,15 @@ int module_start(SceSize argc, const void *args)
   sort_segment_table();
   //print_segment_table();
   
+  //dump_vfs_data();
+
+  //dump_vfs_node_info();
+
+  //dump_block_devices();
+
   //print_thread_info();
 
-  init_net();
+  //init_net(); // DISABLE NET FOR NOW
   
   //dump_device_context_mem_blocks_1000();
   
@@ -441,7 +914,7 @@ void _start() __attribute__ ((weak, alias ("module_start")));
  
 int module_stop(SceSize argc, const void *args) 
 {
-  deinit_net();
+  //deinit_net(); // DISABLE NET FOR NOW
 
   deinitialize_all_hooks();
   

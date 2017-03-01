@@ -4,6 +4,10 @@
 
 #include <stdint.h>
 
+#include "sdstor_types.h"
+
+#pragma pack(push, 1)
+
 //probably vnodeops
 typedef struct node_ops2 // size is 0x74 (29 pointers)
 {
@@ -37,70 +41,6 @@ typedef struct node_ops2 // size is 0x74 (29 pointers)
   int (*func28)(void* ctx); // ?
   int (*func29)(void* ctx); // not implemented by all
 } node_ops2;
-
-typedef struct vfs_node_unk_48_unk_0
-{
-  uint32_t unk_0;
-  uint32_t unk_4;
-  uint32_t unk_8; //not a pointer
-  uint32_t unk_C;  //not a pointer
-
-  //can be more bytes
-
-}vfs_node_unk_48_unk_0;
-
-typedef struct vfs_node_unk_48_unk_4_2
-{
-  //same pointers?
-  void* unk_0;
-  void* unk_4;
-
-  uint32_t unk_8;
-  uint32_t unk_C;
-} vfs_node_unk_48_unk_4_2;
-
-typedef struct vfs_node_unk_48_unk_4_1
-{
-  //same pointers?
-  void* unk_0;
-  void* unk_4;
-
-  void* unk_8;
-  void* unk_C;
-} vfs_node_unk_48_unk_4_1;
-
-typedef struct vfs_node_unk_48_unk_4
-{
-  //same pointers?
-  vfs_node_unk_48_unk_4_1* unk_0;
-  vfs_node_unk_48_unk_4_1* unk_4;
-
-  uint32_t unk_8; //not a pointer
-  vfs_node_unk_48_unk_4_2* unk_C;
-
-  //can be more bytes
-
-}vfs_node_unk_48_unk_4;
-
-typedef struct vfs_node_unk_48
-{
-  vfs_node_unk_48_unk_0* unk_0;
-  vfs_node_unk_48_unk_4* unk_4;
-
-  //can be more bytes
-}vfs_node_unk_48;
-
-typedef struct vfs_node_unk_50
-{
-  //same pointers?
-  void* unk_0;
-  void* unk_4;
-
-  uint32_t unk_8;
-  void* unk_C;
-
-  //can be more bytes
-} vfs_node_unk_50;
 
 typedef struct vfs_node_unk_54
 {
@@ -168,6 +108,13 @@ typedef struct vfs_node_unk_70
   //can be more bytes
 } vfs_node_unk_70;
 
+typedef struct vfs_device_info //size is 0xC
+{
+   partition_entry* partition;
+   sd_stor_device* device;
+   uint32_t unk_8;
+}vfs_device_info;
+
 typedef struct vfs_node
 {
    uint32_t unk_0;
@@ -192,10 +139,10 @@ typedef struct vfs_node
 
    node_ops2 *ops;
    uint32_t unk_44;
-   vfs_node_unk_48* unk_48; //ptr ?
+   void* dev_info;
    uint32_t unk_4C; // not a pointer
 
-   vfs_node_unk_50* unk_50; //ptr
+   struct vfs_node* prev_node;
    vfs_node_unk_54* unk_54; //ptr
    uint32_t unk_58; //num
    uint32_t unk_5C;
@@ -237,21 +184,6 @@ typedef struct vfs_node
 
    uint32_t unk_D0; //num
 }vfs_node;
-
-typedef struct vnf1_arg1
-{
-  char* blockDevice;
-  uint32_t nameLength;
-  char* unixMount;
-}vnf1_arg1;
-
-typedef struct vfs_node_func1_args
-{
-   struct vfs_node* node;
-   struct vnf1_arg1* arg1;
-   uint32_t arg2;
-   uint32_t arg3;
-}vfs_node_func1_args;
 
 typedef struct node_ops1 // size is 0x34 (13 pointers)
 {
@@ -310,3 +242,16 @@ typedef struct vfs_unmount_data
     const char *mountpoint;
     int flags;
 } vfs_unmount_data; 
+
+typedef struct vfs_node_info //size is 0x38
+{
+   char name[0x20];
+   struct vfs_node* node; //can be zero
+   uint32_t unk_24; // probably size of vfs_node
+   uint32_t unk_28; // probably flags
+   struct vfs_node_info* unk_2C; //can be zero
+   struct vfs_node_info* unk_30; //can be zero
+   struct vfs_node_info* unk_34; //can be zero
+}vfs_node_info;
+
+#pragma pack(pop)
