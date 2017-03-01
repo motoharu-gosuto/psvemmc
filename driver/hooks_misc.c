@@ -57,7 +57,8 @@ SceUID cmd55_41_hook_id = -1;
 tai_hook_ref_t sysroot_zero_hook_ref;
 SceUID sysroot_zero_hook_id = -1;
 
-SceUID gen_init_2_patch_uid; // patch of zero func in gen_init_2 function
+SceUID gen_init_1_patch_uid = -1; // patch of zero func in gen_init_1 function
+SceUID gen_init_2_patch_uid = -1; // patch of zero func in gen_init_2 function
 
 tai_hook_ref_t gen_read_hook_ref;
 SceUID gen_read_hook_id = -1;

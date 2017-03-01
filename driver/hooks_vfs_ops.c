@@ -141,14 +141,14 @@ int vfs_func13(void* ctx) //00C17551
     snprintf(sprintfBuffer, 256, "vfs_func13: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
 
     vfs_func13_args* args = (vfs_func13_args*)ctx;
 
     snprintf(sprintfBuffer, 256, "dev: %s num: %s res: %x\n", args->blockDeviceName, args->numericName, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
   }
   close_sdstor_dev_fs_log();
   vfs_func13_entered = 0;
@@ -387,7 +387,7 @@ int vfs_node_func1(void* ctx) //00C17465
     snprintf(sprintfBuffer, 256, "vfs_node_func1: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
 
     /*
     snprintf(sprintfBuffer, 256, "node: %08x\narg1: %08x\narg2: %08x\narg3: %08x\nret:%08x\n", args->node, args->arg1, args->arg2, args->arg3, res);
@@ -397,7 +397,7 @@ int vfs_node_func1(void* ctx) //00C17465
     snprintf(sprintfBuffer, 256, "dev: %s mount: %s res: %x\n", args->arg1->blockDevice, args->arg1->unixMount, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
   }
   close_sdstor_dev_fs_log();
 
@@ -480,12 +480,12 @@ int vfs_node_func4(void* ctx) //00C172E1
     snprintf(sprintfBuffer, 256, "vfs_node_func4: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
 
     snprintf(sprintfBuffer, 256, "node: %x dev: %s arg1: %x arg3: %x res: %x\n", args->node, args->dev->blockDeviceName, *args->new_node, args->arg3, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func4_entered = 0;
@@ -598,7 +598,7 @@ int vfs_node_func7(void* ctx) //00C170C5
 
     //send_message_to_client(sprintfBuffer, 256);
 
-    send_message_to_client("vfs_node_func7", sizeof("vfs_node_func7"));
+    //send_message_to_client("vfs_node_func7", sizeof("vfs_node_func7"));
   }
   close_sdstor_dev_fs_log();
   vfs_node_func7_entered = 0;
@@ -636,18 +636,18 @@ int vfs_node_func9(void* ctx) //00C17291
     snprintf(sprintfBuffer, 256, "vfs_node_func9: %x\n", ctx);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
 
     snprintf(sprintfBuffer, 256, "node0: %08x node1: %08x dev: %s arg3: %08x res:%08x\n", args->node0, args->node1, args->arg2->blockDeviceName, args->arg3, res);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
 
     //======================
     snprintf(sprintfBuffer, 256, "vfs_node_func5_num %x vfs_node_func6_num: %x\n", vfs_node_func5_num, vfs_node_func6_num);
     FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
 
-    send_message_to_client(sprintfBuffer, 256);
+    //send_message_to_client(sprintfBuffer, 256);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func9_entered = 0;

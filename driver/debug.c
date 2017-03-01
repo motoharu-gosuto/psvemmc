@@ -72,6 +72,8 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
 #define SceSysrootForDriver_NID 0x2ED7F97A
 #define SceIofilemgrForDriver_NID 0x40FD29C7
 
+#define ENABLE_SD_PATCHES
+
 int initialize_all_hooks()
 {
   // Get tai module info
@@ -97,24 +99,33 @@ int initialize_all_hooks()
         sdstor_dev_fs_ids[f] = taiHookFunctionOffsetForKernel(KERNEL_PID, &sdstor_dev_fs_refs[f], sdstor_info.modid, 0, sdstor_dev_fs_function_offsets[f], 1, sdstor_dev_fs_functions[f]);
       }
 
-      char zeroCallPatch[4] = {0x01, 0x20, 0x00, 0xBF};
-
-      gen_init_2_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x2498, zeroCallPatch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP)
-
       gen_read_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &gen_read_hook_ref, sdstor_info.modid, 0, 0x2AF4, 1, gen_read_hook); //0xC16AF4
 
       sd_read_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &sd_read_hook_ref, "SceSdstor", SceSdifForDriver_NID, 0xb9593652, sd_read_hook);
 
-      char zeroCallSupressPatch[4] = {0x00, 0x20, 0x00, 0xBF};
-      
-      //this patch is not required but it is much easier to replace BLX with this code that does not do anything
-      //since BLX call of zero proc is logged, and I want to identify other places that might require patching
-      mbr_init_zero_patch1_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x10B0, zeroCallSupressPatch, 4); //patch of zero proc call inside mbr init function
-      mbr_init_zero_patch2_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x10C0, zeroCallSupressPatch, 4); //patch of zero proc call inside mbr init function
-
       init_partition_table_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &init_partition_table_hook_ref, sdstor_info.modid, 0, 0x36C, 1, init_partition_table_hook); //0xC1436C
 
       create_device_handle_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &create_device_handle_hook_ref, sdstor_info.modid, 0, 0x80, 1, create_device_handle); //0xC14080
+
+      #ifdef ENABLE_SD_PATCHES
+      //different patches of zero proc
+
+      //patch for proc_initialize_generic_2 - so that sd card type is not ignored
+      char zeroCallOnePatch[4] = {0x01, 0x20, 0x00, 0xBF};
+      gen_init_2_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x2498, zeroCallOnePatch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP)
+
+      //this patch is not required but it is much easier to replace BLX with this code that does not do anything
+      //since BLX call of zero proc is logged, and I want to identify other places that might require patching
+      char zeroCallZeroPatch[4] = {0x00, 0x20, 0x00, 0xBF};
+      mbr_init_zero_patch1_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x10B0, zeroCallZeroPatch, 4); //patch of zero proc call inside mbr init function
+      mbr_init_zero_patch2_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x10C0, zeroCallZeroPatch, 4); //patch of zero proc call inside mbr init function
+
+     //patch for proc_initialize_generic_1 - so that sd card type is not ignored
+     gen_init_1_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x2022, zeroCallOnePatch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP)
+     #endif
+
+     //700000
+     //40
   }
   
   tai_module_info_t sdif_info;
@@ -132,6 +143,7 @@ int initialize_all_hooks()
     
     cmd55_41_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &cmd55_41_hook_ref, sdif_info.modid, 0, 0x35E8, 1, cmd55_41_hook);
 
+    #ifdef ENABLE_SD_PATCHES
     char lowSpeed[1] = {0xF0};
 
     hs_dis_patch1_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B34, lowSpeed, 1); //data:00C6EB30 data_CMD6_06000000_00FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x00
@@ -140,6 +152,7 @@ int initialize_all_hooks()
     char busWidth[1] = {0x02}; // for now - leaving it as it is 2 (4 bit transfer). 0 (1 bit transfer) does not work
 
     bus_size_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6826, busWidth, 1); //patch (MOVS R3, #2) to (MOVS R3, #0)
+    #endif
   }
   
   tai_module_info_t sysroot_info;
@@ -351,6 +364,16 @@ int initialize_all_hooks()
     FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
+  if(gen_init_1_patch_uid >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set gen_init_1_patch hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set gen_init_1_patch hook: %x\n", gen_init_1_patch_uid);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
   if(gen_read_hook_id >= 0)
   {
     FILE_WRITE(global_log_fd, "set gen_read hook\n");
@@ -513,6 +536,9 @@ int deinitialize_all_hooks()
 
   if(gen_init_2_patch_uid >= 0)
     taiInjectReleaseForKernel(gen_init_2_patch_uid);
+
+  if(gen_init_1_patch_uid >= 0)
+    taiInjectReleaseForKernel(gen_init_1_patch_uid);
 
   if(gen_read_hook_id >= 0)
     taiHookReleaseForKernel(gen_read_hook_id, gen_read_hook_ref);
