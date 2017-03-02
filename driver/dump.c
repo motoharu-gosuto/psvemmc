@@ -280,6 +280,34 @@ int dump_sdif_data()
   return 0;
 } 
 
+int dump_exfatfs_data()
+{
+  tai_module_info_t exfatfs_info;
+  exfatfs_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceExfatfs", &exfatfs_info) >= 0)
+  {
+    SceKernelModuleInfo minfo;
+    minfo.size = sizeof(SceKernelModuleInfo);
+    int ret = ksceKernelGetModuleInfo(KERNEL_PID, exfatfs_info.modid, &minfo);
+    if(ret >= 0)
+    {
+      open_global_log();
+      FILE_WRITE(global_log_fd, "ready to dump exfatfs data seg\n");
+      close_global_log();
+      
+      dumpSegment(&minfo, 1);
+    }
+    else
+    {
+      open_global_log();
+      FILE_WRITE(global_log_fd, "can not dump exfatfs data seg\n");
+      close_global_log();
+    }
+  }
+  
+  return 0;
+}
+
 int print_ctx(int sd_index)
 {
   sd_context_global* gctx = ksceSdifGetSdContextGlobal(sd_index);
