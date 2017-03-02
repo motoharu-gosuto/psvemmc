@@ -72,7 +72,7 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
 #define SceSysrootForDriver_NID 0x2ED7F97A
 #define SceIofilemgrForDriver_NID 0x40FD29C7
 
-#define ENABLE_SD_PATCHES
+//#define ENABLE_SD_PATCHES
 
 int initialize_all_hooks()
 {
@@ -123,9 +123,6 @@ int initialize_all_hooks()
      //patch for proc_initialize_generic_1 - so that sd card type is not ignored
      gen_init_1_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdstor_info.modid, 0, 0x2022, zeroCallOnePatch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP)
      #endif
-
-     //700000
-     //40
   }
   
   tai_module_info_t sdif_info;
@@ -144,13 +141,16 @@ int initialize_all_hooks()
     cmd55_41_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &cmd55_41_hook_ref, sdif_info.modid, 0, 0x35E8, 1, cmd55_41_hook);
 
     #ifdef ENABLE_SD_PATCHES
-    char lowSpeed[1] = {0xF0};
+    
+    //pages 35, 66
+    
+    char lowSpeed_check[4] = {0xF0, 0xFF, 0xFF, 0x00};
+    hs_dis_patch1_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B34, lowSpeed_check, 4); //data:00C6EB30 data_CMD6_06000000_00FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x00
 
-    hs_dis_patch1_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B34, lowSpeed, 1); //data:00C6EB30 data_CMD6_06000000_00FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x00
-    hs_dis_patch2_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B54, lowSpeed, 1); //data:00C6EB50 data_CMD6_06000000_80FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x80
+    char lowSpeed_set[4] = {0xF0, 0xFF, 0xFF, 0x80};
+    hs_dis_patch2_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B54, lowSpeed_set, 4); //data:00C6EB50 data_CMD6_06000000_80FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x80
 
     char busWidth[1] = {0x02}; // for now - leaving it as it is 2 (4 bit transfer). 0 (1 bit transfer) does not work
-
     bus_size_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6826, busWidth, 1); //patch (MOVS R3, #2) to (MOVS R3, #0)
     #endif
   }
