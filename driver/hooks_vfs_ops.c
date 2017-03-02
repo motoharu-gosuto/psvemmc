@@ -428,6 +428,7 @@ int vfs_node_func1(void* ctx) //00C17465
 
   dump_sdstor_data();
   dump_sdif_data();
+  dump_exfatfs_data();
 
   return res;
 }
