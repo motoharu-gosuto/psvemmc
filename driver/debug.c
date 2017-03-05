@@ -73,6 +73,7 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
 #define SceIofilemgrForDriver_NID 0x40FD29C7
 
 #define ENABLE_SD_PATCHES
+//#define ENABLE_LOW_SPEED_PATCH
 
 int initialize_all_hooks()
 {
@@ -146,13 +147,13 @@ int initialize_all_hooks()
     
     //pages 35, 66
     
-    
+    #ifdef ENABLE_LOW_SPEED_PATCH
     char lowSpeed_check[4] = {0xF0, 0xFF, 0xFF, 0x00};
     hs_dis_patch1_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B34, lowSpeed_check, 4); //data:00C6EB30 data_CMD6_06000000_00FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x00
 
     char lowSpeed_set[4] = {0xF0, 0xFF, 0xFF, 0x80};
     hs_dis_patch2_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6B54, lowSpeed_set, 4); //data:00C6EB50 data_CMD6_06000000_80FFFFF1 DCB 6, 0, 0, 0, 0xF1, 0xFF, 0xFF, 0x80
-    
+    #endif
 
     char busWidth[1] = {0x02}; // for now - leaving it as it is 2 (4 bit transfer). 0 (1 bit transfer) does not work
     bus_size_patch_uid = taiInjectDataForKernel(KERNEL_PID, sdif_info.modid, 0, 0x6826, busWidth, 1); //patch (MOVS R3, #2) to (MOVS R3, #0)
