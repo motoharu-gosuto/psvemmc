@@ -81,6 +81,18 @@ SceUID create_device_handle_hook_id = -1;
 tai_hook_ref_t send_command_hook_ref;
 SceUID send_command_hook_id = -1;
 
+tai_hook_ref_t sceErrorHistoryPostError_hook_ref;
+SceUID sceErrorHistoryPostError_hook_id = -1;
+
+tai_hook_ref_t sceErrorHistoryUpdateSequenceInfo_hook_ref;
+SceUID sceErrorHistoryUpdateSequenceInfo_hook_id = -1;
+
+tai_hook_ref_t sceErrorGetExternalString_hook_ref;
+SceUID sceErrorGetExternalString_hook_id = -1;
+
+tai_hook_ref_t sceErrorHistoryGetError_hook_ref;
+SceUID sceErrorHistoryGetError_hook_id = -1;
+
 //========================================
 
 #pragma pack(push, 1)
@@ -513,6 +525,65 @@ int send_command_hook(sd_context_global* ctx, cmd_input* cmd_data1, cmd_input* c
     close_global_log();
   }
   
+
+  return res;
+}
+
+int sceErrorHistoryPostError_hook(void* src_user)
+{
+  int res = TAI_CONTINUE(int, sceErrorHistoryPostError_hook_ref, src_user);
+
+  open_global_log();
+  {
+    snprintf(sprintfBuffer, 256, "called sceErrorHistoryPostError_hook: src_user: %08x res: %08x\n", src_user, res);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+  close_global_log();
+
+  return res;
+}
+
+int sceErrorHistoryUpdateSequenceInfo_hook(void* src_user, int unk1)
+{
+  int res = TAI_CONTINUE(int, sceErrorHistoryUpdateSequenceInfo_hook_ref, src_user, unk1);
+
+  open_global_log();
+  {
+    snprintf(sprintfBuffer, 256, "called sceErrorHistoryUpdateSequenceInfo_hook: src_user: %08x unk1: %08x res: %08x\n", src_user, unk1, res);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+  close_global_log();
+
+  return res;
+}
+
+int sceErrorGetExternalString_hook(void* dest_user, int unk)
+{
+  int res = TAI_CONTINUE(int, sceErrorGetExternalString_hook_ref, dest_user, unk);
+
+  open_global_log();
+  {
+    snprintf(sprintfBuffer, 256, "called sceErrorGetExternalString_hook: dest_user: %08x unk: %08x res: %08x\n", dest_user, unk, res);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+  close_global_log();
+
+  stacktrace_from_here_global("", 0, 100, 1);
+  print_current_thread_info_global();
+
+  return res;
+}
+
+int sceErrorHistoryGetError_hook(int unk0, void* dest_user)
+{
+  int res = TAI_CONTINUE(int, sceErrorHistoryGetError_hook_ref, unk0, dest_user);
+
+  open_global_log();
+  {
+    snprintf(sprintfBuffer, 256, "called sceErrorHistoryGetError: dest_user: %08x unk0: %08x res: %08x\n", dest_user, unk0, res);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+  close_global_log();
 
   return res;
 }

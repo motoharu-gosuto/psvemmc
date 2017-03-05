@@ -71,6 +71,7 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
 #define SceSdifForDriver_NID 0x96D306FA
 #define SceSysrootForDriver_NID 0x2ED7F97A
 #define SceIofilemgrForDriver_NID 0x40FD29C7
+#define SceError_NID 0x5CD2CAD1
 
 #define ENABLE_SD_PATCHES
 //#define ENABLE_LOW_SPEED_PATCH
@@ -182,6 +183,19 @@ int initialize_all_hooks()
 
     sceVfsDeleteVfs_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceVfsDeleteVfs_hook_ref, "SceIofilemgr", SceIofilemgrForDriver_NID, 0x9CBFA725, sceVfsDeleteVfs_hook);
     sceVfsGetNewNode_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceVfsGetNewNode_hook_ref, "SceIofilemgr", SceIofilemgrForDriver_NID, 0xD60B5C63, sceVfsGetNewNode_hook);
+  }
+ 
+  tai_module_info_t err_info;
+  err_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceError", &err_info) >= 0)
+  {
+    sceErrorHistoryPostError_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceErrorHistoryPostError_hook_ref, "SceError", SceError_NID, 0x70F9D872, sceErrorHistoryPostError_hook);
+
+    sceErrorHistoryUpdateSequenceInfo_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceErrorHistoryUpdateSequenceInfo_hook_ref, "SceError", SceError_NID, 0x6FBE4BDC, sceErrorHistoryUpdateSequenceInfo_hook);
+
+    sceErrorGetExternalString_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceErrorGetExternalString_hook_ref, "SceError", SceError_NID, 0x85747003, sceErrorGetExternalString_hook);
+
+    sceErrorHistoryGetError_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceErrorHistoryGetError_hook_ref, "SceError", SceError_NID, 0xF16DF981, sceErrorHistoryGetError_hook);
   }
   
   open_global_log();
@@ -479,6 +493,46 @@ int initialize_all_hooks()
     FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
 
+  if(sceErrorHistoryPostError_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceErrorHistoryPostError_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set sceErrorHistoryPostError_hook: %x\n", sceErrorHistoryPostError_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(sceErrorHistoryUpdateSequenceInfo_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceErrorHistoryUpdateSequenceInfo_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set sceErrorHistoryUpdateSequenceInfo_hook: %x\n", sceErrorHistoryUpdateSequenceInfo_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(sceErrorGetExternalString_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceErrorGetExternalString_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set sceErrorGetExternalString_hook: %x\n", sceErrorGetExternalString_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
+  if(sceErrorHistoryGetError_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceErrorHistoryGetError_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set sceErrorHistoryGetError_hook: %x\n", sceErrorHistoryGetError_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  }
+
   close_global_log();
   
   return 0;
@@ -585,5 +639,17 @@ int deinitialize_all_hooks()
   if(send_command_hook_id >= 0)
     taiHookReleaseForKernel(send_command_hook_id, send_command_hook_ref);
 
+  if(sceErrorHistoryPostError_hook_id >= 0)
+    taiHookReleaseForKernel(sceErrorHistoryPostError_hook_id, sceErrorHistoryPostError_hook_ref);
+
+  if(sceErrorHistoryUpdateSequenceInfo_hook_id >= 0)
+    taiHookReleaseForKernel(sceErrorHistoryUpdateSequenceInfo_hook_id, sceErrorHistoryUpdateSequenceInfo_hook_ref);
+
+  if(sceErrorGetExternalString_hook_id >= 0)
+    taiHookReleaseForKernel(sceErrorGetExternalString_hook_id, sceErrorGetExternalString_hook_ref);
+
+  if(sceErrorHistoryGetError_hook_id >= 0)
+    taiHookReleaseForKernel(sceErrorHistoryGetError_hook_id, sceErrorHistoryGetError_hook_ref);
+    
   return 0;
 }

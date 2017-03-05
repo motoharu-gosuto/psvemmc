@@ -63,6 +63,18 @@ extern SceUID create_device_handle_hook_id;
 extern tai_hook_ref_t send_command_hook_ref;
 extern SceUID send_command_hook_id;
 
+extern tai_hook_ref_t sceErrorHistoryPostError_hook_ref;
+extern SceUID sceErrorHistoryPostError_hook_id;
+
+extern tai_hook_ref_t sceErrorHistoryUpdateSequenceInfo_hook_ref;
+extern SceUID sceErrorHistoryUpdateSequenceInfo_hook_id;
+
+extern tai_hook_ref_t sceErrorGetExternalString_hook_ref;
+extern SceUID sceErrorGetExternalString_hook_id;
+
+extern tai_hook_ref_t sceErrorHistoryGetError_hook_ref;
+extern SceUID sceErrorHistoryGetError_hook_id;
+
 int gc_patch(int param0);
 int init_mmc_hook(int sd_ctx_index, sd_context_part** result);
 int init_sd_hook(int sd_ctx_index, sd_context_part** result);
@@ -82,3 +94,8 @@ int init_partition_table_hook(int arg0, sdstor_mbr_ctx* data);
 int create_device_handle(partition_entry* pentry, int unk1, sd_stor_device_handle** handle);
 
 int send_command_hook(sd_context_global* ctx, cmd_input* cmd_data1, cmd_input* cmd_data2, int nIter, int num);
+
+int sceErrorHistoryPostError_hook(void* src_user);
+int sceErrorHistoryUpdateSequenceInfo_hook(void* src_user, int unk1);
+int sceErrorGetExternalString_hook(void* dest_user, int unk);
+int sceErrorHistoryGetError_hook(int unk0, void* dest_user);

@@ -49,7 +49,6 @@ target_link_libraries(psvemmc
   SceIofilemgrForDriver_stub
   SceSdifForDriver_stub
   SceMsifForDriver_stub
-  SceThreadmgrForKernel_stub
   SceThreadmgrForDriver_stub
   SceModulemgrForKernel_stub
   taihenForKernel_stub
