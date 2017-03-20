@@ -18,34 +18,40 @@
 
 char sprintfBuffer[256];
 
-SceUID g_modlist[MOD_LIST_SIZE];
+SceUID g_modlistKernel[MOD_LIST_SIZE];
+segment_info g_segListKernel[SEG_LIST_SIZE]; 
 
-int moduleListIsConstructed = 0;
+SceUID g_modlistUser[MOD_LIST_SIZE];
+segment_info g_segListUser[SEG_LIST_SIZE]; 
 
-int construct_module_range_table()
+int moduleListIsConstructedKernel = 0;
+
+int moduleListIsConstructedUser = 0;
+
+int construct_module_range_table(SceUID pid, int flags1, int flags2, SceUID* modlist, int32_t modlistLen, segment_info* segList, int32_t segListLen, int* moduleConstructured)
 {
-  if(moduleListIsConstructed > 0)
+  if(*moduleConstructured > 0)
     return 0;
 
-  moduleListIsConstructed = 1;
+  *moduleConstructured = 1;
 
   open_global_log();
-  FILE_WRITE(global_log_fd, "constructing module range table\n");
+  FILE_GLOBAL_WRITE_LEN("constructing module range table\n");
   close_global_log();
 
-  size_t count = MOD_LIST_SIZE;
+  size_t count = modlistLen;
 
-  memset(g_modlist, 0, sizeof(g_modlist));
+  memset(modlist, 0, modlistLen * sizeof(SceUID));
 
-  memset(g_segList, -1, sizeof(g_segList));
+  memset(segList, -1, segListLen * sizeof(segment_info));
   
-  int ret = ksceKernelGetModuleList(KERNEL_PID, 0x80000001, 1, g_modlist, &count);
+  int ret = ksceKernelGetModuleList(pid, flags1, flags2, modlist, &count);
   if(ret < 0)
     return ret;
 
   open_global_log();
   snprintf(sprintfBuffer, 256, "number of modules: %d\n", count);
-  FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+  FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   close_global_log();
 
   int segInfoIndex = 0;
@@ -54,7 +60,7 @@ int construct_module_range_table()
   {
     SceKernelModuleInfo minfo;
     minfo.size = sizeof(SceKernelModuleInfo);
-    ret = ksceKernelGetModuleInfo(KERNEL_PID, g_modlist[m], &minfo);
+    ret = ksceKernelGetModuleInfo(KERNEL_PID, modlist[m], &minfo);
     if(ret < 0)
       return ret;
 
@@ -63,21 +69,21 @@ int construct_module_range_table()
       if (minfo.segments[s].vaddr == NULL) 
         continue;
       
-      memset(g_segList[segInfoIndex].moduleName, 0, 30);
-      memcpy(g_segList[segInfoIndex].moduleName, minfo.module_name, 28);
+      memset(segList[segInfoIndex].moduleName, 0, 30);
+      memcpy(segList[segInfoIndex].moduleName, minfo.module_name, 28);
 
-      g_segList[segInfoIndex].seg = s;
+      segList[segInfoIndex].seg = s;
 
-      g_segList[segInfoIndex].range.start = (uintptr_t)minfo.segments[s].vaddr;
-      g_segList[segInfoIndex].range.end = (uintptr_t)minfo.segments[s].vaddr + minfo.segments[s].memsz;
+      segList[segInfoIndex].range.start = (uintptr_t)minfo.segments[s].vaddr;
+      segList[segInfoIndex].range.end = (uintptr_t)minfo.segments[s].vaddr + minfo.segments[s].memsz;
 
       segInfoIndex++;
     }
   }
 
   //set final item
-  g_segList[segInfoIndex].range.start = -1;
-  g_segList[segInfoIndex].range.end = -1;
+  segList[segInfoIndex].range.start = -1;
+  segList[segInfoIndex].range.end = -1;
 
   return 0;
 }
@@ -94,43 +100,43 @@ int compare_segments(const void *p, const void *q)
     return 0;
 }
 
-int sort_segment_table()
+int sort_segment_table(segment_info* segList, int32_t segListSize, int* moduleConstructured)
 {
-  if(moduleListIsConstructed == 0)
+  if(*moduleConstructured == 0)
     return -1;
 
-  qsort_imp(g_segList, SEG_LIST_SIZE, sizeof(segment_info), compare_segments);
+  qsort_imp(segList, segListSize, sizeof(segment_info), compare_segments);
 
   return 0; 
 }
 
-int find_in_segments(uintptr_t item)
+int find_in_segments(segment_info* segList, int32_t segListSize, int* moduleConstructured, uintptr_t item)
 {
-  if(moduleListIsConstructed == 0)
+  if(*moduleConstructured == 0)
       return -1;
 
-  for (int s = 0; s < SEG_LIST_SIZE; s++) 
+  for (int s = 0; s < segListSize; s++) 
   {
-    if(item >= g_segList[s].range.start && item < g_segList[s].range.end)
+    if(item >= segList[s].range.start && item < segList[s].range.end)
       return s;
   }
 
   return -1;  
 }
 
-int print_segment_table()
+int print_segment_table(segment_info* segList, int32_t segListSize, int* moduleConstructured)
 {
-  if(moduleListIsConstructed == 0)
+  if(*moduleConstructured == 0)
       return -1;
 
-  for (int s = 0; s < SEG_LIST_SIZE; s++) 
+  for (int s = 0; s < segListSize; s++) 
   {
-    if(g_segList[s].range.start == -1 || g_segList[s].range.end == -1)
+    if(segList[s].range.start == -1 || segList[s].range.end == -1)
       break;
 
     open_global_log();
-    snprintf(sprintfBuffer, 256, "%s %d %08x %08x\n", g_segList[s].moduleName, g_segList[s].seg, g_segList[s].range.start, g_segList[s].range.end);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    snprintf(sprintfBuffer, 256, "%s %d %08x %08x\n", segList[s].moduleName, segList[s].seg, segList[s].range.start, segList[s].range.end);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     close_global_log();
   }
 
