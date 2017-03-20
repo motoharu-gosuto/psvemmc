@@ -69,11 +69,29 @@ extern SceUID sceErrorHistoryPostError_hook_id;
 extern tai_hook_ref_t sceErrorHistoryUpdateSequenceInfo_hook_ref;
 extern SceUID sceErrorHistoryUpdateSequenceInfo_hook_id;
 
-extern tai_hook_ref_t sceErrorGetExternalString_hook_ref;
-extern SceUID sceErrorGetExternalString_hook_id;
+extern tai_hook_ref_t sceErrorGetExternalString_kernel_hook_ref;
+extern SceUID sceErrorGetExternalString_kernel_hook_id;
 
 extern tai_hook_ref_t sceErrorHistoryGetError_hook_ref;
 extern SceUID sceErrorHistoryGetError_hook_id;
+
+extern tai_hook_ref_t ksceKernelCreateThread_hook_ref;
+extern SceUID ksceKernelCreateThread_hook_id;
+
+extern tai_hook_ref_t sceKernelCreateThreadForUser_hook_ref;
+extern SceUID sceKernelCreateThreadForUser_hook_id;
+
+extern tai_hook_ref_t sceIoOpenForDriver_hook_ref;
+extern SceUID sceIoOpenForDriver_hook_id;
+
+extern tai_hook_ref_t ksceKernelWaitSema_hook_ref;
+extern SceUID ksceKernelWaitSema_hook_id;
+
+extern tai_hook_ref_t ksceKernelSignalSema_hook_ref;
+extern SceUID ksceKernelSignalSema_hook_id;
+
+extern tai_hook_ref_t vshSblAuthMgrVerifySpsfo_hook_ref;
+extern SceUID vshSblAuthMgrVerifySpsfo_hook_id;
 
 int gc_patch(int param0);
 int init_mmc_hook(int sd_ctx_index, sd_context_part** result);
@@ -97,5 +115,22 @@ int send_command_hook(sd_context_global* ctx, cmd_input* cmd_data1, cmd_input* c
 
 int sceErrorHistoryPostError_hook(void* src_user);
 int sceErrorHistoryUpdateSequenceInfo_hook(void* src_user, int unk1);
-int sceErrorGetExternalString_hook(void* dest_user, int unk);
+int sceErrorGetExternalString_kernel_hook(void* dest_user, int unk);
 int sceErrorHistoryGetError_hook(int unk0, void* dest_user);
+
+int ksceKernelCreateThread_hook(const char *name, SceKernelThreadEntry entry, int initPriority, int stackSize, SceUInt attr, int cpuAffinityMask, const SceKernelThreadOptParam *option);
+int sceKernelCreateThreadForUser_hook(const char *name, SceKernelThreadEntry entry, int initPriority, int stackSize, SceUInt attr, int cpuAffinityMask, const SceKernelThreadOptParam *option);
+
+SceUID sceIoOpenForDriver_hook(const char *file, int flags, SceMode mode, void *args);
+
+int ksceKernelWaitSema_hook(SceUID semaid, int signal, SceUInt *timeout);
+
+int ksceKernelSignalSema_hook(SceUID semaid, int signal);
+
+typedef struct spsfo_opt
+{
+  uint32_t unk_0;
+  uint32_t unk_4;
+} spsfo_opt;
+
+int vshSblAuthMgrVerifySpsfo_hook(char *path_user, char *dest_user, int maxSize, spsfo_opt *opt);
