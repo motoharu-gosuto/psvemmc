@@ -30,7 +30,7 @@ SceUID get_currentThreadId()
   {
     open_global_log();
     snprintf(sprintfBuffer, 256, "TPIDRPRW %x\n", TPIDRPRW);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     close_global_log();
   }
   */
@@ -44,7 +44,7 @@ SceUID get_currentThreadId()
     {
       open_global_log();
       snprintf(sprintfBuffer, 256, "value %x\n", value);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
       close_global_log();
     }
     */
@@ -57,8 +57,23 @@ SceUID get_currentThreadId()
 
 typedef int (ksceKernelGetThreadInfo_func)(SceUID thid, SceKernelThreadInfo *info);
 
+SceUID g_threadInfoMutex = -1;
+
+void init_threadInfoMutex()
+{
+  g_threadInfoMutex = ksceKernelCreateMutex("ThreadInfoMutex", 0, 0, 0);
+}
+
+void deinit_threadInfoMutex()
+{
+  ksceKernelDeleteMutex(g_threadInfoMutex);
+  g_threadInfoMutex = -1;
+}
+
 int get_current_thread_info(SceKernelThreadInfo* t_info)
 {
+  ksceKernelLockMutex(g_threadInfoMutex, 1, 0);
+
   SceUID thid = get_currentThreadId();
   
   memset(t_info, 0, sizeof(SceKernelThreadInfo));
@@ -77,7 +92,7 @@ int get_current_thread_info(SceKernelThreadInfo* t_info)
     {
       /*
       open_global_log();
-      FILE_WRITE(global_log_fd, "ready to call ksceKernelGetThreadInfo\n");
+      FILE_GLOBAL_WRITE_LEN("ready to call ksceKernelGetThreadInfo\n");
       close_global_log();
       */
       
@@ -88,15 +103,19 @@ int get_current_thread_info(SceKernelThreadInfo* t_info)
       if(gtiRes >= 0)
       {
         open_global_log();
-        FILE_WRITE(global_log_fd, "ksceKernelGetThreadInfo success\n");
+        FILE_GLOBAL_WRITE_LEN("ksceKernelGetThreadInfo success\n");
         close_global_log();
       }
       */
       
+      ksceKernelUnlockMutex(g_threadInfoMutex, 1);
+
       return gtiRes;
     }
   }
   
+  ksceKernelUnlockMutex(g_threadInfoMutex, 1);
+
   return -1;
 }
 
@@ -108,7 +127,7 @@ int print_current_thread_info_global()
   open_global_log();
   {
     snprintf(sprintfBuffer, 256, "(global) process: %08x thread: %s\nstack: %08x stackSize: %08x\n", t_info.processId, t_info.name, t_info.stack, t_info.stackSize);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
   close_global_log();
   
@@ -125,7 +144,7 @@ int print_current_thread_info_sd()
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "(sd) process: %08x thread: %s\nstack: %08x stackSize: %08x\n", t_info.processId, t_info.name, t_info.stack, t_info.stackSize);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   
@@ -159,28 +178,28 @@ int stacktrace_from_here_global(char* moduleNameSearch, int segIndexSearch, int 
   for(int i = 0; i < traceSize; i++)
   {
     int curValue = *stackPtr;
-    int segidx = find_in_segments(curValue);
+    int segidx = find_in_segments(g_segListKernel, SEG_LIST_SIZE, &moduleListIsConstructedKernel, curValue);
     if(segidx >= 0)
     {
       if(verbose == 1)
       {
         open_global_log();
         {
-          snprintf(sprintfBuffer, 256, "(global) %08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
-          FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+          snprintf(sprintfBuffer, 256, "(global) %08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segListKernel[segidx].moduleName, g_segListKernel[segidx].seg, g_segListKernel[segidx].range.start, (curValue - g_segListKernel[segidx].range.start));
+          FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
         }
         close_global_log();
       }
       else
       {
-        if(g_segList[segidx].seg == segIndexSearch)
+        if(g_segListKernel[segidx].seg == segIndexSearch)
         {
-          if(strcmp(moduleNameSearch, g_segList[segidx].moduleName) == 0)
+          if(strcmp(moduleNameSearch, g_segListKernel[segidx].moduleName) == 0)
           {
             open_global_log();
             {
-              snprintf(sprintfBuffer, 256, "(global) %08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
-              FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+              snprintf(sprintfBuffer, 256, "(global) %08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segListKernel[segidx].moduleName, g_segListKernel[segidx].seg, g_segListKernel[segidx].range.start, (curValue - g_segListKernel[segidx].range.start));
+              FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
             }
             close_global_log();
           }
@@ -223,28 +242,28 @@ int stacktrace_from_here_sd(char* moduleNameSearch, int segIndexSearch, int stac
   for(int i = 0; i < traceSize; i++)
   {
     int curValue = *stackPtr;
-    int segidx = find_in_segments(curValue);
+    int segidx = find_in_segments(g_segListKernel, SEG_LIST_SIZE, &moduleListIsConstructedKernel, curValue);
     if(segidx >= 0)
     {
       if(verbose == 1)
       {
         open_sdstor_dev_fs_log();
         {
-          snprintf(sprintfBuffer, 256, "(sd) %08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
-          FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+          snprintf(sprintfBuffer, 256, "(sd) %08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segListKernel[segidx].moduleName, g_segListKernel[segidx].seg, g_segListKernel[segidx].range.start, (curValue - g_segListKernel[segidx].range.start));
+          FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
         }
         close_sdstor_dev_fs_log();
       }
       else
       {
-        if(g_segList[segidx].seg == segIndexSearch)
+        if(g_segListKernel[segidx].seg == segIndexSearch)
         {
-          if(strcmp(moduleNameSearch, g_segList[segidx].moduleName) == 0)
+          if(strcmp(moduleNameSearch, g_segListKernel[segidx].moduleName) == 0)
           {
             open_sdstor_dev_fs_log();
             {
-              snprintf(sprintfBuffer, 256, "(sd) %08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
-              FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+              snprintf(sprintfBuffer, 256, "(sd) %08x: %08x %s %d %08x %08x\n", stackPtr, curValue, g_segListKernel[segidx].moduleName, g_segListKernel[segidx].seg, g_segListKernel[segidx].range.start, (curValue - g_segListKernel[segidx].range.start));
+              FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
             }
             close_sdstor_dev_fs_log();
           }
