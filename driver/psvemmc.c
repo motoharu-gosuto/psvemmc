@@ -21,10 +21,12 @@
 
 #include "debug.h"       //hook init
 #include "glog.h"
+#include "sdstor_log.h"
 #include "dump.h"        //some dumping functions
 #include "thread_test.h" //to try get current thread id
 #include "net.h"    //to init net
 #include "mtable.h" //to init tables
+#include "stacktrace.h"
 
 //=================================================
 
@@ -430,437 +432,15 @@ int dump_block_devices()
   call_proc_get_mount_data_C15B80("int-lp-ign-idstor");  // 0 0 1 2 : ?    0x1 - 000
   call_proc_get_mount_data_C15B80("int-lp-ign-sloader"); // 0 0 2 2 : ?    0x2 - 001
 
-  return 0;
-
-  //second level
-
-  /*
-  str_ptr_00C1A238 DCD 0xC1A318 ;	"lp-"
-  str_ptr_00C1A23C DCD 0xC1A31C ;	"pp-"
-  */
-
-  //forth level
-
-  /*
-  str_ptr_00C1A240 DCD 0xC1A320 ;	"unused"
-  str_ptr_00C1A244 DCD 0xC1A328 ;	"idstor"
-  str_ptr_00C1A248 DCD 0xC1A330 ;	"sloader"
-  str_ptr_00C1A24C DCD 0xC1A338 ;	"os"
-  str_ptr_00C1A250 DCD 0xC1A33C ;	"vsh"
-  str_ptr_00C1A254 DCD 0xC1A340 ;	"vshdata"
-  str_ptr_00C1A258 DCD 0xC1A348 ;	"vtrm"
-  str_ptr_00C1A25C DCD 0xC1A350 ;	"user"
-  str_ptr_00C1A260 DCD 0xC1A358 ;	"userext"
-  str_ptr_00C1A264 DCD 0xC1A360 ;	"gamero"
-  str_ptr_00C1A268 DCD 0xC1A368 ;	"gamerw"
-  str_ptr_00C1A26C DCD 0xC1A370 ;	"updater"
-  str_ptr_00C1A270 DCD 0xC1A378 ;	"sysdata"
-  str_ptr_00C1A274 DCD 0xC1A380 ;	"mediaid"
-  str_ptr_00C1A278 DCD 0xC1A388 ;	"pidata"
-  str_ptr_00C1A27C DCD 0xC1A390 ;	"entire"
-  */
-
-  //third level
-
-  /*
-  aIna DCB "ina-"
-  aAct DCB "act-"
-  aIgn DCB "ign-"
-  */
-
-  //first level
-
-  /*
-  str_ptr_C1A2C0 DCD 0xC1A2E0 ; "int-"
-  str_ptr_C1A2C4 DCD 0xC1A2E8 ; "ext-"
-  str_ptr_C1A2C8 DCD 0xC1A2F0 ; "gcd-"
-  str_ptr_C1A2CC DCD 0xC1A2F8 ; "mcd-"
-  str_ptr_C1A2D0 DCD 0xC1A300 ; "uma-"
-  str_ptr_C1A2D4 DCD 0xC1A308 ; "usd-"
-  str_ptr_C1A2D8 DCD 0xC1A310 ; "xmc-"
-  */
-
-  /*
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A2E0
-  aInt DCB "int-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A2E4
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A2E8
-  aExt DCB "ext-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A2EC
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A2F0
-  aGcd DCB "gcd-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A2F4
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A2F8
-  aMcd DCB "mcd-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A2FC
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A300
-  aUma DCB "uma-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A304
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A308
-  aUsd DCB "usd-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A30C
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A310
-  aXmc DCB "xmc-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A314
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A318
-  aLp DCB	"lp-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A31B
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A31C
-  aPp DCB	"pp-"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A31F
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A320
-  aUnused	DCB "unused"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A326
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A328
-  aIdstor	DCB "idstor"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A32E
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A330
-  aSloader DCB "sloader"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A337
-  DCB    0
-  aOs DCB	"os",0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A33C
-  aVsh DCB "vsh"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A33F
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A340
-  aVshdata DCB "vshdata"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A347
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A348
-  aVtrm DCB "vtrm"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A34C
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A350
-  aUser DCB "user"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A354
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A358
-  aUserext DCB "userext"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A35F
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A360
-  aGamero	DCB "gamero"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A366
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A368
-  aGamerw	DCB "gamerw"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A36E
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A370
-  aUpdater DCB "updater"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A377
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A378
-  aSysdata DCB "sysdata"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A37F
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A380
-  aMediaid DCB "mediaid"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A387
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A388
-  aPidata	DCB "pidata"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A38E
-  DCB    0
-  DCB    0
-  ; unknown ends
-
-
-  ; Segment type:	Pure data
-  AREA string, DATA, ABS
-  ORG 0xC1A390
-  aEntire	DCB "entire"
-  ; string ends
-
-
-  ; Segment type:	Regular
-  AREA unknown, DATA, ABS
-  ORG 0xC1A396
-  DCB    0
-  DCB    0
-  str_ptr_00C1A398 DCD 0xC1A288 ;	"ina-"
-  str_ptr_00C1A39C DCD 0xC1A290 ;	"act-"
-  str_ptr_00C1A3A0 DCD 0xC1A298 ;	"ign-"
-  DCB    0
-  DCB    0
-  DCB    0
-  DCB    0
-  */
+  return 0;  
 }
 
 int module_start(SceSize argc, const void *args) 
 {
+  init_threadInfoMutex();
+  init_global_log();
+  init_sdstor_log();
+
   //initialize emmc if required
   initialize_emmc_globals();
   
@@ -873,9 +453,17 @@ int module_start(SceSize argc, const void *args)
   initialize_all_hooks();
 
   //deal with module table
-  construct_module_range_table();
-  sort_segment_table();
-  //print_segment_table();
+  construct_module_range_table(KERNEL_PID, 0x80000001, 1, g_modlistKernel, MOD_LIST_SIZE, g_segListKernel, SEG_LIST_SIZE, &moduleListIsConstructedKernel);
+  sort_segment_table(g_segListKernel, SEG_LIST_SIZE, &moduleListIsConstructedKernel);
+  //print_segment_table(g_segListKernel, SEG_LIST_SIZE, &moduleListIsConstructedKernel);
+
+  //user module table
+  //construct_module_range_table(ksceKernelGetProcessId(), 0xFF, 1, g_modlistUser, MOD_LIST_SIZE, g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser); //gets some modules
+  //construct_module_range_table(ksceKernelGetProcessId(), 0xFFFF, 1, g_modlistUser, MOD_LIST_SIZE, g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser);
+  //construct_module_range_table(ksceKernelGetProcessId(), 0xFFFFFF, 1, g_modlistUser, MOD_LIST_SIZE, g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser);
+  construct_module_range_table(ksceKernelGetProcessId(), 0xFFFFFFFF, 1, g_modlistUser, MOD_LIST_SIZE, g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser);
+  sort_segment_table(g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser);
+  print_segment_table(g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser);
   
   //dump_vfs_data();
 
@@ -920,6 +508,10 @@ int module_stop(SceSize argc, const void *args)
   
   //deinitialize buffers if required
   psvemmcDeinitialize();
+
+  deinit_global_log();
+  deinit_sdstor_log();
+  deinit_threadInfoMutex();
   
   return SCE_KERNEL_STOP_SUCCESS;
 }
