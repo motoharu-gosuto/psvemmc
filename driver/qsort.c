@@ -31,7 +31,7 @@
 #include <sys/types.h>
 
 
-#include <qsort.h>
+#include "qsort.h"
 
 static __inline char	*med3(char *, char *, char *, int (*)(const void *, const void *));
 static __inline void	 swapfunc(char *, char *, size_t, int);

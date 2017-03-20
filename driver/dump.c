@@ -47,7 +47,7 @@ int validate_dump_memblock_1000(int index, SceUID uid, void* membase)
       {
         open_global_log();
         snprintf(sprintfBuffer, 256, "device:%x membase 1000 OK\n", index);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
         close_global_log();
         
         dump_memblock_1000(uid, membase);
@@ -58,7 +58,7 @@ int validate_dump_memblock_1000(int index, SceUID uid, void* membase)
       {
         open_global_log();
         snprintf(sprintfBuffer, 256, "device:%x membase 1000 does not match\n", index);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
         close_global_log();
         return -1;
       }
@@ -67,7 +67,7 @@ int validate_dump_memblock_1000(int index, SceUID uid, void* membase)
     {
       open_global_log();
       snprintf(sprintfBuffer, 256, "device:%x failed to get membase 1000, error:%x\n", index, res_1);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
       close_global_log();
       return -1;
     }
@@ -76,7 +76,7 @@ int validate_dump_memblock_1000(int index, SceUID uid, void* membase)
   {
     open_global_log();
     snprintf(sprintfBuffer, 256, "device:%x membase 1000 is empty\n", index);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     close_global_log();
     return -1;
   }
@@ -125,7 +125,7 @@ int validate_dump_memblock_10000(int index, SceUID uid, void* membase)
       {
         open_global_log();
         snprintf(sprintfBuffer, 256, "device:%x membase 10000 OK\n", index);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
         close_global_log();
         
         dump_memblock_10000(uid, membase);
@@ -136,7 +136,7 @@ int validate_dump_memblock_10000(int index, SceUID uid, void* membase)
       {
         open_global_log();
         snprintf(sprintfBuffer, 256, "device:%x membase 10000 does not match\n", index);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
         close_global_log();
         return -1;
       }
@@ -145,7 +145,7 @@ int validate_dump_memblock_10000(int index, SceUID uid, void* membase)
     {
       open_global_log();
       snprintf(sprintfBuffer, 256, "device:%x failed to get membase 10000, error:%x\n", index, res_1);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
       close_global_log();
       return -1;
     }
@@ -154,7 +154,7 @@ int validate_dump_memblock_10000(int index, SceUID uid, void* membase)
   {
     open_global_log();
     snprintf(sprintfBuffer, 256, "device:%x membase 10000 is empty\n", index);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     close_global_log();
     return -1;
   }
@@ -185,7 +185,7 @@ int dumpSegment(SceKernelModuleInfo* minfo, int index)
   if (minfo->segments[index].vaddr <= 0) 
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "segment is empty\n");
+    FILE_GLOBAL_WRITE_LEN("segment is empty\n");
     close_global_log();
     return -1;
   }
@@ -193,7 +193,7 @@ int dumpSegment(SceKernelModuleInfo* minfo, int index)
   {
     open_global_log();
     snprintf(sprintfBuffer, 256, "%d %x %x\n", index, minfo->segments[index].vaddr, minfo->segments[index].memsz);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     close_global_log();
   }
   
@@ -205,7 +205,7 @@ int dumpSegment(SceKernelModuleInfo* minfo, int index)
   {
     open_global_log();
     snprintf(sprintfBuffer, 256, "%s\n", filename);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     close_global_log();
   }
   
@@ -236,7 +236,7 @@ int dump_sdstor_data()
     if(ret >= 0)
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "ready to dump sdstor data seg\n");
+      FILE_GLOBAL_WRITE_LEN("ready to dump sdstor data seg\n");
       close_global_log();
       
       dumpSegment(&minfo, 1);
@@ -244,7 +244,7 @@ int dump_sdstor_data()
     else
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "can not dump sdstor data seg\n");
+      FILE_GLOBAL_WRITE_LEN("can not dump sdstor data seg\n");
       close_global_log();
     }
   }
@@ -264,7 +264,7 @@ int dump_sdif_data()
     if(ret >= 0)
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "ready to dump sdif data seg\n");
+      FILE_GLOBAL_WRITE_LEN("ready to dump sdif data seg\n");
       close_global_log();
       
       dumpSegment(&minfo, 1);
@@ -272,7 +272,7 @@ int dump_sdif_data()
     else
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "can not dump sdif data seg\n");
+      FILE_GLOBAL_WRITE_LEN("can not dump sdif data seg\n");
       close_global_log();
     }
   }
@@ -292,7 +292,7 @@ int dump_exfatfs_data()
     if(ret >= 0)
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "ready to dump exfatfs data seg\n");
+      FILE_GLOBAL_WRITE_LEN("ready to dump exfatfs data seg\n");
       close_global_log();
       
       dumpSegment(&minfo, 1);
@@ -300,7 +300,7 @@ int dump_exfatfs_data()
     else
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "can not dump exfatfs data seg\n");
+      FILE_GLOBAL_WRITE_LEN("can not dump exfatfs data seg\n");
       close_global_log();
     }
   }
@@ -317,7 +317,7 @@ int print_ctx(int sd_index)
   open_global_log();
   {
     snprintf(sprintfBuffer, 256, "type:%x ctx:%x\n", idx, pctx);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
   close_global_log();
   
@@ -334,7 +334,7 @@ int initialize_gc_sd()
     open_global_log();
     {
       snprintf(sprintfBuffer, 256, "res:%x \n", res);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     }
     close_global_log();
   }
@@ -355,9 +355,9 @@ int print_bytes(char* bytes, int size)
   {
     char buffer[4];
     snprintf(buffer, 4, "%02x ", bytes[i]);
-    FILE_WRITE_LEN(global_log_fd, buffer);
+    FILE_GLOBAL_WRITE_LEN(buffer);
   }
-  FILE_WRITE(global_log_fd, "\n");
+  FILE_GLOBAL_WRITE_LEN("\n");
   close_global_log();
 
   return 0;
@@ -400,7 +400,7 @@ vfs_add_data* get_sdstor_dummy_ttyp_dev_fs_info_base()
 int dump_vfs_data()
 {
   open_global_log();
-  FILE_WRITE(global_log_fd, "dumping vfs data...\n");
+  FILE_GLOBAL_WRITE_LEN("dumping vfs data...\n");
   close_global_log();
 
   //vfs_add_data* data = get_sdstor_dev_fs_info_base();
@@ -413,7 +413,7 @@ int dump_vfs_data()
     open_global_log();
     {
       snprintf(sprintfBuffer, 256, "name: %s\n", data->name);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     }
     close_global_log();
 
@@ -445,7 +445,7 @@ int dump_vfs_node(vfs_node* node)
   if(node == 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "node is not set\n");
+    FILE_GLOBAL_WRITE_LEN("node is not set\n");
     close_global_log();
     return 0;
   }
@@ -456,7 +456,7 @@ int dump_vfs_node(vfs_node* node)
   if(dev_info == 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "dev info is not set\n");
+    FILE_GLOBAL_WRITE_LEN("dev info is not set\n");
     close_global_log();
     return 0;
   }  
@@ -464,7 +464,7 @@ int dump_vfs_node(vfs_node* node)
   if(node->prev_node != 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "prev node is set\n");
+    FILE_GLOBAL_WRITE_LEN("prev node is set\n");
     close_global_log();
   }
 
@@ -472,16 +472,16 @@ int dump_vfs_node(vfs_node* node)
 
   open_global_log();
   {
-    int segidx = find_in_segments((uintptr_t)dev_info->partition);
+    int segidx = find_in_segments(g_segListKernel, SEG_LIST_SIZE, &moduleListIsConstructedKernel, (uintptr_t)dev_info->partition);
     if(segidx >= 0)
     {
-      snprintf(sprintfBuffer, 256, "ready: %s %x %x %x\n", g_segList[segidx].moduleName, dev_info->partition, dev_info->device, dev_info->unk_8);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      snprintf(sprintfBuffer, 256, "ready: %s %x %x %x\n", g_segListKernel[segidx].moduleName, dev_info->partition, dev_info->device, dev_info->unk_8);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     }
     else
     {
       snprintf(sprintfBuffer, 256, "ready: %x %x %x\n", dev_info->partition, dev_info->device, dev_info->unk_8);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     }
   }
   close_global_log();
@@ -495,7 +495,7 @@ int dump_vfs_node(vfs_node* node)
       open_global_log();
       {
         snprintf(sprintfBuffer, 256, "partition: %s\n", partition->numericName);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
       }
       close_global_log();
   }
@@ -504,7 +504,7 @@ int dump_vfs_node(vfs_node* node)
       open_global_log();
       {
         snprintf(sprintfBuffer, 256, "partition: %s\n", "none");
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
       }
       close_global_log();
   }
@@ -522,7 +522,7 @@ int dump_vfs_node(vfs_node* node)
 int dump_vfs_node_info()
 {
   open_global_log();
-  FILE_WRITE(global_log_fd, "dumping vfs node info...\n");
+  FILE_GLOBAL_WRITE_LEN("dumping vfs node info...\n");
   close_global_log();
 
   vfs_node_info* data = get_vfs_node_info_base();
@@ -536,7 +536,7 @@ int dump_vfs_node_info()
       open_global_log();
       {
         snprintf(sprintfBuffer, 256, "name: %s\n", data->name);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
       }
       close_global_log(); 
 
@@ -595,7 +595,7 @@ partition_entry* find_partition_entry_by_code(sdstor_mbr_ctx* dev, char partitio
 int call_proc_get_mount_data_C15B80(char* blockDeviceName)
 {
   open_global_log();
-  FILE_WRITE(global_log_fd, "call_proc_get_mount_data_C15B80...\n");
+  FILE_GLOBAL_WRITE_LEN("call_proc_get_mount_data_C15B80...\n");
   close_global_log();
 
   tai_module_info_t m_info;
@@ -615,7 +615,7 @@ int call_proc_get_mount_data_C15B80(char* blockDeviceName)
       open_global_log();
       {
         snprintf(sprintfBuffer, 256, "block: %s mount %x %x %x %x res: %x\n", blockDeviceName, mountData.sdstor_mbr_ctx_index, mountData.unk1, mountData.partitionCode, mountData.unk3 , res);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
       }
       close_global_log();
 
@@ -631,7 +631,7 @@ int call_proc_get_mount_data_C15B80(char* blockDeviceName)
             open_global_log();
             {
               snprintf(sprintfBuffer, 256, "numeric: %s\n", pentry->numericName);
-              FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+              FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
             }
             close_global_log();
          }

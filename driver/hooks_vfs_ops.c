@@ -49,17 +49,19 @@ int vfs_func1(void* ctx) //00C17015
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_func1: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_func1_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -79,17 +81,19 @@ int vfs_func3(void* ctx) //00C1703D
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_func3: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_func3_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -109,17 +113,19 @@ int vfs_func12(void* ctx) //00C175D1
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_func12: %x %s\n", ctx, ((ctx_C175D0*)ctx)->blockDeviceName);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_func12_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -139,14 +145,14 @@ int vfs_func13(void* ctx) //00C17551
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_func13: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
 
     vfs_func13_args* args = (vfs_func13_args*)ctx;
 
     snprintf(sprintfBuffer, 256, "dev: %s num: %s res: %x\n", args->blockDeviceName, args->numericName, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
   }
@@ -156,11 +162,11 @@ int vfs_func13(void* ctx) //00C17551
 
   /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
-  */
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -208,42 +214,42 @@ int print_sd_stor_dev_name_by_address(sd_stor_device* dev)
     case 0:
     {
       open_sdstor_dev_fs_log();
-      FILE_WRITE(sdstor_dev_fs_log_fd, "device: emmc\n");
+      FILE_SDSTOR_WRITE_LEN("device: emmc\n");
       close_sdstor_dev_fs_log();
     }
     break;
     case 1:
     {
       open_sdstor_dev_fs_log();
-      FILE_WRITE(sdstor_dev_fs_log_fd, "device: game card\n");
+      FILE_SDSTOR_WRITE_LEN("device: game card\n");
       close_sdstor_dev_fs_log();
     }
     break;
     case 2:
     {
       open_sdstor_dev_fs_log();
-      FILE_WRITE(sdstor_dev_fs_log_fd, "device: memory card\n");
+      FILE_SDSTOR_WRITE_LEN("device: memory card\n");
       close_sdstor_dev_fs_log();
     }
     break;
     case 3:
     {
       open_sdstor_dev_fs_log();
-      FILE_WRITE(sdstor_dev_fs_log_fd, "device: unknown\n");
+      FILE_SDSTOR_WRITE_LEN("device: unknown\n");
       close_sdstor_dev_fs_log();
     }
     break;
     case 4:
     {
       open_sdstor_dev_fs_log();
-      FILE_WRITE(sdstor_dev_fs_log_fd, "device: unknown\n");
+      FILE_SDSTOR_WRITE_LEN("device: unknown\n");
       close_sdstor_dev_fs_log();
     }
     break;
     default:
     {
       open_sdstor_dev_fs_log();
-      FILE_WRITE(sdstor_dev_fs_log_fd, "device: invalid\n");
+      FILE_SDSTOR_WRITE_LEN("device: invalid\n");
       close_sdstor_dev_fs_log();
     }
     break;
@@ -274,7 +280,7 @@ int print_vfs_node(vfs_node* node)
   if(node == 0)
   {
     open_sdstor_dev_fs_log();
-    FILE_WRITE(sdstor_dev_fs_log_fd, "node is not set\n");
+    FILE_SDSTOR_WRITE_LEN("node is not set\n");
     close_sdstor_dev_fs_log();
     return 0;
   }
@@ -282,7 +288,7 @@ int print_vfs_node(vfs_node* node)
   if(node->prev_node == 0)
   {
     open_sdstor_dev_fs_log();
-    FILE_WRITE(sdstor_dev_fs_log_fd, "prev_node is not set\n");
+    FILE_SDSTOR_WRITE_LEN("prev_node is not set\n");
     close_sdstor_dev_fs_log();
   }
   else
@@ -290,7 +296,7 @@ int print_vfs_node(vfs_node* node)
     open_sdstor_dev_fs_log();
     {
       snprintf(sprintfBuffer, 256, "nodes: %x %x\n", node, node->prev_node->unk_54);
-      FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+      FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
     }
     close_sdstor_dev_fs_log();
   }    
@@ -299,7 +305,7 @@ int print_vfs_node(vfs_node* node)
   if(dev_info == 0)
   {
     open_sdstor_dev_fs_log();
-    FILE_WRITE(sdstor_dev_fs_log_fd, "dev info is not set\n");
+    FILE_SDSTOR_WRITE_LEN("dev info is not set\n");
     close_sdstor_dev_fs_log();
     return 0;
   }
@@ -307,7 +313,7 @@ int print_vfs_node(vfs_node* node)
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "dev info: %x %x %x\n", dev_info->partition, dev_info->device, dev_info->unk_8);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
 
@@ -318,7 +324,7 @@ int print_vfs_node(vfs_node* node)
     open_sdstor_dev_fs_log();
     {
       snprintf(sprintfBuffer, 256, "partition: %s\n", partition->numericName);
-      FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+      FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
     }
     close_sdstor_dev_fs_log();
 
@@ -332,14 +338,14 @@ int print_vfs_node(vfs_node* node)
     else
     {
       open_sdstor_dev_fs_log();
-      FILE_WRITE(sdstor_dev_fs_log_fd, "partition raw: not set\n");
+      FILE_SDSTOR_WRITE_LEN("partition raw: not set\n");
       close_sdstor_dev_fs_log();
     }
   }
   else
   {
     open_sdstor_dev_fs_log();
-    FILE_WRITE(sdstor_dev_fs_log_fd, "partition: not set\n");
+    FILE_SDSTOR_WRITE_LEN("partition: not set\n");
     close_sdstor_dev_fs_log();
   }
 
@@ -348,7 +354,7 @@ int print_vfs_node(vfs_node* node)
     open_sdstor_dev_fs_log();
     {
       snprintf(sprintfBuffer, 256, "prev node is initialized: %x\n", node->prev_node);
-      FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+      FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
     }
     close_sdstor_dev_fs_log();
   }
@@ -362,7 +368,7 @@ int print_vfs_node(vfs_node* node)
   else
   {
     open_sdstor_dev_fs_log();
-    FILE_WRITE(sdstor_dev_fs_log_fd, "device: not set\n");
+    FILE_SDSTOR_WRITE_LEN("device: not set\n");
     close_sdstor_dev_fs_log();
   }
 
@@ -385,17 +391,17 @@ int vfs_node_func1(void* ctx) //00C17465
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func1: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
 
     /*
     snprintf(sprintfBuffer, 256, "node: %08x\narg1: %08x\narg2: %08x\narg3: %08x\nret:%08x\n", args->node, args->arg1, args->arg2, args->arg3, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
     */
 
     snprintf(sprintfBuffer, 256, "dev: %s mount: %s res: %x\n", args->arg1->blockDevice, args->arg1->unixMount, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
   }
@@ -419,11 +425,11 @@ int vfs_node_func1(void* ctx) //00C17465
 
   /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
-  */
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   dump_sdstor_data();
@@ -447,17 +453,19 @@ int vfs_node_func3(void* ctx) //00C17459
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func3: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func3_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -479,12 +487,12 @@ int vfs_node_func4(void* ctx) //00C172E1
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func4: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
 
     snprintf(sprintfBuffer, 256, "node: %x dev: %s arg1: %x arg3: %x res: %x\n", args->node, args->dev->blockDeviceName, *args->new_node, args->arg3, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
   }
@@ -495,18 +503,18 @@ int vfs_node_func4(void* ctx) //00C172E1
   print_vfs_node(args->node);
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "----\n");
+  FILE_SDSTOR_WRITE_LEN("----\n");
   close_sdstor_dev_fs_log();
 
   print_vfs_node(*args->new_node);
 
   /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
-  */
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -529,7 +537,7 @@ int vfs_node_func5(void* ctx) //00C17231 - HOOK DOES NOT WORK when writing to fi
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func5: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   */
@@ -559,7 +567,7 @@ int vfs_node_func6(void* ctx) //00C1717D - HOOK DOES NOT WORK when writing to fi
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func6: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   */
@@ -590,12 +598,12 @@ int vfs_node_func7(void* ctx) //00C170C5
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func7: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
 
     snprintf(sprintfBuffer, 256, "node: %08x arg1: %08x arg2: %08x arg3: %08x arg_0: %08x res:%08x\n", args->node, args->arg1, args->arg2, args->arg3, args->arg_0, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
 
@@ -609,11 +617,11 @@ int vfs_node_func7(void* ctx) //00C170C5
 
   /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
-  */
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -635,18 +643,18 @@ int vfs_node_func9(void* ctx) //00C17291
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func9: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
 
     snprintf(sprintfBuffer, 256, "node0: %08x node1: %08x dev: %s arg3: %08x res:%08x\n", args->node0, args->node1, args->arg2->blockDeviceName, args->arg3, res);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
 
     //======================
     snprintf(sprintfBuffer, 256, "vfs_node_func5_num %x vfs_node_func6_num: %x\n", vfs_node_func5_num, vfs_node_func6_num);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
 
     //send_message_to_client(sprintfBuffer, 256);
   }
@@ -657,18 +665,18 @@ int vfs_node_func9(void* ctx) //00C17291
   print_vfs_node(args->node0);
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "----\n");
+  FILE_SDSTOR_WRITE_LEN("----\n");
   close_sdstor_dev_fs_log();
 
   print_vfs_node(args->node1);
 
   /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
-  */
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -688,17 +696,19 @@ int vfs_node_func19(void* ctx) //00C171DD
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func19: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func19_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;
@@ -718,17 +728,19 @@ int vfs_node_func20(void* ctx) //00C17071
   open_sdstor_dev_fs_log();
   {
     snprintf(sprintfBuffer, 256, "vfs_node_func20: %x\n", ctx);
-    FILE_WRITE_LEN(sdstor_dev_fs_log_fd, sprintfBuffer);
+    FILE_SDSTOR_WRITE_LEN(sprintfBuffer);
   }
   close_sdstor_dev_fs_log();
   vfs_node_func20_entered = 0;
   #endif
 
+  /*
   stacktrace_from_here_sd("SceIofilemgr", 0, 100, 0);
   print_current_thread_info_sd();
+  */
 
   open_sdstor_dev_fs_log();
-  FILE_WRITE(sdstor_dev_fs_log_fd, "\n");
+  FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
   return res;

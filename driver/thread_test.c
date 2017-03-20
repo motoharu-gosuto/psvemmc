@@ -26,7 +26,7 @@ int print_TPIDRURO()
   {
     open_global_log();
     snprintf(sprintfBuffer, 256, "TPIDRURO %x\n", TPIDRURO);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     close_global_log();
   }
   
@@ -36,7 +36,7 @@ int print_TPIDRURO()
 int TestThread(SceSize args, void *argp)
 {
   open_global_log();
-  FILE_WRITE(global_log_fd, "message from thread\n");
+  FILE_GLOBAL_WRITE_LEN("message from thread\n");
   close_global_log();
   
   //get_currentThreadId();
@@ -53,7 +53,7 @@ int print_thread_info()
   if(newThid < 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to create thread\n");
+    FILE_GLOBAL_WRITE_LEN("failed to create thread\n");
     close_global_log();
     return -1;
   }
@@ -61,7 +61,7 @@ int print_thread_info()
   {
     open_global_log();
     snprintf(sprintfBuffer, 256, "created thread %x\n", newThid);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     close_global_log();
   }
   
@@ -76,12 +76,12 @@ int print_thread_info()
   if(delret < 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to delete thread\n");
+    FILE_GLOBAL_WRITE_LEN("failed to delete thread\n");
     close_global_log();
   }
   
   open_global_log();
-  FILE_WRITE(global_log_fd, "deleted thread\n");
+  FILE_GLOBAL_WRITE_LEN("deleted thread\n");
   close_global_log();
   
   //get_currentThreadId();

@@ -68,7 +68,7 @@ int lock_listen_mutex()
   if(lockRes >= 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "conn init mutex locked\n");
+    FILE_GLOBAL_WRITE_LEN("conn init mutex locked\n");
     close_global_log();
   }
   else
@@ -76,7 +76,7 @@ int lock_listen_mutex()
     open_global_log();
     {
       snprintf(sprintfBuffer, 256, "failed to lock mutex %x\n", lockRes);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);    
     }
     close_global_log();
   }
@@ -92,7 +92,7 @@ int unlock_listen_mutex()
   if(unlockRes >= 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "conn init mutex unlocked\n");
+    FILE_GLOBAL_WRITE_LEN("conn init mutex unlocked\n");
     close_global_log();
   }
   else
@@ -100,7 +100,7 @@ int unlock_listen_mutex()
     open_global_log();
     {
       snprintf(sprintfBuffer, 256, "failed to unlock mutex %x\n", unlockRes);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);    
     }
     close_global_log();
   }
@@ -141,7 +141,7 @@ void accept_single_connection()
       open_global_log();
       {
         snprintf(sprintfBuffer, 256, "failed to accept socket %x\n", clsock);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);    
       }
       close_global_log();
 
@@ -155,7 +155,7 @@ void accept_single_connection()
     open_global_log();
     {
       snprintf(sprintfBuffer, 256, "Accepted connection from %s:%d\n", ksceNetInetNtop(SCE_NET_AF_INET, &client.sin_addr, ipstr, 16), ksceNetNtohs(client.sin_port));
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);    
     }
     close_global_log();
 
@@ -198,20 +198,20 @@ int init_net_internal()
   if(_server_sock < 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to create socket\n");
+    FILE_GLOBAL_WRITE_LEN("failed to create socket\n");
     close_global_log();
     return -1;
   }
 
   open_global_log();
-  FILE_WRITE(global_log_fd, "server socket created\n");
+  FILE_GLOBAL_WRITE_LEN("server socket created\n");
   close_global_log();
 
   int bind_res = ksceNetBind(_server_sock, (SceNetSockaddr*)&server, sizeof(server));
   if(bind_res < 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to bind socket\n");
+    FILE_GLOBAL_WRITE_LEN("failed to bind socket\n");
     close_global_log();
     return -1;
   }
@@ -222,20 +222,20 @@ int init_net_internal()
   open_global_log();
   {
     snprintf(sprintfBuffer, 256, "server socket binded %s:%d\n", ip_address, serv_port);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);    
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);    
   }
   close_global_log();
 
   if(ksceNetListen(_server_sock, 128) < 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to listen socket\n");
+    FILE_GLOBAL_WRITE_LEN("failed to listen socket\n");
     close_global_log();
     return -1;
   }
   
   open_global_log();
-  FILE_WRITE(global_log_fd, "listening for connection\n");
+  FILE_GLOBAL_WRITE_LEN("listening for connection\n");
   close_global_log();
 
   return 0;
@@ -253,7 +253,7 @@ int ConnListenThread()
   }
 
   open_global_log();
-  FILE_WRITE(global_log_fd, "exit listen thread\n");
+  FILE_GLOBAL_WRITE_LEN("exit listen thread\n");
   close_global_log();
 
   return 0;
@@ -271,7 +271,7 @@ int init_listen_mutex()
     open_global_log();
     {
       snprintf(sprintfBuffer, 256, "failed to create conn init mutex %x\n", g_connInitMutexId);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer); 
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer); 
     }
     close_global_log();
 
@@ -280,7 +280,7 @@ int init_listen_mutex()
   else
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "created conn init mutex\n");
+    FILE_GLOBAL_WRITE_LEN("created conn init mutex\n");
     close_global_log();
   }
 
@@ -293,7 +293,7 @@ int init_listen_thread()
   if(g_connListenThid < 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to create thread\n");
+    FILE_GLOBAL_WRITE_LEN("failed to create thread\n");
     close_global_log();
     return -1;
   }
@@ -301,7 +301,7 @@ int init_listen_thread()
   open_global_log();
   {
     snprintf(sprintfBuffer, 256, "created thread %x\n", g_connListenThid);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
   close_global_log();
 
@@ -331,14 +331,14 @@ void deinit_listen_mutex()
     open_global_log();
     {
       snprintf(sprintfBuffer, 256, "failed to delete conn init mutex %x\n", mutexRes);
-      FILE_WRITE_LEN(global_log_fd, sprintfBuffer); 
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer); 
     }
     close_global_log();    
   }
   else
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "deleted conn init mutex\n");
+    FILE_GLOBAL_WRITE_LEN("deleted conn init mutex\n");
     close_global_log();
   }
 }
@@ -352,12 +352,12 @@ void deinit_listen_thread()
   if(delret < 0)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to delete conn listen thread\n");
+    FILE_GLOBAL_WRITE_LEN("failed to delete conn listen thread\n");
     close_global_log();
   }
   
   open_global_log();
-  FILE_WRITE(global_log_fd, "deleted conn listen thread\n");
+  FILE_GLOBAL_WRITE_LEN("deleted conn listen thread\n");
   close_global_log();
 }
 
@@ -368,14 +368,14 @@ void close_client_sock()
     if(ksceNetSocketClose(_client_sock) < 0)
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "failed to close client socket\n");
+      FILE_GLOBAL_WRITE_LEN("failed to close client socket\n");
       close_global_log();
     }
     _client_sock = 0;
   }
   
   open_global_log();
-  FILE_WRITE(global_log_fd, "closed client socket\n");
+  FILE_GLOBAL_WRITE_LEN("closed client socket\n");
   close_global_log();
 }
 
@@ -386,14 +386,14 @@ void close_server_sock()
     if(ksceNetSocketClose(_server_sock) < 0)
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "failed to close server socket\n");
+      FILE_GLOBAL_WRITE_LEN("failed to close server socket\n");
       close_global_log();
     }
     _server_sock = 0;
   }
   
   open_global_log();
-  FILE_WRITE(global_log_fd, "closed server socket\n");
+  FILE_GLOBAL_WRITE_LEN("closed server socket\n");
   close_global_log();
 }
 
@@ -429,7 +429,7 @@ int send_message(char* msg_raw, int size)
      {
         open_global_log();
         snprintf(sprintfBuffer, 256, "failed to send data %x\n", sendLen);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
         close_global_log();
         
         //return -1;
@@ -448,7 +448,7 @@ int send_message_to_client(char* msg, int size)
   if(size > MSG_SIZE)
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to send data: msg size is invalid\n");
+    FILE_GLOBAL_WRITE_LEN("failed to send data: msg size is invalid\n");
     close_global_log();
     return -1;
   }
@@ -463,7 +463,7 @@ int send_message_to_client(char* msg, int size)
     if(res < 0)
     {
       open_global_log();
-      FILE_WRITE(global_log_fd, "failed to send message to client\n");
+      FILE_GLOBAL_WRITE_LEN("failed to send message to client\n");
       close_global_log();
 
       //if failed to send message this means that most likely connection was terminated
@@ -477,7 +477,7 @@ int send_message_to_client(char* msg, int size)
   else
   {
     open_global_log();
-    FILE_WRITE(global_log_fd, "failed to send message to client: connection is not initialized\n");
+    FILE_GLOBAL_WRITE_LEN("failed to send message to client: connection is not initialized\n");
     close_global_log();
   }
 
