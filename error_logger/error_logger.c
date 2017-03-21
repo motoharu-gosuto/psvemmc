@@ -20,6 +20,7 @@ char sprintfBuffer[256];
 
 #define SceErrorUser_NID 0xD401318D
 #define SceLibKernel_NID 0xCAE9ACE6
+#define ScePafStdc_NID 0xA7D28DAE
 
 tai_hook_ref_t sceErrorGetExternalString_hook_ref;
 SceUID sceErrorGetExternalString_hook_id = -1;
@@ -71,6 +72,9 @@ SceUID proc_8430F028_hook_id = -1;
 
 tai_hook_ref_t queue_worker_entry2_834DED94_hook_ref;
 SceUID queue_worker_entry2_834DED94_hook_id = -1;
+
+tai_hook_ref_t scePafAllocateMem_hook_ref;
+SceUID scePafAllocateMem_hook_id = -1;
 
 void* g_dest_user;
 int g_unk;
@@ -592,6 +596,27 @@ int queue_worker_entry2_834DED94_hook(queue_worker_ctx *ctx)
 
 //---------------
 
+int scePafAllocateMem_hook_called = 0;
+int g_scePafAllocateMem_hook_size = 0;
+void* g_scePafAllocateMem_hook_res = 0;
+
+int g_scePafAllocateMem_allocCtr = 0;
+
+void* scePafAllocateMem_hook(int size)
+{
+  void* res = TAI_CONTINUE(void*, scePafAllocateMem_hook_ref, size);
+
+  //g_scePafAllocateMem_hook_size = size;
+  //g_scePafAllocateMem_hook_res = res;
+  //scePafAllocateMem_hook_called = 1;
+
+  g_scePafAllocateMem_allocCtr++;
+
+  return res;
+}
+
+//---------------
+
 int print_error(int err)
 {
   //open_global_log();
@@ -640,6 +665,23 @@ int print_error(int err)
 
   return 0;
 }
+
+int has_info()
+{
+  return  proc_83F258F8_hook_called ||
+          proc_83F27424_hook_called ||
+          proc_83F2407A_hook_called ||
+          proc_83F25592_hook_called ||
+          proc_83F24534_hook_called ||
+          proc_83F24D96_hook_called ||
+          proc_8430F028_hook_called ||
+          queue_worker_entry2_834DED94_hook_called ||
+          scePafAllocateMem_hook_called ||
+          param_sfo_verifySpsfo_shell_hook_called ||
+          proc_gc_param_sfo_83F2CEA0_hook_called ||
+          param_sfo_verifySpsfo_hook_called;
+}
+
 
 int ListenerThread(SceSize args, void *argp)
 {
@@ -819,6 +861,13 @@ int ListenerThread(SceSize args, void *argp)
       stacktrace_global(g_proc_8430F028_hook_stack, "", 0, 4, 1, addresses, &addressNum);
       */
 
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "alloc ctr: %08x\n", g_scePafAllocateMem_allocCtr);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
       proc_8430F028_hook_called = 0;
     }
 
@@ -871,6 +920,17 @@ int ListenerThread(SceSize args, void *argp)
       param_sfo_verifySpsfo_hook_called = 0;
     }
 
+    if(scePafAllocateMem_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called scePafAllocateMem_hook:\nsize: %08x res: %08x\n", g_scePafAllocateMem_hook_size, g_scePafAllocateMem_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      scePafAllocateMem_hook_called = 0;
+    }
   }
 
   open_global_log();
@@ -911,6 +971,8 @@ int initialize_all_hooks()
     //proc_83F24D96_hook_id = taiHookFunctionOffset(&proc_83F24D96_hook_ref, sceshell_info.modid, 0, 0x24556, 1, proc_83F24D96_hook);
 
     proc_8430F028_hook_id = taiHookFunctionOffset(&proc_8430F028_hook_ref, sceshell_info.modid, 0, 0x40E7E8, 1, proc_8430F028_hook);
+
+    scePafAllocateMem_hook_id = taiHookFunctionImport(&scePafAllocateMem_hook_ref, "SceShell", ScePafStdc_NID, 0xfc5cd359, scePafAllocateMem_hook);
   }
 
   tai_module_info_t paf_info;
@@ -1147,6 +1209,17 @@ int initialize_all_hooks()
     print_error(queue_worker_entry2_834DED94_hook_id);
   }
 
+  if(scePafAllocateMem_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set scePafAllocateMem_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set scePafAllocateMem_hook: %08x\n", scePafAllocateMem_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(scePafAllocateMem_hook_id);
+  }
+
   close_global_log();
   
   //--------------------------
@@ -1225,6 +1298,9 @@ int deinitialize_all_hooks()
 
   if(queue_worker_entry2_834DED94_hook_id >= 0)
     taiHookRelease(queue_worker_entry2_834DED94_hook_id, queue_worker_entry2_834DED94_hook_ref); 
+
+  if(scePafAllocateMem_hook_id >= 0)
+    taiHookRelease(scePafAllocateMem_hook_id, scePafAllocateMem_hook_ref);
     
   int stat = 0;
   SceUInt timeout = 0;
