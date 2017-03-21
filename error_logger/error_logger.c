@@ -19,7 +19,7 @@ char sprintfBuffer[256];
 //---------------
 
 #define SceErrorUser_NID 0xD401318D
-#define SceLibKernel_UID 0xCAE9ACE6
+#define SceLibKernel_NID 0xCAE9ACE6
 
 tai_hook_ref_t sceErrorGetExternalString_hook_ref;
 SceUID sceErrorGetExternalString_hook_id = -1;
@@ -83,6 +83,13 @@ uint32_t g_stack_dump[256];
 
 uint32_t* g_stackPtr;
 
+//Warning
+//Hooks should not use logging directly in the hook - this is recomendation
+//by some unknown reason sometimes this can cause segfaults or some other undefined behavior
+//that is why there is a separate thread that does the logging
+//TODO:
+//it would be better if mutex is added to the listener thread to avoid corruption of data that is logged if listener is not fast enough
+
 int sceErrorGetExternalString_hook(void* dest_user, int unk)
 {
   int res = TAI_CONTINUE(int, sceErrorGetExternalString_hook_ref, dest_user, unk);
@@ -117,9 +124,7 @@ int sceErrorGetExternalString_hook(void* dest_user, int unk)
 
 SceUID g_sceKernelCreateThreadMutex;
 
-SceUID sceKernelCreateThread_hook(const char *name, SceKernelThreadEntry entry, int initPriority,
-                                  int stackSize, SceUInt attr, int cpuAffinityMask,
-                                  const SceKernelThreadOptParam *option)
+SceUID sceKernelCreateThread_hook(const char *name, SceKernelThreadEntry entry, int initPriority, int stackSize, SceUInt attr, int cpuAffinityMask, const SceKernelThreadOptParam *option)
 {
   SceUID res = TAI_CONTINUE(SceUID, sceKernelCreateThread_hook_ref, name, entry, initPriority, stackSize, attr, cpuAffinityMask, option);
 
@@ -140,16 +145,22 @@ SceUID sceKernelCreateThread_hook(const char *name, SceKernelThreadEntry entry, 
   return res;
 }
 
+int param_sfo_verifySpsfo_hook_called = 0;
+char* g_param_sfo_verifySpsfo_hook_file = 0;
+char g_param_sfo_verifySpsfo_hook_path[1024];
+int g_param_sfo_verifySpsfo_hook_res = 0;
+
 int param_sfo_verifySpsfo_hook(char *file, void *ctx, int verifySpsfo)
 {
   int res = TAI_CONTINUE(int, param_sfo_verifySpsfo_hook_ref, file, ctx, verifySpsfo);
 
-  open_global_log();
-  {
-    sceClibSnprintf(sprintfBuffer, 256, "called param_sfo_verifySpsfo_hook:\npath: %s res: %08x\n", file, res);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
-  }
-  close_global_log();
+  int len = sceClibStrnlen(file, 1024);
+  sceClibMemcpy(g_param_sfo_verifySpsfo_hook_path, file, len);
+  g_param_sfo_verifySpsfo_hook_path[len] = 0;
+
+  g_param_sfo_verifySpsfo_hook_file = file;
+  g_param_sfo_verifySpsfo_hook_res = res;
+  param_sfo_verifySpsfo_hook_called = 1;
 
   return res;
 }
@@ -158,12 +169,14 @@ SceUID sceKernelLoadModule_hook(char *path, int flags, SceKernelLMOption *option
 {
   SceUID res = TAI_CONTINUE(SceUID, sceKernelLoadModule_hook_ref, path, flags, option);
 
+  /*
   open_global_log();
   {
     sceClibSnprintf(sprintfBuffer, 256, "called sceKernelLoadModule_hook:\npath: %s res: %08x\n", path, res);
     FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
   }
   close_global_log();
+  */
 
   return res;
 }
@@ -175,13 +188,15 @@ int g_flags_ld = 0;
 
 SceUID sceKernelLoadStartModule_hook(char *path, SceSize args, void *argp, int flags, SceKernelLMOption *option, int *status)
 {
+  /*
   open_global_log();
   {
     //sceClibSnprintf(sprintfBuffer, 256, "called sceKernelLoadStartModule:\npath: %s res: %08x\n", path, 0);
     //FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
-    FILE_WRITE(global_log_fd, "called sceKernelLoadStartModule_hook\n");
+    //FILE_WRITE(global_log_fd, "called sceKernelLoadStartModule_hook\n");
   }
   close_global_log();
+  */
 
   SceUID res = TAI_CONTINUE(SceUID, sceKernelLoadStartModule_hook_ref, path, args, argp, flags, option, status);
 
@@ -201,30 +216,36 @@ typedef struct copy_str_pair
   int32_t len;
 }copy_str_pair;
 
+int param_sfo_verifySpsfo_shell_hook_called = 0;
+char* g_param_sfo_verifySpsfo_shell_hook_data = 0;
+char g_param_sfo_verifySpsfo_shell_hook_path[1024];
+int g_param_sfo_verifySpsfo_shell_hook_res = 0;
+
 int param_sfo_verifySpsfo_shell_hook(void *ctx, copy_str_pair *path_ctx)
 {
   int res = TAI_CONTINUE(int, param_sfo_verifySpsfo_shell_hook_ref, ctx, path_ctx);
 
-  open_global_log();
-  {
-    sceClibSnprintf(sprintfBuffer, 256, "called param_sfo_verifySpsfo_shell_hook:\npath: %s res: %08x\n", path_ctx->data, res);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
-  }
-  close_global_log();
+  sceClibMemcpy(g_param_sfo_verifySpsfo_shell_hook_path, path_ctx->data, path_ctx->len);
+  g_param_sfo_verifySpsfo_shell_hook_path[path_ctx->len] = 0;
+
+  g_param_sfo_verifySpsfo_shell_hook_data = path_ctx->data;
+  g_param_sfo_verifySpsfo_shell_hook_res = res;
+  param_sfo_verifySpsfo_shell_hook_called = 1;
 
   return res;
 }
+
+int proc_gc_param_sfo_83F2CEA0_hook_called = 0;
+int g_proc_gc_param_sfo_83F2CEA0_hook_unk = 0;
+int g_proc_gc_param_sfo_83F2CEA0_hook_res = 0;
 
 int proc_gc_param_sfo_83F2CEA0_hook(int unk)
 {
   int res = TAI_CONTINUE(int, proc_gc_param_sfo_83F2CEA0_hook_ref, unk);
 
-  open_global_log();
-  {
-    sceClibSnprintf(sprintfBuffer, 256, "called proc_gc_param_sfo_83F2CEA0_hook:\narg: %08x res: %08x\n", unk, res);
-    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
-  }
-  close_global_log();
+  g_proc_gc_param_sfo_83F2CEA0_hook_unk = unk;
+  g_proc_gc_param_sfo_83F2CEA0_hook_res = res;
+  proc_gc_param_sfo_83F2CEA0_hook_called = 1;
 
   return res;
 }
@@ -628,7 +649,7 @@ int ListenerThread(SceSize args, void *argp)
   
   while(1)
   {
-    sceKernelDelayThread(10000);
+    sceKernelDelayThread(100);
     
     /*
     if(g_sceErrorGetExternalString_hook_called == 1)
@@ -813,6 +834,43 @@ int ListenerThread(SceSize args, void *argp)
 
       queue_worker_entry2_834DED94_hook_called = 0;
     }
+
+    if(param_sfo_verifySpsfo_shell_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called param_sfo_verifySpsfo_shell_hook:\npath: %s res: %08x\n", g_param_sfo_verifySpsfo_shell_hook_path, g_param_sfo_verifySpsfo_shell_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      param_sfo_verifySpsfo_shell_hook_called = 0;
+    }
+
+    if(proc_gc_param_sfo_83F2CEA0_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called proc_gc_param_sfo_83F2CEA0_hook:\narg: %08x res: %08x\n", g_proc_gc_param_sfo_83F2CEA0_hook_unk, g_proc_gc_param_sfo_83F2CEA0_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      proc_gc_param_sfo_83F2CEA0_hook_called = 0;
+    }
+
+    if(param_sfo_verifySpsfo_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called param_sfo_verifySpsfo_hook:\npath: %s res: %08x\n", g_param_sfo_verifySpsfo_hook_path, g_param_sfo_verifySpsfo_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      param_sfo_verifySpsfo_hook_called = 0;
+    }
+
   }
 
   open_global_log();
@@ -859,7 +917,8 @@ int initialize_all_hooks()
   paf_info.size = sizeof(tai_module_info_t);
   if (taiGetModuleInfo("ScePaf", &paf_info) >= 0)
   {
-    queue_worker_entry2_834DED94_hook_id = taiHookFunctionOffset(&queue_worker_entry2_834DED94_hook_ref, paf_info.modid, 0, 0x1DE364, 1, queue_worker_entry2_834DED94_hook);
+    //looks like this hook causes segfaults
+    //queue_worker_entry2_834DED94_hook_id = taiHookFunctionOffset(&queue_worker_entry2_834DED94_hook_ref, paf_info.modid, 0, 0x1DE364, 1, queue_worker_entry2_834DED94_hook);
   }
 
   tai_module_info_t driverUser_info;
@@ -876,11 +935,11 @@ int initialize_all_hooks()
   libKernel_info.size = sizeof(tai_module_info_t);
   if (taiGetModuleInfo("SceLibKernel", &libKernel_info) >= 0) 
   {
-    //sceKernelCreateThread_hook_id = taiHookFunctionImport(&sceKernelCreateThread_hook_ref, "SceShell", SceLibKernel_UID, 0xC5C11EE7, sceKernelCreateThread_hook);
+    //sceKernelCreateThread_hook_id = taiHookFunctionImport(&sceKernelCreateThread_hook_ref, "SceShell", SceLibKernel_NID, 0xC5C11EE7, sceKernelCreateThread_hook);
 
-    //sceKernelLoadModule_hook_id = taiHookFunctionExport(&sceKernelLoadModule_hook_ref, "SceLibKernel", SceLibKernel_UID, 0xBBE82155, sceKernelLoadModule_hook);
+    //sceKernelLoadModule_hook_id = taiHookFunctionExport(&sceKernelLoadModule_hook_ref, "SceLibKernel", SceLibKernel_NID, 0xBBE82155, sceKernelLoadModule_hook);
 
-    //sceKernelLoadStartModule_hook_id = taiHookFunctionExport(&sceKernelLoadStartModule_hook_ref, "SceLibKernel", SceLibKernel_UID, 0x2DCC4AFA, sceKernelLoadStartModule_hook);
+    //sceKernelLoadStartModule_hook_id = taiHookFunctionExport(&sceKernelLoadStartModule_hook_ref, "SceLibKernel", SceLibKernel_NID, 0x2DCC4AFA, sceKernelLoadStartModule_hook);
   }
 
   tai_module_info_t gcip_info;
