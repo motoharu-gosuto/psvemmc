@@ -12,6 +12,8 @@
 #include "glog.h"
 #include "net.h"
 
+#include "defines.h"
+
 SceUID g_connListenThid = -1;
 SceUID g_connInitMutexId = -1;
 int g_connInitialized = 0;
@@ -427,10 +429,12 @@ int send_message(char* msg_raw, int size)
      int sendLen = ksceNetSend(_client_sock, message_buffer + bytesWereSend, bytesToSend - bytesWereSend, 0);
      if(sendLen < 0)
      {
+        #ifdef ENABLE_NETWORK_REPORT_SEND_FAILURE
         open_global_log();
         snprintf(sprintfBuffer, 256, "failed to send data %x\n", sendLen);
         FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
         close_global_log();
+        #endif
         
         //return -1;
         
@@ -447,9 +451,11 @@ int send_message_to_client(char* msg, int size)
 {
   if(size > MSG_SIZE)
   {
+    #ifdef ENABLE_NETWORK_REPORT_SEND_FAILURE
     open_global_log();
     FILE_GLOBAL_WRITE_LEN("failed to send data: msg size is invalid\n");
     close_global_log();
+    #endif
     return -1;
   }
 
@@ -462,9 +468,11 @@ int send_message_to_client(char* msg, int size)
     int res = send_message(msg, size);
     if(res < 0)
     {
+      #ifdef ENABLE_NETWORK_REPORT_SEND_FAILURE
       open_global_log();
       FILE_GLOBAL_WRITE_LEN("failed to send message to client\n");
       close_global_log();
+      #endif
 
       //if failed to send message this means that most likely connection was terminated
       //we need to reinitialize connection then (mutex is already locked)
@@ -476,9 +484,11 @@ int send_message_to_client(char* msg, int size)
   }
   else
   {
+    #ifdef ENABLE_NETWORK_REPORT_SEND_FAILURE
     open_global_log();
     FILE_GLOBAL_WRITE_LEN("failed to send message to client: connection is not initialized\n");
     close_global_log();
+    #endif
   }
 
   unlock_listen_mutex();

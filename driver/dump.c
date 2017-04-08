@@ -224,6 +224,34 @@ int dumpSegment(SceKernelModuleInfo* minfo, int index)
   return 0;
 }
 
+int dump_iofilemgr_data()
+{
+  tai_module_info_t iofilemgr_info;
+  iofilemgr_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceIofilemgr", &iofilemgr_info) >= 0) 
+  {
+    SceKernelModuleInfo minfo;
+    minfo.size = sizeof(SceKernelModuleInfo);
+    int ret = ksceKernelGetModuleInfo(KERNEL_PID, iofilemgr_info.modid, &minfo);
+    if(ret >= 0)
+    {
+      open_global_log();
+      FILE_GLOBAL_WRITE_LEN("ready to dump iofilemgr data seg\n");
+      close_global_log();
+      
+      dumpSegment(&minfo, 1);
+    }
+    else
+    {
+      open_global_log();
+      FILE_GLOBAL_WRITE_LEN("can not dump iofilemgr data seg\n");
+      close_global_log();
+    }
+  }
+  
+  return 0;
+}
+
 int dump_sdstor_data()
 {
   tai_module_info_t sdstor_info;

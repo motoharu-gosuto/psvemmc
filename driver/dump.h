@@ -3,6 +3,7 @@
 int dump_device_context_mem_blocks_1000(); 
 int dump_device_context_mem_blocks_10000();
 int dump_sdif_data();
+int dump_iofilemgr_data();
 int dump_sdstor_data();
 int dump_exfatfs_data();
 int dump_vfs_data();
