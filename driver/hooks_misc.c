@@ -113,6 +113,9 @@ SceUID ksceKernelSignalSema_hook_id = -1;
 tai_hook_ref_t vshSblAuthMgrVerifySpsfo_hook_ref;
 SceUID vshSblAuthMgrVerifySpsfo_hook_id = -1;
 
+tai_hook_ref_t debug_printf_callback_invoke_ref;
+SceUID debug_printf_callback_invoke_id = -1;
+
 //========================================
 
 #pragma pack(push, 1)
@@ -700,7 +703,7 @@ SceUID sceIoOpenForDriver_hook(const char *file, int flags, SceMode mode, void *
 {
   //temporary disable this since log is very heavy
 
-  /*
+  #ifdef ENABLE_IO_FILE_OPEN_LOG
   if(sceIoOpenForDriver_hook_entered == 0)
   {
     sceIoOpenForDriver_hook_entered = 1;
@@ -746,7 +749,7 @@ SceUID sceIoOpenForDriver_hook(const char *file, int flags, SceMode mode, void *
     
     sceIoOpenForDriver_hook_entered = 0;
   }
-  */
+  #endif
 
   SceUID res = TAI_CONTINUE(SceUID, sceIoOpenForDriver_hook_ref, file, flags, mode, args);
 
@@ -869,6 +872,35 @@ int vshSblAuthMgrVerifySpsfo_hook(char *path_user, char *dest_user, int maxSize,
 
   //ksceKernelMemcpyUserToKernel(g_spsfo_dest, (uintptr_t)dest_user, maxSize < 1024 ? maxSize : 1024);
   //print_bytes(g_spsfo_dest, maxSize);
+
+  return res;
+}
+
+int debug_printf_callback_invoke_hook_called = 0;
+
+int debug_printf_callback_invoke_hook(int unk0, int unk1, int unk2)
+{
+  if(debug_printf_callback_invoke_hook_called == 0)
+  {
+    debug_printf_callback_invoke_hook_called = 1;
+
+    //send_message_to_client("prinf", sizeof("prinf"));
+
+    /*
+    open_global_log();
+    {
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+      snprintf(sprintfBuffer, 256, "called debug_printf_callback_invoke:\narg0: %08x arg1: %08x arg2: %08x res: %08x\n", unk0, unk1, unk2, res);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+    }
+    close_global_log();
+    */
+
+    debug_printf_callback_invoke_hook_called = 0;
+  }
+
+  int res = TAI_CONTINUE(int, debug_printf_callback_invoke_ref, unk0, unk1, unk2);
 
   return res;
 }

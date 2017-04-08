@@ -432,6 +432,7 @@ int vfs_node_func1(void* ctx) //00C17465
   FILE_SDSTOR_WRITE_LEN("\n");
   close_sdstor_dev_fs_log();
 
+  dump_iofilemgr_data();
   dump_sdstor_data();
   dump_sdif_data();
   dump_exfatfs_data();

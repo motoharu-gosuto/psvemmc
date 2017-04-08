@@ -28,6 +28,8 @@
 #include "mtable.h" //to init tables
 #include "stacktrace.h"
 
+#include "defines.h"
+
 //=================================================
 
 //defalut size of sector for SD MMC protocol
@@ -473,7 +475,9 @@ int module_start(SceSize argc, const void *args)
 
   //print_thread_info();
 
-  //init_net(); // DISABLE NET FOR NOW
+  #ifdef ENABLE_NETWORK
+  init_net();
+  #endif
   
   //dump_device_context_mem_blocks_1000();
   
@@ -502,7 +506,9 @@ void _start() __attribute__ ((weak, alias ("module_start")));
  
 int module_stop(SceSize argc, const void *args) 
 {
-  //deinit_net(); // DISABLE NET FOR NOW
+  #ifdef ENABLE_NETWORK
+  deinit_net();
+  #endif
 
   deinitialize_all_hooks();
   

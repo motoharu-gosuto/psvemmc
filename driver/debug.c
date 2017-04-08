@@ -167,14 +167,16 @@ int initialize_all_hooks()
     #endif
   }
   
-  tai_module_info_t sysroot_info;
-  sysroot_info.size = sizeof(tai_module_info_t);
-  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceSysmem", &sysroot_info) >= 0)
+  tai_module_info_t sysmem_info;
+  sysmem_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceSysmem", &sysmem_info) >= 0)
   {
     //sysroot_zero_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sysroot_zero_hook_ref, "SceSysmem", SceSysrootForDriver_NID, 0xf804f761, sysroot_zero_hook);
     
     //by some reason only import hook worked
     sysroot_zero_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &sysroot_zero_hook_ref, "SceSdstor", SceSysrootForDriver_NID, 0xf804f761, sysroot_zero_hook);
+
+    //debug_printf_callback_invoke_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &debug_printf_callback_invoke_ref, sysmem_info.modid, 0, 0x19FA8, 1, debug_printf_callback_invoke_hook);
   }
 
   tai_module_info_t iofilemgr_info;
@@ -194,7 +196,9 @@ int initialize_all_hooks()
     //sceIoOpenForDriver_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceIoOpenForDriver_hook_ref, "SceIofilemgr", SceIofilemgrForDriver_NID, 0x75192972, sceIoOpenForDriver_hook);
 
     //user hook
+    #ifdef ENABLE_IO_FILE_OPEN_LOG
     sceIoOpenForDriver_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceIoOpenForDriver_hook_ref, "SceIofilemgr", SceIofilemgr_NID, 0xCC67B6FD, sceIoOpenForDriver_hook);
+    #endif
   }
  
   tai_module_info_t err_info;
@@ -627,6 +631,16 @@ int initialize_all_hooks()
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
 
+  if(debug_printf_callback_invoke_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set debug_printf_callback_invoke_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set debug_printf_callback_invoke_hook: %x\n", debug_printf_callback_invoke_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
   close_global_log();
   
   return 0;
@@ -762,6 +776,9 @@ int deinitialize_all_hooks()
 
   if(vshSblAuthMgrVerifySpsfo_hook_id >= 0)
     taiHookReleaseForKernel(vshSblAuthMgrVerifySpsfo_hook_id, vshSblAuthMgrVerifySpsfo_hook_ref);
+
+  if(debug_printf_callback_invoke_id >= 0)
+    taiHookReleaseForKernel(debug_printf_callback_invoke_id, debug_printf_callback_invoke_ref);
     
   return 0;
 }
