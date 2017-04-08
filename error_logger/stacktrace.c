@@ -50,13 +50,13 @@ int print_current_thread_info_global()
   return 0;
 }
 
-int stacktrace_global(volatile int* stackPtr, char* moduleNameSearch, int segIndexSearch, int stackSize, int verbose, uint32_t* addresses, uint32_t* addressNum)
+int stacktrace_global(volatile int* stackPtr, char* moduleNameSearch, int segIndexSearch, int stackSize, int verbose, int print, uint32_t* addresses, uint32_t* addressNum)
 {
   *addressNum = 0;
 
   //for(int i = 0; stackPtr < (volatile int*)t_info.stack; i++)
   
-  int traceSize = stackSize + sizeof(SceKernelThreadInfo) / 4;
+  int traceSize = stackSize;
   
   for(int i = 0; i < traceSize; i++)
   {
@@ -64,19 +64,22 @@ int stacktrace_global(volatile int* stackPtr, char* moduleNameSearch, int segInd
     int segidx = find_in_segments(curValue);
     if(segidx >= 0)
     {
-      *addresses = curValue;
-      addresses++;
-      
-      (*addressNum)++;
-      
       if(verbose == 1)
       {
-        open_global_log();
-        {
-          sceClibSnprintf(sprintfBuffer, 256, "(global) %08x: %08x %s %d %08x %08x\n", (unsigned int)stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
-          FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
-        }
-        close_global_log();
+        *addresses = curValue;
+        addresses++;
+        
+        (*addressNum)++;
+
+	if(print == 1)
+	{
+	  open_global_log();
+	  {
+	    sceClibSnprintf(sprintfBuffer, 256, "(global) %08x: %08x %s %d %08x %08x\n", (unsigned int)stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
+	    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+	  }
+	  close_global_log();
+	}
       }
       else
       {
@@ -84,12 +87,20 @@ int stacktrace_global(volatile int* stackPtr, char* moduleNameSearch, int segInd
         {
           if(sceClibStrcmp(moduleNameSearch, g_segList[segidx].moduleName) == 0)
           {
-            open_global_log();
-            {
-              sceClibSnprintf(sprintfBuffer, 256, "(global) %08x: %08x %s %d %08x %08x\n", (unsigned int)stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
-              FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
-            }
-            close_global_log();
+            *addresses = curValue;
+            addresses++;
+            
+            (*addressNum)++;
+
+	    if(print == 1)
+	    {
+	      open_global_log();
+	      {
+		sceClibSnprintf(sprintfBuffer, 256, "(global) %08x: %08x %s %d %08x %08x\n", (unsigned int)stackPtr, curValue, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (curValue - g_segList[segidx].range.start));
+		FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+	      }
+	      close_global_log();
+	    }
           }
         }
       }    
@@ -101,7 +112,7 @@ int stacktrace_global(volatile int* stackPtr, char* moduleNameSearch, int segInd
   return 0;
 }
 
-int stacktrace_from_here_global(char* moduleNameSearch, int segIndexSearch, int stackSize, int verbose, uint32_t* addresses, uint32_t* addressNum)
+int stacktrace_from_here_global(char* moduleNameSearch, int segIndexSearch, int stackSize, int verbose, int print, uint32_t* addresses, uint32_t* addressNum)
 {
   //must be specified volatile or optimizer will do what it likes
 
@@ -125,7 +136,7 @@ int stacktrace_from_here_global(char* moduleNameSearch, int segIndexSearch, int 
 
   volatile int* stackPtr = &mark0;
 
-  stacktrace_global(stackPtr, moduleNameSearch, segIndexSearch, stackSize, verbose, addresses, addressNum);
+  stacktrace_global(stackPtr, moduleNameSearch, segIndexSearch, stackSize, verbose, print, addresses, addressNum);
 
   return 0;
 }
