@@ -21,6 +21,9 @@ char sprintfBuffer[256];
 #define SceErrorUser_NID 0xD401318D
 #define SceLibKernel_NID 0xCAE9ACE6
 #define ScePafStdc_NID 0xA7D28DAE
+#define ScePafGraphics_NID 0xA070D6A7
+#define ScePafMisc_NID 0x3D643CE8
+#define SceAppMgrUser_NID 0xA6605D6F
 
 tai_hook_ref_t sceErrorGetExternalString_hook_ref;
 SceUID sceErrorGetExternalString_hook_id = -1;
@@ -76,6 +79,42 @@ SceUID queue_worker_entry2_834DED94_hook_id = -1;
 tai_hook_ref_t scePafAllocateMem_hook_ref;
 SceUID scePafAllocateMem_hook_id = -1;
 
+tai_hook_ref_t proc_83F20D36_hook_ref;
+SceUID proc_83F20D36_hook_id = -1;
+
+tai_hook_ref_t scePafGraphics_b976a154_hook_ref;
+SceUID scePafGraphics_b976a154_hook_id = -1;
+
+tai_hook_ref_t scePafGraphics_b2eca849_hook_ref;
+SceUID scePafGraphics_b2eca849_hook_id = -1;
+
+tai_hook_ref_t scePafGraphics_7c8b2a63_hook_ref;
+SceUID scePafGraphics_7c8b2a63_hook_id = -1;
+
+tai_hook_ref_t scePafGraphics_a97584eb_hook_ref;
+SceUID scePafGraphics_a97584eb_hook_id = -1;
+
+tai_hook_ref_t scePafGraphics_c84832a2_hook_ref;
+SceUID scePafGraphics_c84832a2_hook_id = -1;
+
+tai_hook_ref_t scePafGraphics_b228a257_hook_ref;
+SceUID scePafGraphics_b228a257_hook_id = -1;
+
+tai_hook_ref_t scePafMisc_b9fb9bd6_hook_ref;
+SceUID scePafMisc_b9fb9bd6_hook_id = -1;
+
+tai_hook_ref_t proc_83F23D5C_hook_ref;
+SceUID proc_83F23D5C_hook_id = -1;
+
+tai_hook_ref_t proc_83F275CC_hook_ref;
+SceUID proc_83F275CC_hook_id = -1;
+
+tai_hook_ref_t proc_83F10C5A_hook_ref;
+SceUID proc_83F10C5A_hook_id = -1;
+
+tai_hook_ref_t sceAppMgrGameDataMount_hook_ref;
+SceUID sceAppMgrGameDataMount_hook_id = -1;
+
 void* g_dest_user;
 int g_unk;
 int g_sceErrorGetExternalString_hook_called = 0;
@@ -86,6 +125,21 @@ uint32_t g_adress_num;
 uint32_t g_stack_dump[256];
 
 uint32_t* g_stackPtr;
+
+int print_bytes(char* bytes, int size)
+{ 
+  open_global_log();
+  for(int i = 0; i < size; i++)
+  {
+    char buffer[4];
+    sceClibSnprintf(buffer, 4, "%02x ", bytes[i]);
+    FILE_WRITE_LEN(global_log_fd, buffer);
+  }
+  FILE_WRITE_LEN(global_log_fd, "\n");
+  close_global_log();
+
+  return 0;
+}
 
 //Warning
 //Hooks should not use logging directly in the hook - this is recomendation
@@ -284,6 +338,30 @@ int proc_gc_param_sfo_83F74B30_hook(int unk) // not called
 
 //---------
 
+typedef struct ctx14_t
+{
+  void* unk_0;
+  uint32_t unk_4;
+  uint32_t unk_8;
+  uint32_t unk_C;
+
+  void* unk_10;
+  void* unk_14;
+  uint32_t unk_18;
+  uint32_t unk_1C;
+
+  uint32_t unk_20;
+  uint32_t unk_24;
+  uint32_t unk_28;
+  uint32_t unk_2C;
+
+  float unk_30;
+  float unk_34;
+  uint32_t unk_38;
+  uint32_t unk_3C;
+
+}ctx14_t;
+
 typedef struct input_83F23578
 {
   uint32_t unk_0;
@@ -291,7 +369,7 @@ typedef struct input_83F23578
   uint32_t unk_8;
   uint32_t unk_C;
   uint32_t unk_10;
-  uint32_t unk_14;
+  struct ctx14_t* unk_14;
 } input_83F23578;
 
 int proc_83F2407A_hook_called = 0;
@@ -326,7 +404,7 @@ int proc_83F25592_hook_called = 0;
 int g_proc_83F25592_hook_arg0 = 0;
 int g_proc_83F25592_hook_arg1 = 0;
 int g_proc_83F25592_hook_res = 0;
-int g_proc_83F25592_hook_ctx_14 = 0;
+ctx14_t* g_proc_83F25592_hook_ctx_14 = 0;
 
 int proc_83F25592_hook(input_83F23578 *ctx, int unk1) //works
 {
@@ -358,11 +436,51 @@ int g_proc_83F24534_hook_arg2 = 0;
 int g_proc_83F24534_hook_arg3 = 0;
 int g_proc_83F24534_hook_arg4 = 0;
 int g_proc_83F24534_hook_res = 0;
-int g_proc_83F24534_hook_ctx_14 = 0;
+ctx14_t* g_proc_83F24534_hook_ctx_14 = 0;
+
+ctx14_t ctx14_dummy;
+
+char ctx14_dump[0x200] = {0};
+
+char ctx14_dump_unk_0[0x600] = {0};
+char ctx14_dump_unk_10[0xA0] = {0};
+char ctx14_dump_unk_14[0x400] = {0};
 
 int proc_83F24534_hook(input_83F23578 *ctx, int unk1, int unk2, int unk3, int unk4)
 {
+  /*
+  sceClibMemcpy(ctx14_dump, (void*)ctx->unk_14, 0x200);
+
+  sceClibMemcpy(ctx14_dump_unk_0,  (void*)ctx->unk_14->unk_0,  0x600);
+  sceClibMemcpy(ctx14_dump_unk_10, (void*)ctx->unk_14->unk_10, 0xA0);
+  sceClibMemcpy(ctx14_dump_unk_14, (void*)ctx->unk_14->unk_14, 0x400);
+  */
+
   g_proc_83F24534_hook_ctx_14 = ctx->unk_14;
+
+  /*
+  ctx->unk_14 = &ctx14_dummy;
+
+  ctx14_dummy.unk_0 = 0xe04e88a0; // ? - looks like callback table with addresses pointing to ScePaf. looks like bigger than 0x200 bytes
+  ctx14_dummy.unk_4 = 0x00000016;
+  ctx14_dummy.unk_8 = 0x00000001;
+  ctx14_dummy.unk_C = 0x00000003;
+
+  ctx14_dummy.unk_10 = 0x8196fe00; // - looks like it is about 0xA0 bytes
+  ctx14_dummy.unk_14 = 0xe0170aa8; // - looks like it is more than 0x200
+  ctx14_dummy.unk_18 = 0x00000003;
+  ctx14_dummy.unk_1C = 0x00800080;
+
+  ctx14_dummy.unk_20 = 0x00000001;
+  ctx14_dummy.unk_24 = 0x00000000;
+  ctx14_dummy.unk_28 = 0x00000002;
+  ctx14_dummy.unk_2C = 0x00800080;
+
+  ctx14_dummy.unk_30 = 1.0f; // 0x3f800000;
+  ctx14_dummy.unk_34 = 1.0f; // 0x3f800000;
+  ctx14_dummy.unk_38 = 0x00004000;
+  ctx14_dummy.unk_3C = 0x00000080;
+  */
   
   int res = TAI_CONTINUE(int, proc_83F24534_hook_ref, ctx, unk1, unk2, unk3, unk4);
 
@@ -393,7 +511,7 @@ int g_proc_83F24D96_hook_arg2 = 0;
 int g_proc_83F24D96_hook_arg3 = 0;
 int g_proc_83F24D96_hook_arg4 = 0;
 int g_proc_83F24D96_hook_res = 0;
-int g_proc_83F24D96_hook_ctx_14 = 0;
+ctx14_t* g_proc_83F24D96_hook_ctx_14 = 0;
 
 int proc_83F24D96_hook(input_83F23578 *ctx, int unk1, int unk2, int unk3, int unk4)
 {
@@ -428,7 +546,7 @@ int g_proc_83F258F8_hook_arg0 = 0;
 int g_proc_83F258F8_hook_arg1 = 0;
 int g_proc_83F258F8_hook_arg2 = 0;
 int g_proc_83F258F8_hook_res = 0;
-int g_proc_83F258F8_hook_ctx_14 = 0;
+ctx14_t* g_proc_83F258F8_hook_ctx_14 = 0;
 
 //volatile int g_proc_83F258F8_stack[10];
 
@@ -550,10 +668,12 @@ struct sema_atomic_ctx
 int proc_8430F028_hook_called = 0;
 queue_worker_ctx* g_proc_8430F028_hook_ctx = 0;
 input_83F23578* g_proc_8430F028_hook_arg = 0;
-uint32_t g_proc_8430F028_hook_ctx_14 = 0;
+ctx14_t* g_proc_8430F028_hook_ctx_14 = 0;
 int g_proc_8430F028_hook_res = 0;
 
-//volatile int g_proc_8430F028_hook_stack[4];
+#define STACKTRACE_8430F028_SIZE 15 //max size of stack trace
+
+volatile int g_proc_8430F028_hook_stack[STACKTRACE_8430F028_SIZE];
 
 int proc_8430F028_hook(queue_worker_ctx *ctx)
 {
@@ -563,7 +683,7 @@ int proc_8430F028_hook(queue_worker_ctx *ctx)
 
   int res = TAI_CONTINUE(int, proc_8430F028_hook_ref, ctx);
 
-  //sceClibMemcpy((int*)g_proc_8430F028_hook_stack, &res, 4 * sizeof(int));
+  sceClibMemcpy((int*)g_proc_8430F028_hook_stack, &res, STACKTRACE_8430F028_SIZE * sizeof(int));
 
   g_proc_8430F028_hook_res = res;
 
@@ -574,10 +694,37 @@ int proc_8430F028_hook(queue_worker_ctx *ctx)
 
 //---------------
 
+int proc_83F20D36_hook_called = 0;
+queue_worker_ctx* g_proc_83F20D36_hook_ctx = 0;
+int g_proc_83F20D36_hook_arg1 = 0;
+int g_proc_83F20D36_hook_arg2 = 0;
+int g_proc_83F20D36_hook_res = 0;
+
+input_83F23578* g_proc_83F20D36_hook_arg = 0;
+ctx14_t* g_proc_83F20D36_hook_ctx_14 = 0;
+
+int proc_83F20D36_hook(queue_worker_ctx * ctx, int unk1, int unk2)
+{
+  int res = TAI_CONTINUE(int, proc_83F20D36_hook_ref, ctx, unk1, unk2);
+
+  proc_83F20D36_hook_called = 1;
+  g_proc_83F20D36_hook_ctx = ctx;
+  g_proc_83F20D36_hook_arg1 = unk1;
+  g_proc_83F20D36_hook_arg2 = unk2;
+  g_proc_83F20D36_hook_res = res;
+
+  g_proc_83F20D36_hook_arg = ctx->queue_callback_arg;
+  g_proc_83F20D36_hook_ctx_14 = ctx->queue_callback_arg->unk_14;  
+
+  return res;
+}
+
+//---------------
+
 int queue_worker_entry2_834DED94_hook_called = 0;
 queue_worker_ctx* g_queue_worker_entry2_834DED94_hook_ctx = 0;
 input_83F23578* g_queue_worker_entry2_834DED94_hook_arg = 0;
-uint32_t g_queue_worker_entry2_834DED94_hook_ctx_14 = 0;
+ctx14_t* g_queue_worker_entry2_834DED94_hook_ctx_14 = 0;
 int g_queue_worker_entry2_834DED94_hook_res = 0;
 
 int queue_worker_entry2_834DED94_hook(queue_worker_ctx *ctx)
@@ -600,7 +747,23 @@ int scePafAllocateMem_hook_called = 0;
 int g_scePafAllocateMem_hook_size = 0;
 void* g_scePafAllocateMem_hook_res = 0;
 
+#define ALLOC_DATA_BUFFER_SIZE 0x4000
+
+typedef struct alloc_data
+{
+  void* ptr;
+  void* caller;
+} alloc_data;
+
+#define ALLOC_STACKTRACE_SIZE 20
+
 int g_scePafAllocateMem_allocCtr = 0;
+int g_scePafAllocateMem_allocTotal = 0;
+uint32_t g_scePafAllocateMem_addresses[ALLOC_STACKTRACE_SIZE];
+uint32_t g_scePafAllocateMem_addressNum = 0;
+
+//cyclic buffer
+alloc_data g_scePafAllocateMem_allocData[ALLOC_DATA_BUFFER_SIZE]; //there is around 0xd44 allocations before proc_8430F028_hook is called after game cart is inserted
 
 void* scePafAllocateMem_hook(int size)
 {
@@ -610,7 +773,209 @@ void* scePafAllocateMem_hook(int size)
   //g_scePafAllocateMem_hook_res = res;
   //scePafAllocateMem_hook_called = 1;
 
+  sceClibMemset(g_scePafAllocateMem_addresses, 0, sizeof(uint32_t) * ALLOC_STACKTRACE_SIZE);  
+  
+  stacktrace_global((int*)&res, "", 0, ALLOC_STACKTRACE_SIZE, 1, 0, g_scePafAllocateMem_addresses, &g_scePafAllocateMem_addressNum);
+
+  g_scePafAllocateMem_allocData[g_scePafAllocateMem_allocCtr].ptr = res;
+  g_scePafAllocateMem_allocData[g_scePafAllocateMem_allocCtr].caller = (void*)g_scePafAllocateMem_addresses[0]; //take first address
+
   g_scePafAllocateMem_allocCtr++;
+
+  if(g_scePafAllocateMem_allocCtr == ALLOC_DATA_BUFFER_SIZE)
+    g_scePafAllocateMem_allocCtr = 0;
+
+  g_scePafAllocateMem_allocTotal++;
+
+  return res;
+}
+
+int find_allocation_data(void* value)
+{
+  for(int i = 0; i < ALLOC_DATA_BUFFER_SIZE; i++)
+  {
+    if(g_scePafAllocateMem_allocData[i].ptr == value)
+      return i;
+  }
+  return -1;
+}
+
+//---------------
+
+//potential ctx14 initializers
+
+#define STACKTRACE_b976a154_SIZE 0x100 //max size of stack trace
+
+volatile int g_scePafGraphics_b976a154_hook_stack[STACKTRACE_b976a154_SIZE];
+
+int scePafGraphics_b976a154_hook_called = 0;
+void* scePafGraphics_b976a154_hook_ctx14 = 0;
+
+void* scePafGraphics_b976a154_hook(void *ctx14, int unk1, int unk2, int unk3, int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14, int arg_18)
+{
+   void* res = TAI_CONTINUE(void*, scePafGraphics_b976a154_hook_ref, ctx14, unk1, unk2, unk3, arg_0, arg_4, arg_8, arg_C, arg_10, arg_14, arg_18);
+
+   //sceClibMemcpy((int*)g_scePafGraphics_b976a154_hook_stack, &res, STACKTRACE_b976a154_SIZE * sizeof(int));
+
+   scePafGraphics_b976a154_hook_ctx14 = ctx14;
+   scePafGraphics_b976a154_hook_called = 1;
+
+   return res;
+}
+
+int scePafGraphics_b2eca849_hook_called = 0;
+void* scePafGraphics_b2eca849_hook_ctx14 = 0;
+
+void* scePafGraphics_b2eca849_hook(void *ctx14, int unk1, int unk2, int unk3, int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14)
+{
+   void* res = TAI_CONTINUE(void*, scePafGraphics_b2eca849_hook_ref, ctx14, unk1, unk2, unk3, arg_0, arg_4, arg_8, arg_C, arg_10, arg_14);
+
+   scePafGraphics_b2eca849_hook_ctx14 = ctx14;
+   scePafGraphics_b2eca849_hook_called = 1;
+
+   return res;
+}
+
+int scePafGraphics_7c8b2a63_hook_called = 0;
+void* scePafGraphics_7c8b2a63_hook_ctx14 = 0;
+
+void* scePafGraphics_7c8b2a63_hook(void *ctx14, int unk1, int unk2, int unk3, int arg_0, int arg_4, int arg_8, int arg_C, int arg_10)
+{
+   void* res = TAI_CONTINUE(void*, scePafGraphics_7c8b2a63_hook_ref, ctx14, unk1, unk2, unk3, arg_0, arg_4, arg_8, arg_C, arg_10);
+
+   scePafGraphics_7c8b2a63_hook_ctx14 = ctx14;
+   scePafGraphics_7c8b2a63_hook_called = 1;
+
+   return res;
+}
+
+#define STACKTRACE_a97584eb_SIZE 0x10 //max size of stack trace
+
+volatile int g_scePafGraphics_a97584eb_hook_stack[STACKTRACE_a97584eb_SIZE];
+
+int scePafGraphics_a97584eb_hook_called = 0;
+
+int scePafGraphics_a97584eb_hook(int unk0, int unk1, int unk2, int unk3)
+{
+   int res = TAI_CONTINUE(int, scePafGraphics_a97584eb_hook_ref, unk0, unk1, unk2, unk3);
+
+   //sceClibMemcpy((int*)g_scePafGraphics_a97584eb_hook_stack, &res, STACKTRACE_a97584eb_SIZE * sizeof(int));
+   
+   scePafGraphics_a97584eb_hook_called = 1;
+
+   return res;
+}
+
+#define STACKTRACE_c84832a2_SIZE 0x10 //max size of stack trace
+
+volatile int g_scePafGraphics_c84832a2_hook_stack[STACKTRACE_c84832a2_SIZE];
+
+int scePafGraphics_c84832a2_hook_called = 0;
+
+int scePafGraphics_c84832a2_hook(int unk0, int unk1, int unk2, int unk3, int arg_0)
+{
+  int res = TAI_CONTINUE(int, scePafGraphics_c84832a2_hook_ref, unk0, unk1, unk2, unk3, arg_0);
+
+  sceClibMemcpy((int*)g_scePafGraphics_c84832a2_hook_stack, &res, STACKTRACE_c84832a2_SIZE * sizeof(int));
+
+  scePafGraphics_c84832a2_hook_called = 1;
+
+  return res;
+}
+
+#define STACKTRACE_b228a257_SIZE 0x10 //max size of stack trace
+
+volatile int g_scePafGraphics_b228a257_hook_stack[STACKTRACE_b228a257_SIZE];
+
+int scePafGraphics_b228a257_hook_called = 0;
+
+int scePafGraphics_b228a257_hook(int unk0, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, scePafGraphics_b228a257_hook_ref, unk0, unk1, unk2, unk3);
+
+  //sceClibMemcpy((int*)g_scePafGraphics_b228a257_hook_stack, &res, STACKTRACE_b228a257_SIZE * sizeof(int));
+
+  scePafGraphics_b228a257_hook_called = 1;
+
+  return res;
+}
+
+//---------------
+
+#define STACKTRACE_proc_83F23D5C_SIZE 0x10 //max size of stack trace
+
+volatile int g_proc_83F23D5C_hook_stack[STACKTRACE_proc_83F23D5C_SIZE];
+
+int proc_83F23D5C_hook_called = 0;
+
+int proc_83F23D5C_hook(int unk0, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, proc_83F23D5C_hook_ref, unk0, unk1, unk2, unk3);
+
+  sceClibMemcpy((int*)g_proc_83F23D5C_hook_stack, &res, STACKTRACE_proc_83F23D5C_SIZE * sizeof(int));
+
+  proc_83F23D5C_hook_called = 1;
+
+  return res;
+}
+
+int proc_83F275CC_hook_called = 0;
+int g_proc_83F275CC_hook_res = 0;
+
+int proc_83F275CC_hook(int unk0, int unk1, int unk2, int unk3, int arg_0)
+{
+  int res = TAI_CONTINUE(int, proc_83F275CC_hook_ref, unk0, unk1, unk2, unk3, arg_0);
+
+  g_proc_83F275CC_hook_res = res;
+  proc_83F275CC_hook_called = 1;
+
+  return res;
+}
+
+int proc_83F10C5A_hook_called = 0;
+int g_proc_83F10C5A_hook_res = 0;
+
+int proc_83F10C5A_hook(int unk0, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, proc_83F10C5A_hook_ref, unk0, unk1, unk2, unk3);
+
+  g_proc_83F10C5A_hook_res = res;
+  proc_83F10C5A_hook_called = 1;
+
+  return res;
+}
+
+//---------------
+
+//checker
+
+int scePafMisc_b9fb9bd6_hook_called = 0;
+
+int g_scePafMisc_b9fb9bd6_hook_result = 0;
+int g_scePafMisc_b9fb9bd6_hook_res = 0;
+
+int scePafMisc_b9fb9bd6_hook(int unk0, int unk1, int unk2, int unk3, int *result)
+{
+  int res = TAI_CONTINUE(int, scePafMisc_b9fb9bd6_hook_ref, unk0, unk1, unk2, unk3, result);
+
+  g_scePafMisc_b9fb9bd6_hook_result = *result;
+  g_scePafMisc_b9fb9bd6_hook_res = res;
+  scePafMisc_b9fb9bd6_hook_called = 1;
+
+  return res;
+}
+
+//---------------
+
+int sceAppMgrGameDataMount_hook_called = 0;
+int g_sceAppMgrGameDataMount_hook_res = 0;
+
+int sceAppMgrGameDataMount_hook(int unk0, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, sceAppMgrGameDataMount_hook_ref, unk0, unk1, unk2, unk3);
+
+  g_sceAppMgrGameDataMount_hook_res = res;
+  sceAppMgrGameDataMount_hook_called = 1;
 
   return res;
 }
@@ -772,7 +1137,7 @@ int ListenerThread(SceSize args, void *argp)
 
       uint32_t addresses[10];
       uint32_t addressNum = 0;
-      stacktrace_global(g_proc_83F258F8_stack, "", 0, 10, 1, addresses, &addressNum);
+      stacktrace_global(g_proc_83F258F8_stack, "", 0, 10, 1, 1, addresses, &addressNum);
       */
 
       proc_83F258F8_hook_called = 0;
@@ -825,6 +1190,51 @@ int ListenerThread(SceSize args, void *argp)
       }
       close_global_log();
 
+      //print_bytes(ctx14_dump, 0x40); //0x40 of 0x200
+
+      //print_bytes(ctx14_dump_unk_0, 0x600);
+      //print_bytes(ctx14_dump_unk_10, 0xA0);
+      //print_bytes(ctx14_dump_unk_14, 0x400);
+
+      /*
+      uintptr_t* paf_adr_ptr = (uintptr_t*)ctx14_dump_unk_0;
+      for(int i = 0; i < (0x600 / sizeof(uintptr_t)); i++, paf_adr_ptr++)
+      {
+        uintptr_t paf_adr = *paf_adr_ptr;
+        if(paf_adr > 0)
+        {
+          int segidx = find_in_segments((uintptr_t)paf_adr);
+          if(segidx >= 0)
+          {
+            open_global_log();
+            {
+              sceClibSnprintf(sprintfBuffer, 256, "item %d is at: %s %d %08x %08x\n", i, g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (paf_adr - g_segList[segidx].range.start));
+              FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+            }
+            close_global_log();
+          }
+          else
+          {
+            open_global_log();
+            {
+              sceClibSnprintf(sprintfBuffer, 256, "item %d is NOT FOUND\n", i);
+              FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+            }
+            close_global_log();
+          }
+        }
+        else
+        {
+          open_global_log();
+          {
+            sceClibSnprintf(sprintfBuffer, 256, "item %d is zero\n", i);
+            FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+          }
+          close_global_log();
+        }
+      }
+      */
+
       proc_83F24534_hook_called = 0;
     }
 
@@ -856,17 +1266,42 @@ int ListenerThread(SceSize args, void *argp)
       FILE_WRITE(global_log_fd, "stacktrace:\n");
       close_global_log(); 
 
-      uint32_t addresses[4];
+      uint32_t addresses[STACKTRACE_8430F028_SIZE];
       uint32_t addressNum = 0;
-      stacktrace_global(g_proc_8430F028_hook_stack, "", 0, 4, 1, addresses, &addressNum);
+      stacktrace_global(g_proc_8430F028_hook_stack, "", 0, STACKTRACE_8430F028_SIZE, 1, 1, addresses, &addressNum);
       */
 
-      open_global_log();
+      /*
+      int found_ctx_14 = find_allocation_data((void*)g_proc_8430F028_hook_ctx_14);
+
+      //if(found_ctx_14 != -1) //somehow if does not work
+      //{
+        void* caller = g_scePafAllocateMem_allocData[found_ctx_14].caller;
+
+        open_global_log();
+        {
+          sceClibSnprintf(sprintfBuffer, 256, "alloc ctr: %08x alloc total: %08x found ctx14: %d caller: %08x\n", g_scePafAllocateMem_allocCtr, g_scePafAllocateMem_allocTotal, found_ctx_14, caller);
+          FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        }
+        close_global_log();
+      //}
+      */
+
+      /*
+      if(caller > 0)
       {
-        sceClibSnprintf(sprintfBuffer, 256, "alloc ctr: %08x\n", g_scePafAllocateMem_allocCtr);
-        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+        int segidx = find_in_segments((uintptr_t)caller);
+        if(segidx >= 0)
+        {
+          open_global_log();
+          {
+            sceClibSnprintf(sprintfBuffer, 256, "caller is at: %s %d %08x %08x\n", g_segList[segidx].moduleName, g_segList[segidx].seg, g_segList[segidx].range.start, (caller - g_segList[segidx].range.start));
+            FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+          }
+          close_global_log();
+        }
       }
-      close_global_log();
+      */
 
       proc_8430F028_hook_called = 0;
     }
@@ -931,6 +1366,205 @@ int ListenerThread(SceSize args, void *argp)
 
       scePafAllocateMem_hook_called = 0;
     }
+
+    if(proc_83F20D36_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called proc_83F20D36_hook:\nctx: %08x arg: %08x ctx14: %08x\n", 
+          g_proc_83F20D36_hook_ctx, g_proc_83F20D36_hook_arg, g_proc_83F20D36_hook_ctx_14);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+
+        sceClibSnprintf(sprintfBuffer, 256, "arg1: %08x arg2: %08x res: %08x\n", 
+          g_proc_83F20D36_hook_arg1, g_proc_83F20D36_hook_arg2, g_proc_83F20D36_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      proc_83F20D36_hook_called = 0;
+    }
+
+    if(scePafGraphics_b976a154_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called scePafGraphics_b976a154_hook:\nctx14: %08x\n", scePafGraphics_b976a154_hook_ctx14);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      /*
+      open_global_log();
+      FILE_WRITE(global_log_fd, "stacktrace:\n");
+      close_global_log(); 
+
+      uint32_t addresses[STACKTRACE_b976a154_SIZE];
+      uint32_t addressNum = 0;
+      stacktrace_global(g_scePafGraphics_b976a154_hook_stack, "", 0, STACKTRACE_b976a154_SIZE, 1, 1, addresses, &addressNum);
+      */
+
+      scePafGraphics_b976a154_hook_called = 0;
+    }
+
+    if(scePafGraphics_b2eca849_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called scePafGraphics_b2eca849_hook:\nctx14: %08x\n", scePafGraphics_b2eca849_hook_ctx14);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      scePafGraphics_b2eca849_hook_called = 0;
+    }
+
+    if(scePafGraphics_7c8b2a63_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called scePafGraphics_7c8b2a63_hook:\nctx14: %08x\n", scePafGraphics_7c8b2a63_hook_ctx14);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      scePafGraphics_7c8b2a63_hook_called = 0;
+    }
+
+    if(scePafGraphics_a97584eb_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called scePafGraphics_a97584eb_hook:\n");
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      /*
+      open_global_log();
+      FILE_WRITE(global_log_fd, "stacktrace:\n");
+      close_global_log(); 
+
+      uint32_t addresses[STACKTRACE_a97584eb_SIZE];
+      uint32_t addressNum = 0;
+      stacktrace_global(g_scePafGraphics_a97584eb_hook_stack, "", 0, STACKTRACE_a97584eb_SIZE, 1, 1, addresses, &addressNum);
+      */
+
+      scePafGraphics_a97584eb_hook_called = 0;
+    }
+
+    if(scePafGraphics_c84832a2_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called scePafGraphics_c84832a2_hook:\n");
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      /*
+      open_global_log();
+      FILE_WRITE(global_log_fd, "stacktrace:\n");
+      close_global_log(); 
+
+      uint32_t addresses[STACKTRACE_c84832a2_SIZE];
+      uint32_t addressNum = 0;
+      stacktrace_global(g_scePafGraphics_c84832a2_hook_stack, "", 0, STACKTRACE_c84832a2_SIZE, 1, 1, addresses, &addressNum);
+      */
+ 
+      scePafGraphics_c84832a2_hook_called = 0;
+    }
+
+    if(scePafGraphics_b228a257_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called scePafGraphics_b228a257_hook:\n");
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      /*
+      open_global_log();
+      FILE_WRITE(global_log_fd, "stacktrace:\n");
+      close_global_log(); 
+
+      uint32_t addresses[STACKTRACE_b228a257_SIZE];
+      uint32_t addressNum = 0;
+      stacktrace_global(g_scePafGraphics_b228a257_hook_stack, "", 0, STACKTRACE_b228a257_SIZE, 1, 1, addresses, &addressNum);
+      */
+
+      scePafGraphics_b228a257_hook_called = 0;
+    }
+
+    if(scePafMisc_b9fb9bd6_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called scePafMisc_b9fb9bd6_hook:\nresult: %08x res: %08x\n", g_scePafMisc_b9fb9bd6_hook_result, g_scePafMisc_b9fb9bd6_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      scePafMisc_b9fb9bd6_hook_called = 0;
+    }
+
+    if(proc_83F23D5C_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called Shell proc_83F23D5C_hook:\n");
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      /*
+      open_global_log();
+      FILE_WRITE(global_log_fd, "stacktrace:\n");
+      close_global_log(); 
+
+      uint32_t addresses[STACKTRACE_proc_83F23D5C_SIZE];
+      uint32_t addressNum = 0;
+      stacktrace_global(g_proc_83F23D5C_hook_stack, "", 0, STACKTRACE_proc_83F23D5C_SIZE, 1, 1, addresses, &addressNum);
+      */
+
+      proc_83F23D5C_hook_called = 0;
+    }
+
+    if(proc_83F275CC_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called Shell proc_83F275CC_hook:\nres: %08x\n", g_proc_83F275CC_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      proc_83F275CC_hook_called = 0;
+    }
+
+    if(proc_83F10C5A_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called Shell proc_83F10C5A_hook:\nres: %08x\n", g_proc_83F10C5A_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();
+
+      proc_83F10C5A_hook_called = 0;
+    }
+
+    if(sceAppMgrGameDataMount_hook_called == 1)
+    {
+      open_global_log();
+      {
+        sceClibSnprintf(sprintfBuffer, 256, "called AppMgr sceAppMgrGameDataMount_hook:\nres: %08x\n", g_sceAppMgrGameDataMount_hook_res);
+        FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+      }
+      close_global_log();      
+
+      sceAppMgrGameDataMount_hook_called = 0;
+    }
   }
 
   open_global_log();
@@ -967,12 +1601,26 @@ int initialize_all_hooks()
 
     //proc_83F2407A_hook_id = taiHookFunctionOffset(&proc_83F2407A_hook_ref, sceshell_info.modid, 0, 0x2383A, 1, proc_83F2407A_hook);
     //proc_83F25592_hook_id = taiHookFunctionOffset(&proc_83F25592_hook_ref, sceshell_info.modid, 0, 0x24D52, 1, proc_83F25592_hook);
-    //proc_83F24534_hook_id = taiHookFunctionOffset(&proc_83F24534_hook_ref, sceshell_info.modid, 0, 0x23CF4, 1, proc_83F24534_hook);
+    proc_83F24534_hook_id = taiHookFunctionOffset(&proc_83F24534_hook_ref, sceshell_info.modid, 0, 0x23CF4, 1, proc_83F24534_hook);
     //proc_83F24D96_hook_id = taiHookFunctionOffset(&proc_83F24D96_hook_ref, sceshell_info.modid, 0, 0x24556, 1, proc_83F24D96_hook);
 
-    proc_8430F028_hook_id = taiHookFunctionOffset(&proc_8430F028_hook_ref, sceshell_info.modid, 0, 0x40E7E8, 1, proc_8430F028_hook);
+    //proc_8430F028_hook_id = taiHookFunctionOffset(&proc_8430F028_hook_ref, sceshell_info.modid, 0, 0x40E7E8, 1, proc_8430F028_hook);
 
-    scePafAllocateMem_hook_id = taiHookFunctionImport(&scePafAllocateMem_hook_ref, "SceShell", ScePafStdc_NID, 0xfc5cd359, scePafAllocateMem_hook);
+    //disabled for now
+    //scePafAllocateMem_hook_id = taiHookFunctionImport(&scePafAllocateMem_hook_ref, "SceShell", ScePafStdc_NID, 0xfc5cd359, scePafAllocateMem_hook);
+
+    //disabled for now
+    //proc_83F20D36_hook_id = taiHookFunctionOffset(&proc_83F20D36_hook_ref, sceshell_info.modid, 0, 0x204F6, 1, proc_83F20D36_hook);
+
+    //paf ctx14 initializer call
+    //proc_83F23D5C_hook_id = taiHookFunctionOffset(&proc_83F23D5C_hook_ref, sceshell_info.modid, 0, 0x2351C, 1, proc_83F23D5C_hook);
+
+    //proc_83F275CC_hook_id = taiHookFunctionOffset(&proc_83F275CC_hook_ref, sceshell_info.modid, 0, 0x26D8C, 1, proc_83F275CC_hook);
+
+    //proc_83F10C5A_hook_id = taiHookFunctionOffset(&proc_83F10C5A_hook_ref, sceshell_info.modid, 0, 0x1041A, 1, proc_83F10C5A_hook);
+
+    //game data mount
+    sceAppMgrGameDataMount_hook_id = taiHookFunctionImport(&sceAppMgrGameDataMount_hook_ref, "SceShell", SceAppMgrUser_NID, 0x4993876c, sceAppMgrGameDataMount_hook);
   }
 
   tai_module_info_t paf_info;
@@ -981,6 +1629,21 @@ int initialize_all_hooks()
   {
     //looks like this hook causes segfaults
     //queue_worker_entry2_834DED94_hook_id = taiHookFunctionOffset(&queue_worker_entry2_834DED94_hook_ref, paf_info.modid, 0, 0x1DE364, 1, queue_worker_entry2_834DED94_hook);
+
+    //initializers     
+    scePafGraphics_b976a154_hook_id = taiHookFunctionExport(&scePafGraphics_b976a154_hook_ref, "ScePaf", ScePafGraphics_NID, 0xb976a154, scePafGraphics_b976a154_hook);
+
+    //disabled for now
+    //scePafGraphics_b2eca849_hook_id = taiHookFunctionExport(&scePafGraphics_b2eca849_hook_ref, "ScePaf", ScePafGraphics_NID, 0xb2eca849, scePafGraphics_b2eca849_hook);
+    //scePafGraphics_7c8b2a63_hook_id = taiHookFunctionExport(&scePafGraphics_7c8b2a63_hook_ref, "ScePaf", ScePafGraphics_NID, 0x7c8b2a63, scePafGraphics_7c8b2a63_hook);
+
+    //other
+    //scePafGraphics_a97584eb_hook_id = taiHookFunctionExport(&scePafGraphics_a97584eb_hook_ref, "ScePaf", ScePafGraphics_NID, 0xa97584eb, scePafGraphics_a97584eb_hook);
+    //scePafGraphics_c84832a2_hook_id = taiHookFunctionExport(&scePafGraphics_c84832a2_hook_ref, "ScePaf", ScePafGraphics_NID, 0xc84832a2, scePafGraphics_c84832a2_hook);
+    scePafGraphics_b228a257_hook_id = taiHookFunctionExport(&scePafGraphics_b228a257_hook_ref, "ScePaf", ScePafGraphics_NID, 0xb228a257, scePafGraphics_b228a257_hook);
+
+    //checker
+    //scePafMisc_b9fb9bd6_hook_id = taiHookFunctionExport(&scePafMisc_b9fb9bd6_hook_ref, "ScePaf", ScePafMisc_NID, 0xb9fb9bd6, scePafMisc_b9fb9bd6_hook);
   }
 
   tai_module_info_t driverUser_info;
@@ -1220,13 +1883,145 @@ int initialize_all_hooks()
     print_error(scePafAllocateMem_hook_id);
   }
 
+  if(proc_83F20D36_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set proc_83F20D36_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set proc_83F20D36_hook: %08x\n", proc_83F20D36_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(proc_83F20D36_hook_id);
+  }
+
+  if(scePafGraphics_b976a154_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set scePafGraphics_b976a154_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set scePafGraphics_b976a154_hook: %08x\n", scePafGraphics_b976a154_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(scePafGraphics_b976a154_hook_id);
+  }
+
+  if(scePafGraphics_b2eca849_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set scePafGraphics_b2eca849_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set scePafGraphics_b2eca849_hook: %08x\n", scePafGraphics_b2eca849_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(scePafGraphics_b2eca849_hook_id);
+  }
+
+  if(scePafGraphics_7c8b2a63_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set scePafGraphics_7c8b2a63_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set scePafGraphics_7c8b2a63_hook: %08x\n", scePafGraphics_7c8b2a63_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(scePafGraphics_7c8b2a63_hook_id);
+  }
+
+  if(scePafGraphics_a97584eb_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set scePafGraphics_a97584eb_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set scePafGraphics_a97584eb_hook: %08x\n", scePafGraphics_a97584eb_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(scePafGraphics_a97584eb_hook_id);
+  }
+
+  if(scePafGraphics_c84832a2_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set scePafGraphics_c84832a2_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set scePafGraphics_c84832a2_hook: %08x\n", scePafGraphics_c84832a2_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(scePafGraphics_c84832a2_hook_id);
+  }
+
+  if(scePafGraphics_b228a257_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set scePafGraphics_b228a257_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set scePafGraphics_b228a257_hook: %08x\n", scePafGraphics_b228a257_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(scePafGraphics_b228a257_hook_id);
+  }
+
+  if(scePafMisc_b9fb9bd6_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set scePafMisc_b9fb9bd6_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set scePafMisc_b9fb9bd6_hook: %08x\n", scePafMisc_b9fb9bd6_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(scePafMisc_b9fb9bd6_hook_id);
+  }
+
+  if(proc_83F23D5C_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set proc_83F23D5C_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set proc_83F23D5C_hook: %08x\n", proc_83F23D5C_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(proc_83F23D5C_hook_id);
+  }
+
+  if(proc_83F275CC_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set proc_83F275CC_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set proc_83F275CC_hook: %08x\n", proc_83F275CC_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(proc_83F275CC_hook_id);
+  }
+
+  if(proc_83F10C5A_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set proc_83F10C5A_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set proc_83F10C5A_hook: %08x\n", proc_83F10C5A_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(proc_83F10C5A_hook_id);
+  }
+
+  if(sceAppMgrGameDataMount_hook_id >= 0)
+  {
+    FILE_WRITE(global_log_fd, "set sceAppMgrGameDataMount_hook\n");
+  }
+  else
+  {
+    sceClibSnprintf(sprintfBuffer, 256, "failed to set sceAppMgrGameDataMount_hook: %08x\n", sceAppMgrGameDataMount_hook_id);
+    FILE_WRITE_LEN(global_log_fd, sprintfBuffer);
+    print_error(sceAppMgrGameDataMount_hook_id);
+  }
+
   close_global_log();
-  
+
   //--------------------------
   
   construct_module_range_table();
   sort_segment_table();
-  //print_segment_table();
+  print_segment_table();
   
   //--------------------------
   
@@ -1301,6 +2096,42 @@ int deinitialize_all_hooks()
 
   if(scePafAllocateMem_hook_id >= 0)
     taiHookRelease(scePafAllocateMem_hook_id, scePafAllocateMem_hook_ref);
+
+  if(proc_83F20D36_hook_id >= 0)
+    taiHookRelease(proc_83F20D36_hook_id, proc_83F20D36_hook_ref);
+
+  if(scePafGraphics_b976a154_hook_id >= 0)
+    taiHookRelease(scePafGraphics_b976a154_hook_id, scePafGraphics_b976a154_hook_ref);
+
+  if(scePafGraphics_b2eca849_hook_id >= 0)
+    taiHookRelease(scePafGraphics_b2eca849_hook_id, scePafGraphics_b2eca849_hook_ref);
+
+  if(scePafGraphics_7c8b2a63_hook_id >= 0)
+    taiHookRelease(scePafGraphics_7c8b2a63_hook_id, scePafGraphics_7c8b2a63_hook_ref);
+
+  if(scePafGraphics_a97584eb_hook_id >= 0)
+    taiHookRelease(scePafGraphics_a97584eb_hook_id, scePafGraphics_a97584eb_hook_ref);
+
+  if(scePafGraphics_c84832a2_hook_id >= 0)
+    taiHookRelease(scePafGraphics_c84832a2_hook_id, scePafGraphics_c84832a2_hook_ref);
+
+  if(scePafGraphics_b228a257_hook_id >= 0)
+    taiHookRelease(scePafGraphics_b228a257_hook_id, scePafGraphics_b228a257_hook_ref);
+
+  if(scePafMisc_b9fb9bd6_hook_id >= 0)
+    taiHookRelease(scePafMisc_b9fb9bd6_hook_id, scePafMisc_b9fb9bd6_hook_ref);
+
+  if(proc_83F23D5C_hook_id >= 0)
+    taiHookRelease(proc_83F23D5C_hook_id, proc_83F23D5C_hook_ref);
+
+  if(proc_83F275CC_hook_id >= 0)
+    taiHookRelease(proc_83F275CC_hook_id, proc_83F275CC_hook_ref);
+
+  if(proc_83F10C5A_hook_id >= 0)
+    taiHookRelease(proc_83F10C5A_hook_id, proc_83F10C5A_hook_ref);
+
+  if(sceAppMgrGameDataMount_hook_id >= 0)
+    taiHookRelease(sceAppMgrGameDataMount_hook_id, sceAppMgrGameDataMount_hook_ref);
     
   int stat = 0;
   SceUInt timeout = 0;
