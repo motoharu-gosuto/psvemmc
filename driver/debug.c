@@ -71,6 +71,7 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
 
 #define SceSblGcAuthMgrGcAuthForDriver_NID 0xC6627F5E
 #define SceSblGcAuthMgrDrmBBForDriver_NID 0x1926B182
+#define SceAppMgrForDriver_NID 0xDCE180F8
 #define SceSdifForDriver_NID 0x96D306FA
 #define SceSysrootForDriver_NID 0x2ED7F97A
 #define SceIofilemgrForDriver_NID 0x40FD29C7
@@ -89,6 +90,8 @@ int initialize_all_hooks()
   {
     //hook that contains drm checks for game data mount
     appmgr_23D642C_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &appmgr_23D642C_hook_ref, appmgr_info.modid, 0, 0x1642C, 1, appmgr_23D642C_hook);
+
+    sceAppMgrGameDataMountForDriver_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceAppMgrGameDataMountForDriver_hook_ref, "SceAppMgr", SceAppMgrForDriver_NID, 0xCE356B2D, sceAppMgrGameDataMountForDriver_hook);
   }
 
   tai_module_info_t gc_auth_info;
@@ -681,6 +684,16 @@ int initialize_all_hooks()
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
 
+  if(sceAppMgrGameDataMountForDriver_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set sceAppMgrGameDataMountForDriver_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set sceAppMgrGameDataMountForDriver_hook: %x\n", sceAppMgrGameDataMountForDriver_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
   close_global_log();
   
   return 0;
@@ -825,6 +838,9 @@ int deinitialize_all_hooks()
 
   if(appmgr_23D642C_hook_id >= 0)
     taiHookReleaseForKernel(appmgr_23D642C_hook_id, appmgr_23D642C_hook_ref);
+
+  if(sceAppMgrGameDataMountForDriver_hook_id >= 0)
+    taiHookReleaseForKernel(sceAppMgrGameDataMountForDriver_hook_id, sceAppMgrGameDataMountForDriver_hook_ref);
 
   return 0;
 }
