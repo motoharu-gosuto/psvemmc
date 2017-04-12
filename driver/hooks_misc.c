@@ -116,6 +116,12 @@ SceUID vshSblAuthMgrVerifySpsfo_hook_id = -1;
 tai_hook_ref_t debug_printf_callback_invoke_ref;
 SceUID debug_printf_callback_invoke_id = -1;
 
+tai_hook_ref_t gc_22fd5d23_hook_ref;
+SceUID gc_22fd5d23_hook_id = -1;
+
+tai_hook_ref_t appmgr_23D642C_hook_ref;
+SceUID appmgr_23D642C_hook_id = -1;
+
 //========================================
 
 #pragma pack(push, 1)
@@ -459,10 +465,12 @@ int sd_read_hook(sd_context_part* ctx, int sector, char* buffer, int nSectors)
 
   if(ksceSdifGetSdContextGlobal(SCE_SDIF_DEV_GAME_CARD) == ctx->gctx_ptr)
   {
+    /*
     if(nSectors > 1)
     {
       print_bytes(buffer, 0x200);
     }
+    */
   }
   #endif
 
@@ -901,6 +909,76 @@ int debug_printf_callback_invoke_hook(int unk0, int unk1, int unk2)
   }
 
   int res = TAI_CONTINUE(int, debug_printf_callback_invoke_ref, unk0, unk1, unk2);
+
+  return res;
+}
+
+//this is a hook for SceNpDrm.SceSblGcAuthMgrDrmBBForDriver._imp_22fd5d23
+//it does some checksum check on last responce of cmd56 custom initialization
+//when error happens - returns 0x8087000A
+
+int gc_22fd5d23_hook(char* buffer)
+{
+  /*
+  tai_module_info_t gc_auth_info;
+  gc_auth_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceSblGcAuthMgr", &gc_auth_info) >= 0)
+  {
+    //does not work
+    //directly into data segment
+    
+    //uintptr_t buffer_BDD038_adr = 0;
+    //int ofstRes = module_get_offset(KERNEL_PID, gc_auth_info.modid, 1, 0x5038, &buffer_BDD038_adr);
+    //if(ofstRes >= 0)
+    //{
+    //  if(buffer > 0)
+    //  {
+    //    memcpy((void*)buffer_BDD038_adr, buffer, 0x14);
+    //  }
+    //}
+    
+    //does not work
+    //derive address from code segment constant
+    //uintptr_t dword_CA9144 = 0;
+    //int ofstRes = module_get_offset(KERNEL_PID, gc_auth_info.modid, 0, 0x9144, &dword_CA9144);
+    //if(ofstRes >= 0)
+    //{
+    //  if(dword_CA9144 > 0)
+    //  {
+    //    void* destBuffer = *((void**)(dword_CA9144));
+    //    if(destBuffer > 0)
+    //    {
+    //      if(buffer > 0)
+    //      {
+    //        memcpy(destBuffer, buffer, 0x14);
+    //      }
+    //    }
+    //  }
+    //}
+  }
+  */
+
+  int res = TAI_CONTINUE(int, gc_22fd5d23_hook_ref, buffer);
+
+  #ifdef ENABLE_SD_PATCHES
+  return 0; //force return success
+  #else
+  return res; 
+  #endif
+}
+
+int appmgr_23D642C_hook(int unk0, int unk1)
+{
+  int res = TAI_CONTINUE(int, appmgr_23D642C_hook_ref, unk0, unk1);
+ 
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called appmgr_23D642C_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log();  
 
   return res;
 }

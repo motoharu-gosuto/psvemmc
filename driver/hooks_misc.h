@@ -96,6 +96,12 @@ extern SceUID vshSblAuthMgrVerifySpsfo_hook_id;
 extern tai_hook_ref_t debug_printf_callback_invoke_ref;
 extern SceUID debug_printf_callback_invoke_id;
 
+extern tai_hook_ref_t gc_22fd5d23_hook_ref;
+extern SceUID gc_22fd5d23_hook_id;
+
+extern tai_hook_ref_t appmgr_23D642C_hook_ref;
+extern SceUID appmgr_23D642C_hook_id;
+
 int gc_patch(int param0);
 int init_mmc_hook(int sd_ctx_index, sd_context_part** result);
 int init_sd_hook(int sd_ctx_index, sd_context_part** result);
@@ -139,3 +145,7 @@ typedef struct spsfo_opt
 int vshSblAuthMgrVerifySpsfo_hook(char *path_user, char *dest_user, int maxSize, spsfo_opt *opt);
 
 int debug_printf_callback_invoke_hook(int unk0, int unk1, int unk2);
+
+int gc_22fd5d23_hook(char* buffer);
+
+int appmgr_23D642C_hook(int unk0, int unk1);

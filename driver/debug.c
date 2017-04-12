@@ -70,6 +70,7 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
                                               };
 
 #define SceSblGcAuthMgrGcAuthForDriver_NID 0xC6627F5E
+#define SceSblGcAuthMgrDrmBBForDriver_NID 0x1926B182
 #define SceSdifForDriver_NID 0x96D306FA
 #define SceSysrootForDriver_NID 0x2ED7F97A
 #define SceIofilemgrForDriver_NID 0x40FD29C7
@@ -82,6 +83,25 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
 
 int initialize_all_hooks()
 {
+  tai_module_info_t appmgr_info;
+  appmgr_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceAppMgr", &appmgr_info) >= 0)
+  {
+    //hook that contains drm checks for game data mount
+    appmgr_23D642C_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &appmgr_23D642C_hook_ref, appmgr_info.modid, 0, 0x1642C, 1, appmgr_23D642C_hook);
+  }
+
+  tai_module_info_t gc_auth_info;
+  gc_auth_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceSblGcAuthMgr", &gc_auth_info) >= 0)
+  {
+    //export does not work
+    //gc_22fd5d23_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &gc_22fd5d23_hook_ref, "SceSblGcAuthMgr", SceSblGcAuthMgrDrmBBForDriver_NID, 0x22fd5d23, gc_22fd5d23_hook);
+
+    //import does work
+    gc_22fd5d23_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &gc_22fd5d23_hook_ref, "SceNpDrm", SceSblGcAuthMgrDrmBBForDriver_NID, 0x22fd5d23, gc_22fd5d23_hook);
+  }
+
   // Get tai module info
   tai_module_info_t sdstor_info;
   sdstor_info.size = sizeof(tai_module_info_t);
@@ -641,6 +661,26 @@ int initialize_all_hooks()
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
 
+  if(gc_22fd5d23_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set gc_22fd5d23_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set gc_22fd5d23_hook: %x\n", gc_22fd5d23_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
+  if(appmgr_23D642C_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set appmgr_23D642C_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set appmgr_23D642C_hook: %x\n", appmgr_23D642C_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
   close_global_log();
   
   return 0;
@@ -779,6 +819,12 @@ int deinitialize_all_hooks()
 
   if(debug_printf_callback_invoke_id >= 0)
     taiHookReleaseForKernel(debug_printf_callback_invoke_id, debug_printf_callback_invoke_ref);
-    
+
+  if(gc_22fd5d23_hook_id >= 0)
+    taiHookReleaseForKernel(gc_22fd5d23_hook_id, gc_22fd5d23_hook_ref);
+
+  if(appmgr_23D642C_hook_id >= 0)
+    taiHookReleaseForKernel(appmgr_23D642C_hook_id, appmgr_23D642C_hook_ref);
+
   return 0;
 }
