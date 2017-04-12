@@ -125,6 +125,9 @@ SceUID appmgr_23D642C_hook_id = -1;
 tai_hook_ref_t sceAppMgrGameDataMountForDriver_hook_ref;
 SceUID sceAppMgrGameDataMountForDriver_hook_id = -1;
 
+tai_hook_ref_t appmgr_23D9B50_hook_ref;
+SceUID appmgr_23D9B50_hook_id = -1;
+
 //========================================
 
 #pragma pack(push, 1)
@@ -998,6 +1001,22 @@ int sceAppMgrGameDataMountForDriver_hook(int unk0, int unk1, int unk2, int unk3)
     FILE_GLOBAL_WRITE_LEN("======================================\n");
   }
   close_global_log();  
+
+  return res;
+}
+
+int appmgr_23D9B50_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int arg_4, int arg_8, int arg_C)
+{
+  int res = TAI_CONTINUE(int, appmgr_23D9B50_hook_ref, unk0, unk1, unk2, unk3, arg_0, arg_4, arg_8, arg_C);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called appmgr_23D9B50_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
 
   return res;
 }

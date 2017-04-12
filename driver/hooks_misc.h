@@ -105,6 +105,9 @@ extern SceUID appmgr_23D642C_hook_id;
 extern tai_hook_ref_t sceAppMgrGameDataMountForDriver_hook_ref;
 extern SceUID sceAppMgrGameDataMountForDriver_hook_id;
 
+extern tai_hook_ref_t appmgr_23D9B50_hook_ref;
+extern SceUID appmgr_23D9B50_hook_id;
+
 int gc_patch(int param0);
 int init_mmc_hook(int sd_ctx_index, sd_context_part** result);
 int init_sd_hook(int sd_ctx_index, sd_context_part** result);
@@ -154,3 +157,5 @@ int gc_22fd5d23_hook(char* buffer);
 int appmgr_23D642C_hook(int unk0, int unk1);
 
 int sceAppMgrGameDataMountForDriver_hook(int unk0, int unk1, int unk2, int unk3);
+
+int appmgr_23D9B50_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int arg_4, int arg_8, int arg_C);

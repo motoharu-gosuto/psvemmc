@@ -92,6 +92,8 @@ int initialize_all_hooks()
     appmgr_23D642C_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &appmgr_23D642C_hook_ref, appmgr_info.modid, 0, 0x1642C, 1, appmgr_23D642C_hook);
 
     sceAppMgrGameDataMountForDriver_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceAppMgrGameDataMountForDriver_hook_ref, "SceAppMgr", SceAppMgrForDriver_NID, 0xCE356B2D, sceAppMgrGameDataMountForDriver_hook);
+
+    appmgr_23D9B50_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &appmgr_23D9B50_hook_ref, appmgr_info.modid, 0, 0x19B50, 1, appmgr_23D9B50_hook);
   }
 
   tai_module_info_t gc_auth_info;
@@ -694,6 +696,16 @@ int initialize_all_hooks()
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
 
+  if(appmgr_23D9B50_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set appmgr_23D9B50_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set appmgr_23D9B50_hook: %x\n", appmgr_23D9B50_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
   close_global_log();
   
   return 0;
@@ -841,6 +853,9 @@ int deinitialize_all_hooks()
 
   if(sceAppMgrGameDataMountForDriver_hook_id >= 0)
     taiHookReleaseForKernel(sceAppMgrGameDataMountForDriver_hook_id, sceAppMgrGameDataMountForDriver_hook_ref);
+
+  if(appmgr_23D9B50_hook_id >= 0)
+    taiHookReleaseForKernel(appmgr_23D9B50_hook_id, appmgr_23D9B50_hook_ref);
 
   return 0;
 }
