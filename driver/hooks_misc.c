@@ -128,6 +128,27 @@ SceUID sceAppMgrGameDataMountForDriver_hook_id = -1;
 tai_hook_ref_t appmgr_23D9B50_hook_ref;
 SceUID appmgr_23D9B50_hook_id = -1;
 
+tai_hook_ref_t sceAppMgrGameDataVfsMountForDriver_hook_ref;
+SceUID sceAppMgrGameDataVfsMountForDriver_hook_id = -1;
+
+tai_hook_ref_t sceFiosKernelOverlayRemoveForProcessForDriver_hook_ref;
+SceUID sceFiosKernelOverlayRemoveForProcessForDriver_hook_id = -1;
+
+tai_hook_ref_t proc_read_sealedkey_23D6EA0_hook_ref;
+SceUID proc_read_sealedkey_23D6EA0_hook_id = -1;
+
+tai_hook_ref_t sbl_acmgr_0b6e6cd7_hook_ref;
+SceUID sbl_acmgr_0b6e6cd7_hook_id = -1;
+
+tai_hook_ref_t proc_generate_random_path_23D4FBC_hook_ref;
+SceUID proc_generate_random_path_23D4FBC_hook_id = -1;
+
+tai_hook_ref_t proc_get_clearsign_stat_23D9A4C_hook_ref;
+SceUID proc_get_clearsign_stat_23D9A4C_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_a772209c_hook_ref;
+SceUID pfs_mgr_a772209c_hook_id = -1;
+
 //========================================
 
 #pragma pack(push, 1)
@@ -1013,6 +1034,118 @@ int appmgr_23D9B50_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int a
   {
     FILE_GLOBAL_WRITE_LEN("======================================\n");
     snprintf(sprintfBuffer, 256, "called appmgr_23D9B50_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int sceAppMgrGameDataVfsMountForDriver_hook(int vshMountId)
+{
+  int res = TAI_CONTINUE(int, sceAppMgrGameDataVfsMountForDriver_hook_ref, vshMountId);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called sceAppMgrGameDataVfsMountForDriver:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int sceFiosKernelOverlayRemoveForProcessForDriver_hook(int unk0, int unk1)
+{
+  int res = TAI_CONTINUE(int, sceFiosKernelOverlayRemoveForProcessForDriver_hook_ref, unk0, unk1);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called sceFiosKernelOverlayRemoveForProcessForDriver:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int proc_read_sealedkey_23D6EA0_hook(int unk0, int unk1)
+{
+  int res = TAI_CONTINUE(int, proc_read_sealedkey_23D6EA0_hook_ref, unk0, unk1);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called proc_read_sealedkey_23D6EA0_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int sbl_acmgr_0b6e6cd7_hook(int unk0)
+{
+  int res = TAI_CONTINUE(int, sbl_acmgr_0b6e6cd7_hook_ref, unk0);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called sbl_acmgr_0b6e6cd7_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int proc_generate_random_path_23D4FBC_hook(int unk0, int unk1)
+{
+  int res = TAI_CONTINUE(int, proc_generate_random_path_23D4FBC_hook_ref, unk0, unk1);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called proc_generate_random_path_23D4FBC_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int proc_get_clearsign_stat_23D9A4C_hook(int unk0, int unk1) //this function definitely has 1 argument however it works only with 2 args
+{
+  int res = TAI_CONTINUE(int, proc_get_clearsign_stat_23D9A4C_hook_ref, unk0); //do I need to pass arg here?
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called proc_get_clearsign_stat_23D9A4C_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int pfs_mgr_a772209c_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int arg_4)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_a772209c_hook_ref, unk0, unk1, unk2, unk3, arg_0, arg_4);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called pfs_mgr_a772209c_hook:\nres: %08x\n", res);
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     FILE_GLOBAL_WRITE_LEN("======================================\n");
   }

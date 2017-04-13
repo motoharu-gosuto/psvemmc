@@ -6,6 +6,8 @@
 
 #include "sdstor_types.h"
 
+#include "vfs_types.h"
+
 #include "sector_api.h"
 
 extern tai_hook_ref_t gc_hook_ref;
@@ -108,6 +110,27 @@ extern SceUID sceAppMgrGameDataMountForDriver_hook_id;
 extern tai_hook_ref_t appmgr_23D9B50_hook_ref;
 extern SceUID appmgr_23D9B50_hook_id;
 
+extern tai_hook_ref_t sceAppMgrGameDataVfsMountForDriver_hook_ref;
+extern SceUID sceAppMgrGameDataVfsMountForDriver_hook_id;
+
+extern tai_hook_ref_t sceFiosKernelOverlayRemoveForProcessForDriver_hook_ref;
+extern SceUID sceFiosKernelOverlayRemoveForProcessForDriver_hook_id;
+
+extern tai_hook_ref_t proc_read_sealedkey_23D6EA0_hook_ref;
+extern SceUID proc_read_sealedkey_23D6EA0_hook_id;
+
+extern tai_hook_ref_t sbl_acmgr_0b6e6cd7_hook_ref;
+extern SceUID sbl_acmgr_0b6e6cd7_hook_id;
+
+extern tai_hook_ref_t proc_generate_random_path_23D4FBC_hook_ref;
+extern SceUID proc_generate_random_path_23D4FBC_hook_id;
+
+extern tai_hook_ref_t proc_get_clearsign_stat_23D9A4C_hook_ref;
+extern SceUID proc_get_clearsign_stat_23D9A4C_hook_id;
+
+extern tai_hook_ref_t pfs_mgr_a772209c_hook_ref;
+extern SceUID pfs_mgr_a772209c_hook_id;
+
 int gc_patch(int param0);
 int init_mmc_hook(int sd_ctx_index, sd_context_part** result);
 int init_sd_hook(int sd_ctx_index, sd_context_part** result);
@@ -159,3 +182,17 @@ int appmgr_23D642C_hook(int unk0, int unk1);
 int sceAppMgrGameDataMountForDriver_hook(int unk0, int unk1, int unk2, int unk3);
 
 int appmgr_23D9B50_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int arg_4, int arg_8, int arg_C);
+
+int sceAppMgrGameDataVfsMountForDriver_hook(int vshMountId);
+
+int sceFiosKernelOverlayRemoveForProcessForDriver_hook(int unk0, int unk1);
+
+int proc_read_sealedkey_23D6EA0_hook(int unk0, int unk1);
+
+int sbl_acmgr_0b6e6cd7_hook(int unk0);
+
+int proc_generate_random_path_23D4FBC_hook(int unk0, int unk1);
+
+int proc_get_clearsign_stat_23D9A4C_hook(int unk0, int unk1);
+
+int pfs_mgr_a772209c_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int arg_4);
