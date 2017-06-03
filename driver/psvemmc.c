@@ -478,6 +478,8 @@ int module_start(SceSize argc, const void *args)
   #ifdef ENABLE_NETWORK
   init_net();
   #endif
+
+  //test_sceIoPreadForDriver();
   
   //dump_device_context_mem_blocks_1000();
   

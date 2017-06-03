@@ -10,3 +10,6 @@ int dump_vfs_data();
 int dump_vfs_node_info();
 int call_proc_get_mount_data_C15B80(char* blockDeviceName);
 int print_bytes(char* bytes, int size);
+
+int call_sceIoPreadForDriver(SceUID fd, char* buffer, SceSize size, int ignored, int offsetLo, int offsetHi);
+int test_sceIoPreadForDriver();

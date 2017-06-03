@@ -671,3 +671,67 @@ int call_proc_get_mount_data_C15B80(char* blockDeviceName)
   }
   return 0;
 }
+
+typedef int (sceIoPreadForDriver_function)(SceUID fd, char* buffer, SceSize size, int ignored, int offsetLo, int offsetHi);
+
+int call_sceIoPreadForDriver(SceUID fd, char* buffer, SceSize size, int ignored, int offsetLo, int offsetHi)
+{
+  tai_module_info_t iofilemgr_info;
+  iofilemgr_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceIofilemgr", &iofilemgr_info) >= 0)
+  {
+    uintptr_t addr = 0;
+    int ofstRes = module_get_offset(KERNEL_PID, iofilemgr_info.modid, 0, 0xBE12ED - 0xBE0000, &addr);
+    if(ofstRes == 0)
+    {
+      sceIoPreadForDriver_function* proc = (sceIoPreadForDriver_function*)addr;
+      return proc(fd, buffer, size, ignored, offsetLo, offsetHi);
+    }
+    else
+    {
+      return -1;
+    }
+  }
+  else
+  {
+    return -1;
+  }
+}
+
+int test_sceIoPreadForDriver()
+{
+  SceUID fd = ksceIoOpen("ux0:tai/psvKmDump.skprx", SCE_O_RDONLY, 0777);
+
+  if(fd >= 0)
+  {
+    open_global_log();
+    snprintf(sprintfBuffer, 256, "Opened sceIoPread test file\n");
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    close_global_log();
+
+    char buffer[0x100] = {0};
+    int res = call_sceIoPreadForDriver(fd, buffer, 0x15, 0, 5, 0);
+    if(res < 0)
+    {
+      open_global_log();
+      snprintf(sprintfBuffer, 256, "Failed to do sceIoPread file\n");
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+      close_global_log();
+    }
+    else
+    {
+      print_bytes(buffer, 0x20);
+    }
+
+    ksceIoClose(fd);
+  }
+  else
+  {
+    open_global_log();
+    snprintf(sprintfBuffer, 256, "Failed to open sceIoPread test file\n");
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    close_global_log();
+  }
+
+  return 0;
+}
