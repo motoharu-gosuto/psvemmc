@@ -3722,6 +3722,9 @@ int iofilemgr_BFB2A8_hook_err_cnt = 0;
 int pfs_facade_4238d2d2_hook_err = 0;
 int pfs_facade_4238d2d2_hook_err_cnt = 0;
 
+int iofilemgr_0b54f9e0_hook_err = 0;
+int iofilemgr_0b54f9e0_hook_err_cnt = 0;
+
 int app_mgr_e17efc03_hook(SceUID fd, char *data, SceSize size)
 {
   int res = TAI_CONTINUE(int, app_mgr_e17efc03_hook_ref, fd, data, size);
@@ -3824,6 +3827,9 @@ int app_mgr_e17efc03_hook(SceUID fd, char *data, SceSize size)
       FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
 
       snprintf(sprintfBuffer, 256, "pfs_facade_4238d2d2_hook error: %08x cnt: %08x\n", pfs_facade_4238d2d2_hook_err, pfs_facade_4238d2d2_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_0b54f9e0_hook error: %08x cnt: %08x\n", iofilemgr_0b54f9e0_hook_err, iofilemgr_0b54f9e0_hook_err_cnt);
       FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
 
       FILE_GLOBAL_WRITE_LEN("======================================\n");
@@ -4619,6 +4625,23 @@ int pfs_facade_4238d2d2_hook(sceIoPreadForDriver_args* args)
 int iofilemgr_0b54f9e0_hook(sceIoPreadForDriver_args *args)
 {
   int res = TAI_CONTINUE(int, iofilemgr_0b54f9e0_hook_ref, args);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_0b54f9e0_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      iofilemgr_0b54f9e0_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        iofilemgr_0b54f9e0_hook_err = res;
+      }
+    }
+  }
 
   return res;
 }

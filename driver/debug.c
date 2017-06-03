@@ -30,11 +30,21 @@
 
 #define CONCAT(a, b) a ## b
 
+#define CONCAT3(a, b, c) a ## b ## c
+
+#define TOKEN_TO_STRING(token) #token
+
 #define RELEASE_HOOK(name) if(CONCAT(name, _id)  >= 0) \
                              taiHookReleaseForKernel(CONCAT(name, _id), CONCAT(name, _ref));
 
 #define RELEASE_INJECT(name) if(CONCAT(name, _uid)  >= 0) \
                                taiInjectReleaseForKernel(CONCAT(name, _uid));
+
+#define PRINT_HOOK(name) if(CONCAT(name, _id) >= 0){\
+                           FILE_GLOBAL_WRITE_LEN(TOKEN_TO_STRING(CONCAT3(set , name, \n)));}\
+                         else{\
+                           snprintf(sprintfBuffer, 256, TOKEN_TO_STRING(CONCAT3(failed to set ,name,: %x\n)), CONCAT(name, _id));\
+                           FILE_GLOBAL_WRITE_LEN(sprintfBuffer);}
 
 char sprintfBuffer[256];
 
@@ -2051,15 +2061,7 @@ int initialize_all_hooks()
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
 
-  if(iofilemgr_0b54f9e0_hook_id >= 0)
-  {
-    FILE_GLOBAL_WRITE_LEN("set iofilemgr_0b54f9e0_hook\n");
-  }
-  else
-  {
-    snprintf(sprintfBuffer, 256, "failed to set iofilemgr_0b54f9e0_hook: %x\n", iofilemgr_0b54f9e0_hook_id);
-    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
-  }
+  PRINT_HOOK(iofilemgr_0b54f9e0_hook);
 
   close_global_log();
   
@@ -2068,9 +2070,9 @@ int initialize_all_hooks()
 
 int deinitialize_all_hooks()
 {
-  RELEASE_HOOK(gc_hook_id);
-  RELEASE_HOOK(init_mmc_hook_id);
-  RELEASE_HOOK(init_sd_hook_id);
+  RELEASE_HOOK(gc_hook);
+  RELEASE_HOOK(init_mmc_hook);
+  RELEASE_HOOK(init_sd_hook);
 
   if (patch_uids[0] >= 0)
     taiInjectReleaseForKernel(patch_uids[0]);
@@ -2081,7 +2083,7 @@ int deinitialize_all_hooks()
   if (patch_uids[2] >= 0)
     taiInjectReleaseForKernel(patch_uids[2]);
   
-  RELEASE_HOOK(cmd55_41_hook_id);
+  RELEASE_HOOK(cmd55_41_hook);
   
   if(gen_init_hook_uids[0] >= 0)
     taiHookReleaseForKernel(gen_init_hook_uids[0], gen_init_hook_refs[0]);
@@ -2092,10 +2094,10 @@ int deinitialize_all_hooks()
   if(gen_init_hook_uids[2] >= 0)
     taiHookReleaseForKernel(gen_init_hook_uids[2], gen_init_hook_refs[2]);
   
-  RELEASE_HOOK(load_mbr_hook_id);
-  RELEASE_HOOK(mnt_pnt_chk_hook_id);
-  RELEASE_HOOK(mbr_table_init_hook_id);
-  RELEASE_HOOK(sysroot_zero_hook_id);
+  RELEASE_HOOK(load_mbr_hook);
+  RELEASE_HOOK(mnt_pnt_chk_hook);
+  RELEASE_HOOK(mbr_table_init_hook);
+  RELEASE_HOOK(sysroot_zero_hook);
 
   for(int f = 0; f < 13; f++)
   {
@@ -2109,17 +2111,17 @@ int deinitialize_all_hooks()
   RELEASE_HOOK(sceVfsDeleteVfs_hook);
   RELEASE_HOOK(sceVfsGetNewNode_hook);
   
-  RELEASE_INJECT(gen_init_2_patch_uid);
-  RELEASE_INJECT(gen_init_1_patch_uid);
+  RELEASE_INJECT(gen_init_2_patch);
+  RELEASE_INJECT(gen_init_1_patch);
 
   RELEASE_HOOK(gen_read_hook);
   RELEASE_HOOK(sd_read_hook);
 
-  RELEASE_INJECT(hs_dis_patch1_uid);
-  RELEASE_INJECT(hs_dis_patch2_uid);
-  RELEASE_INJECT(bus_size_patch_uid);
-  RELEASE_INJECT(mbr_init_zero_patch1_uid);
-  RELEASE_INJECT(mbr_init_zero_patch2_uid);
+  RELEASE_INJECT(hs_dis_patch1);
+  RELEASE_INJECT(hs_dis_patch2);
+  RELEASE_INJECT(bus_size_patch);
+  RELEASE_INJECT(mbr_init_zero_patch1);
+  RELEASE_INJECT(mbr_init_zero_patch2);
   
   RELEASE_HOOK(init_partition_table_hook);
   RELEASE_HOOK(create_device_handle_hook);
