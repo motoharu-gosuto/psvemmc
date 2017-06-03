@@ -164,6 +164,289 @@ SceUID iofilemgr_d220539d_hook_id = -1;
 tai_hook_ref_t iofilemgr_BF3848_hook_ref;
 SceUID iofilemgr_BF3848_hook_id = -1;
 
+tai_hook_ref_t iofilemgr_BF3474_hook_ref;
+SceUID iofilemgr_BF3474_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_sceVfsMount_hook_ref;
+SceUID iofilemgr_sceVfsMount_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_sceVfsGetNewNode_hook_ref;
+SceUID iofilemgr_sceVfsGetNewNode_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF1AF0_hook_ref;
+SceUID iofilemgr_BF1AF0_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE5B30_hook_ref;
+SceUID iofilemgr_BE5B30_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF18CC_hook_ref;
+SceUID iofilemgr_BF18CC_hook_id = - 1;
+
+tai_hook_ref_t iofilemgr_BEDEB0_hook_ref;
+SceUID iofilemgr_BEDEB0_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE62E8_hook_ref;
+SceUID iofilemgr_BE62E8_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE5F10_hook_ref;
+SceUID iofilemgr_BE5F10_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE6788_hook_ref;
+SceUID iofilemgr_BE6788_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEE3C8_hook_ref;
+SceUID iofilemgr_BEE3C8_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEBAC0_hook_ref;
+SceUID iofilemgr_BEBAC0_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE61C4_hook_ref;
+SceUID iofilemgr_BE61C4_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE59BC_hook_ref;
+SceUID iofilemgr_BE59BC_hook_id = -1;
+
+//------------------------------
+
+tai_hook_ref_t iofilemgr_BEE364_hook_ref;
+SceUID iofilemgr_BEE364_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEE2D4_hook_ref;
+SceUID iofilemgr_BEE2D4_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEE2C4_hook_ref;
+SceUID iofilemgr_BEE2C4_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEDF5C_hook_ref;
+SceUID iofilemgr_BEDF5C_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BECE80_hook_ref;
+SceUID iofilemgr_BECE80_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEC808_hook_ref;
+SceUID iofilemgr_BEC808_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEC620_hook_ref;
+SceUID iofilemgr_BEC620_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEC578_hook_ref;
+SceUID iofilemgr_BEC578_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEC56C_hook_ref;
+SceUID iofilemgr_BEC56C_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEC530_hook_ref;
+SceUID iofilemgr_BEC530_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEC010_hook_ref;
+SceUID iofilemgr_BEC010_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE5A38_hook_ref;
+SceUID iofilemgr_BE5A38_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE5814_hook_ref;
+SceUID iofilemgr_BE5814_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEBB84_hook_ref;
+SceUID iofilemgr_BEBB84_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEC7C0_hook_ref;
+SceUID iofilemgr_BEC7C0_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BECE0C_hook_ref;
+SceUID iofilemgr_BECE0C_hook_id = -1;
+
+//-----------------
+
+tai_hook_ref_t iofilemgr_exp_aa45010b_hook_ref;
+SceUID iofilemgr_exp_aa45010b_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_exp_21d57633_hook_ref;
+SceUID iofilemgr_exp_21d57633_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_exp_dc2d8bce_hook_ref;
+SceUID iofilemgr_exp_dc2d8bce_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_exp_6b3ca9f7_hook_ref;
+SceUID iofilemgr_exp_6b3ca9f7_hook_id = -1;
+
+//-----------------
+
+tai_hook_ref_t pfs_mgr_219105C_hook_ref;
+SceUID pfs_mgr_219105C_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_2193624_hook_ref;
+SceUID pfs_mgr_2193624_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_2198928_hook_ref;
+SceUID pfs_mgr_2198928_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_2199064_hook_ref;
+SceUID pfs_mgr_2199064_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_219DE44_hook_ref;
+SceUID pfs_mgr_219DE44_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_219DE7C_hook_ref;
+SceUID pfs_mgr_219DE7C_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_2199144_hook_ref;
+SceUID pfs_mgr_2199144_hook_id = -1;
+
+SceUID pfs_219DE44_check_patch1_uid = -1;
+SceUID pfs_219DE44_check_patch2_uid = -1;
+
+SceUID pfs_219DE44_check_patch3_uid = -1;
+SceUID pfs_219DE44_check_patch4_uid = -1;
+
+SceUID pfs_219DE44_check_patch5_uid = -1;
+SceUID pfs_219DE44_check_patch6_uid = -1;
+SceUID pfs_219DE44_check_patch7_uid = -1;
+
+//-----------
+
+tai_hook_ref_t app_mgr_23D5028_hook_ref = -1;
+SceUID app_mgr_23D5028_hook_id = -1;
+
+tai_hook_ref_t app_mgr_23EF934_hook_ref = -1;
+SceUID app_mgr_23EF934_hook_id = -1;
+
+tai_hook_ref_t app_mgr_75c96d25_hook_ref = -1;
+SceUID app_mgr_75c96d25_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE8444_hook_ref = -1;
+SceUID iofilemgr_BE8444_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_50a63acf_hook_ref = -1;
+SceUID iofilemgr_50a63acf_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE584C_hook_ref = -1;
+SceUID iofilemgr_BE584C_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE5CC4_hook_ref = -1;
+SceUID iofilemgr_BE5CC4_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_f7dac0f5_hook_ref = -1;
+SceUID iofilemgr_f7dac0f5_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_a5a6a55c_hook_ref = -1;
+SceUID iofilemgr_a5a6a55c_hook_id = -1;
+
+//------
+
+tai_hook_ref_t pfs_mgr_21910F4_hook_ref = -1;
+SceUID pfs_mgr_21910F4_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_2193B44_hook_ref = -1;
+SceUID pfs_mgr_2193B44_hook_id = -1;
+
+//-----------
+
+tai_hook_ref_t app_mgr_75192972_hook_ref = -1;
+SceUID app_mgr_75192972_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BEA704_hook_ref = -1;
+SceUID iofilemgr_BEA704_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_9e347c7d_hook_ref = -1;
+SceUID iofilemgr_9e347c7d_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_76b79bec_hook_ref = -1;
+SceUID iofilemgr_76b79bec_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_219112C_hook_ref = -1;
+SceUID pfs_mgr_219112C_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_2192190_hook_ref = -1;
+SceUID pfs_mgr_2192190_hook_id = -1;
+
+//-----------
+
+tai_hook_ref_t app_mgr_e17efc03_hook_ref = -1;
+SceUID app_mgr_e17efc03_hook_id = -1;
+
+//-----------
+
+SceUID pfs_80140f02_test_patch1_uid = -1;
+SceUID pfs_80140f02_test_patch2_uid = -1;
+
+tai_hook_ref_t pfs_mgr_219BF20_hook_ref = -1;
+SceUID pfs_mgr_219BF20_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE7AEC_hook_ref = -1;
+SceUID iofilemgr_BE7AEC_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF57F8_hook_ref = -1;
+SceUID iofilemgr_BF57F8_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF66E4_hook_ref = -1;
+SceUID iofilemgr_BF66E4_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF6B6C_hook_ref = -1;
+SceUID iofilemgr_BF6B6C_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF69B4_hook_ref = -1;
+SceUID iofilemgr_BF69B4_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF651C_hook_ref = -1;
+SceUID iofilemgr_BF651C_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF89EC_hook_ref = -1;
+SceUID iofilemgr_BF89EC_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF8BD4_hook_ref = -1;
+SceUID iofilemgr_BF8BD4_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF7C00_hook_ref = -1;
+SceUID iofilemgr_BF7C00_hook_id = -1;
+
+//
+
+tai_hook_ref_t iofilemgr_BF8BB0_hook_ref = -1;
+SceUID iofilemgr_BF8BB0_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF7288_hook_ref = -1;
+SceUID iofilemgr_BF7288_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BFB5F0_hook_ref = -1;
+SceUID iofilemgr_BFB5F0_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF88C4_hook_ref = -1;
+SceUID iofilemgr_BF88C4_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BFB794_hook_ref = -1;
+SceUID iofilemgr_BFB794_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF7268_hook_ref = -1;
+SceUID iofilemgr_BF7268_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF83A0_hook_ref = -1;
+SceUID iofilemgr_BF83A0_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BFB628_hook_ref = -1;
+SceUID iofilemgr_BFB628_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF7228_hook_ref = -1;
+SceUID iofilemgr_BF7228_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF83F8_hook_ref = -1;
+SceUID iofilemgr_BF83F8_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BFB748_hook_ref = -1;
+SceUID iofilemgr_BFB748_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BE7F4C_hook_ref = -1;
+SceUID iofilemgr_BE7F4C_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BFB2A8_hook_ref = -1;
+SceUID iofilemgr_BFB2A8_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_4238d2d2_hook_ref = -1;
+SceUID pfs_facade_4238d2d2_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_0b54f9e0_hook_ref = -1;
+SceUID iofilemgr_0b54f9e0_hook_id = -1;
+
 //========================================
 
 #pragma pack(push, 1)
@@ -212,6 +495,11 @@ int print_device_info_arrays()
 }
 
 //========================================
+
+int min(int a, int b)
+{
+  return (a > b) ? b : a;
+}
 
 int gc_sd_init(void* args)
 {
@@ -1244,12 +1532,3093 @@ int iofilemgr_BF3848_hook(ctx_BF3848* ctx)
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     if(ctx > 0)
     {
-      snprintf(sprintfBuffer, 256, "20: %08x\n", ctx->error);
+      snprintf(sprintfBuffer, 256, "20: %08x\n", ctx->error); // this is exactly 0x8001008F error that is set after sceKernelSignalCondTo to "SceIofilemgr"
       FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
     }
     FILE_GLOBAL_WRITE_LEN("======================================\n");
   }
   close_global_log();
+
+  return res;
+}
+
+int g_pfs_mount_enable_log = 0;
+
+int iofilemgr_BF3474_hook(ctx_BF3848* ctx)
+{
+  if(ctx > 0)
+  {
+    if(ctx->operation == 3)
+    {
+      g_pfs_mount_enable_log = 1;
+    }
+  }
+
+  int res = TAI_CONTINUE(int, iofilemgr_BF3474_hook_ref, ctx);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called iofilemgr_BF3474_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    if(ctx > 0)
+    {
+      if(ctx->operation == 3) //print only operation 3
+      {
+        snprintf(sprintfBuffer, 256, "20: %08x\n", ctx->error); // this is exactly 0x8001008F error that is set after sceKernelSignalCondTo to "SceIofilemgr"
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+      }
+    }
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log();
+
+  if(ctx > 0)
+  {
+    if(ctx->operation == 3)
+    {
+      g_pfs_mount_enable_log = 0;
+    }
+  }
+
+  return res;
+}
+
+//-------
+
+int g_iofilemgr_BE62E8_hook_error = 0;
+int g_iofilemgr_BE5F10_hook_error = 0;
+int g_iofilemgr_BE6788_hook_error = 0;
+int g_iofilemgr_BEE3C8_hook_error = 0;
+int g_iofilemgr_BEBAC0_hook_error = 0;
+int g_iofilemgr_sceVfsGetNewNode_hook_error = 0;
+int g_iofilemgr_BE61C4_hook_error = 0;
+int g_iofilemgr_BEDEB0_hook_error = 0;
+int g_iofilemgr_BE59BC_hook_error = 0;
+int g_iofilemgr_BE5B30_hook_error = 0;
+int g_iofilemgr_BF18CC_hook_error = 0;
+int g_iofilemgr_BF1AF0_hook_error = 0;
+
+int g_iofilemgr_BE62E8_hook_error_cnt = 0;
+int g_iofilemgr_BE5F10_hook_error_cnt = 0;
+int g_iofilemgr_BE6788_hook_error_cnt = 0;
+int g_iofilemgr_BEE3C8_hook_error_cnt = 0;
+int g_iofilemgr_BEBAC0_hook_error_cnt = 0;
+int g_iofilemgr_sceVfsGetNewNode_hook_error_cnt = 0;
+int g_iofilemgr_BE61C4_hook_error_cnt = 0;
+int g_iofilemgr_BEDEB0_hook_error_cnt = 0;
+int g_iofilemgr_BE59BC_hook_error_cnt = 0;
+int g_iofilemgr_BE5B30_hook_error_cnt = 0;
+int g_iofilemgr_BF18CC_hook_error_cnt = 0;
+int g_iofilemgr_BF1AF0_hook_error_cnt = 0;
+
+//--------
+
+int g_iofilemgr_BEE364_hook_error = 0;
+int g_iofilemgr_BEE2D4_hook_error = 0;
+int g_iofilemgr_BEE2C4_hook_error = 0;
+int g_iofilemgr_BEDF5C_hook_error = 0;
+int g_iofilemgr_BECE80_hook_error = 0;
+int g_iofilemgr_BEC808_hook_error = 0;
+int g_iofilemgr_BEC620_hook_error = 0;
+int g_iofilemgr_BEC578_hook_error = 0;
+int g_iofilemgr_BEC56C_hook_error = 0;
+int g_iofilemgr_BEC530_hook_error = 0;
+int g_iofilemgr_BEC010_hook_error = 0;
+int g_iofilemgr_BE5A38_hook_error = 0;
+int g_iofilemgr_BE5814_hook_error = 0;
+int g_iofilemgr_BEBB84_hook_error = 0;
+int g_iofilemgr_BEC7C0_hook_error = 0;
+int g_iofilemgr_BECE0C_hook_error = 0;
+
+int g_iofilemgr_BEE364_hook_error_cnt = 0;
+int g_iofilemgr_BEE2D4_hook_error_cnt = 0;
+int g_iofilemgr_BEE2C4_hook_error_cnt = 0;
+int g_iofilemgr_BEDF5C_hook_error_cnt = 0;
+int g_iofilemgr_BECE80_hook_error_cnt = 0;
+int g_iofilemgr_BEC808_hook_error_cnt = 0;
+int g_iofilemgr_BEC620_hook_error_cnt = 0;
+int g_iofilemgr_BEC578_hook_error_cnt = 0;
+int g_iofilemgr_BEC56C_hook_error_cnt = 0;
+int g_iofilemgr_BEC530_hook_error_cnt = 0;
+int g_iofilemgr_BEC010_hook_error_cnt = 0;
+int g_iofilemgr_BE5A38_hook_error_cnt = 0;
+int g_iofilemgr_BE5814_hook_error_cnt = 0;
+int g_iofilemgr_BEBB84_hook_error_cnt = 0;
+int g_iofilemgr_BEC7C0_hook_error_cnt = 0;
+int g_iofilemgr_BECE0C_hook_error_cnt = 0;
+
+//-------
+
+int g_iofilemgr_exp_aa45010b_hook_error = 0;
+int g_iofilemgr_exp_21d57633_hook_error = 0;
+int g_iofilemgr_exp_dc2d8bce_hook_error = 0;
+int g_iofilemgr_exp_6b3ca9f7_hook_error = 0;
+
+int g_iofilemgr_exp_aa45010b_hook_error_cnt = 0;
+int g_iofilemgr_exp_21d57633_hook_error_cnt = 0;
+int g_iofilemgr_exp_dc2d8bce_hook_error_cnt = 0;
+int g_iofilemgr_exp_6b3ca9f7_hook_error_cnt = 0;
+
+//-------
+
+int g_pfs_mgr_219105C_hook_error = 0;
+int g_pfs_mgr_219105C_hook_error_cnt = 0;
+
+int g_pfs_mgr_2193624_hook_error = 0;
+int g_pfs_mgr_2193624_hook_error_cnt = 0;
+
+int g_pfs_mgr_2198928_hook_error = 0;
+int g_pfs_mgr_2198928_hook_error_cnt = 0;
+
+int g_pfs_mgr_2199064_hook_error = 0;
+int g_pfs_mgr_2199064_hook_error_cnt = 0;
+
+int g_pfs_mgr_219DE44_hook_error = 0;
+int g_pfs_mgr_219DE44_hook_error_cnt = 0;
+
+int g_pfs_mgr_219DE7C_hook_error = 0;
+int g_pfs_mgr_219DE7C_hook_error_cnt = 0;
+
+int g_pfs_mgr_2199144_hook_error = 0;
+int g_pfs_mgr_2199144_hook_error_cnt = 0;
+
+//-------
+
+vfs_mount g_mount_copys[10] = {0};
+int g_mount_copys_cnt = 0;
+
+char g_read_buffer_copys[0x50][0x200];
+int g_read_buffer_copys_cnt = 0;
+
+int g_read_buffer_ofsetLow[0x50] = {0};
+int g_read_buffer_ofsetHi[0x50] = {0};
+int g_read_buffer_size[0x50] = {0};
+
+char g_crypto_buffer_before_copys[0x50][0x200];
+int g_crypto_buffer_before_copys_cnt = 0;
+
+char g_crypto_buffer_after_copys[0x50][0x200];
+int g_crypto_buffer_after_copys_cnt = 0;
+
+char nodeStr[0x100] = {0}; 
+int nodeStrLen = 0;
+
+//-------
+
+int print_vfs_mount(vfs_mount* mnt)
+{
+  snprintf(sprintfBuffer, 256, "vfs_mount unixMount: %s\n", mnt->unixMount);
+  FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+  snprintf(sprintfBuffer, 256, "vfs_mount devMajor: %08x\n", mnt->devMajor);
+  FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+  snprintf(sprintfBuffer, 256, "vfs_mount devMinor: %08x\n", mnt->devMinor);
+  FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+  if(mnt->add_data > 0)
+  {
+    snprintf(sprintfBuffer, 256, "vfs_mount add_data name: %s\n", mnt->add_data->name);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
+  if(mnt->blockDev > 0)
+  {
+    snprintf(sprintfBuffer, 256, "vfs_mount blockDev vitaMount: %s\n", mnt->blockDev->vitaMount);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+    snprintf(sprintfBuffer, 256, "vfs_mount blockDev filesystem: %s\n", mnt->blockDev->filesystem);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+    snprintf(sprintfBuffer, 256, "vfs_mount blockDev blockDevicePrimary: %s\n", mnt->blockDev->blockDevicePrimary);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
+  return 0;
+}
+
+int g_iofilemgr_sceVfsMount_enable_log = 0;
+
+int iofilemgr_sceVfsMount_hook(vfs_mount_point_info_base* mountInfo)
+{
+  if(mountInfo > 0)
+  {
+    if(mountInfo->filesystem > 0)
+    {
+      if(strncmp(mountInfo->filesystem, "PFS_GDSD_INF", sizeof("PFS_GDSD_INF")) == 0)
+      {
+        g_iofilemgr_sceVfsMount_enable_log = 1;
+      }
+    }
+  }
+
+  int res = TAI_CONTINUE(int, iofilemgr_sceVfsMount_hook_ref, mountInfo);
+
+  if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    open_global_log();
+    {
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+      snprintf(sprintfBuffer, 256, "called iofilemgr_sceVfsMount_hook:\nres: %08x\n", res);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      if(mountInfo >= 0)
+      {
+        snprintf(sprintfBuffer, 256, "unixMount: %s filesystem: %s\n", mountInfo->unixMount, mountInfo->filesystem);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+        
+        snprintf(sprintfBuffer, 256, "devMajor: %08x devMinor: %08x\n", mountInfo->devMajor, mountInfo->devMinor);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+        if(mountInfo->blockDev1 >= 0)
+        {
+          snprintf(sprintfBuffer, 256, "vitaMount: %s filesystem: %s\n", mountInfo->blockDev1->vitaMount, mountInfo->blockDev1->filesystem);
+          FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+          snprintf(sprintfBuffer, 256, "blockDevicePrimary: %s vshMountId: %08x\n", mountInfo->blockDev1->blockDevicePrimary, mountInfo->blockDev1->vshMountId);
+          FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+        }
+      }
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE62E8_hook error: %08x cnt: %08x\n", g_iofilemgr_BE62E8_hook_error, g_iofilemgr_BE62E8_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE6788_hook error: %08x cnt: %08x\n", g_iofilemgr_BE6788_hook_error, g_iofilemgr_BE6788_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE5F10_hook error: %08x cnt: %08x\n", g_iofilemgr_BE5F10_hook_error, g_iofilemgr_BE5F10_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEE3C8_hook error: %08x cnt: %08x\n", g_iofilemgr_BEE3C8_hook_error, g_iofilemgr_BEE3C8_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEBAC0_hook error: %08x cnt: %08x\n", g_iofilemgr_BEBAC0_hook_error, g_iofilemgr_BEBAC0_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_sceVfsGetNewNode_hook error: %08x cnt: %08x\n", g_iofilemgr_sceVfsGetNewNode_hook_error, g_iofilemgr_sceVfsGetNewNode_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE61C4_hook error: %08x cnt: %08x\n", g_iofilemgr_BE61C4_hook_error, g_iofilemgr_BE61C4_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEDEB0_hook error: %08x cnt: %08x\n", g_iofilemgr_BEDEB0_hook_error, g_iofilemgr_BEDEB0_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE59BC_hook error: %08x cnt: %08x\n", g_iofilemgr_BE59BC_hook_error, g_iofilemgr_BE59BC_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE5B30_hook error: %08x cnt: %08x\n", g_iofilemgr_BE5B30_hook_error, g_iofilemgr_BE5B30_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BF18CC_hook error: %08x cnt: %08x\n", g_iofilemgr_BF18CC_hook_error, g_iofilemgr_BF18CC_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BF1AF0_hook error: %08x cnt: %08x\n", g_iofilemgr_BF1AF0_hook_error, g_iofilemgr_BF1AF0_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //------------------
+
+      /*
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEE364_hook error: %08x cnt: %08x\n", g_iofilemgr_BEE364_hook_error, g_iofilemgr_BEE364_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEE2D4_hook error: %08x cnt: %08x\n", g_iofilemgr_BEE2D4_hook_error, g_iofilemgr_BEE2D4_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEE2C4_hook error: %08x cnt: %08x\n", g_iofilemgr_BEE2C4_hook_error, g_iofilemgr_BEE2C4_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEDF5C_hook error: %08x cnt: %08x\n", g_iofilemgr_BEDF5C_hook_error, g_iofilemgr_BEDF5C_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BECE80_hook error: %08x cnt: %08x\n", g_iofilemgr_BECE80_hook_error, g_iofilemgr_BECE80_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEC808_hook error: %08x cnt: %08x\n", g_iofilemgr_BEC808_hook_error, g_iofilemgr_BEC808_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEC620_hook error: %08x cnt: %08x\n", g_iofilemgr_BEC620_hook_error, g_iofilemgr_BEC620_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEC578_hook error: %08x cnt: %08x\n", g_iofilemgr_BEC578_hook_error, g_iofilemgr_BEC578_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEC56C_hook error: %08x cnt: %08x\n", g_iofilemgr_BEC56C_hook_error, g_iofilemgr_BEC56C_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEC530_hook error: %08x cnt: %08x\n", g_iofilemgr_BEC530_hook_error, g_iofilemgr_BEC530_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEC010_hook error: %08x cnt: %08x\n", g_iofilemgr_BEC010_hook_error, g_iofilemgr_BEC010_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE5A38_hook error: %08x cnt: %08x\n", g_iofilemgr_BE5A38_hook_error, g_iofilemgr_BE5A38_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE5814_hook error: %08x cnt: %08x\n", g_iofilemgr_BE5814_hook_error, g_iofilemgr_BE5814_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEBB84_hook error: %08x cnt: %08x\n", g_iofilemgr_BEBB84_hook_error, g_iofilemgr_BEBB84_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BEC7C0_hook error: %08x cnt: %08x\n", g_iofilemgr_BEC7C0_hook_error, g_iofilemgr_BEC7C0_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BECE0C_hook error: %08x cnt: %08x\n", g_iofilemgr_BECE0C_hook_error, g_iofilemgr_BECE0C_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+      */
+      //------
+      
+      /*
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_exp_aa45010b_hook error: %08x cnt: %08x\n", g_iofilemgr_exp_aa45010b_hook_error, g_iofilemgr_exp_aa45010b_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_exp_21d57633_hook error: %08x cnt: %08x\n", g_iofilemgr_exp_21d57633_hook_error, g_iofilemgr_exp_21d57633_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_exp_dc2d8bce_hook error: %08x cnt: %08x\n", g_iofilemgr_exp_dc2d8bce_hook_error, g_iofilemgr_exp_dc2d8bce_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_exp_6b3ca9f7_hook error: %08x cnt: %08x\n", g_iofilemgr_exp_6b3ca9f7_hook_error, g_iofilemgr_exp_6b3ca9f7_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+      */
+
+      snprintf(sprintfBuffer, 256, "g_pfs_mgr_219105C_hook error: %08x cnt: %08x\n", g_pfs_mgr_219105C_hook_error, g_pfs_mgr_219105C_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_pfs_mgr_2193624_hook error: %08x cnt: %08x\n", g_pfs_mgr_2193624_hook_error, g_pfs_mgr_2193624_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_pfs_mgr_2198928_hook error: %08x cnt: %08x\n", g_pfs_mgr_2198928_hook_error, g_pfs_mgr_2198928_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_pfs_mgr_2199064_hook error: %08x cnt: %08x\n", g_pfs_mgr_2199064_hook_error, g_pfs_mgr_2199064_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_pfs_mgr_219DE44_hook error: %08x cnt: %08x\n", g_pfs_mgr_219DE44_hook_error, g_pfs_mgr_219DE44_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_pfs_mgr_219DE7C_hook error: %08x cnt: %08x\n", g_pfs_mgr_219DE7C_hook_error, g_pfs_mgr_219DE7C_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_pfs_mgr_2199144_hook error: %08x cnt: %08x\n", g_pfs_mgr_2199144_hook_error, g_pfs_mgr_2199144_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+
+      //print string from vfs_node ctx_70
+      /*
+      snprintf(sprintfBuffer, 256, "nodeStrLen %08x\n", nodeStrLen);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      for(int i = 0; i < 0x100; i++)
+      {
+        char buffer[4];
+        snprintf(buffer, 4, "%02x ", nodeStr[i]);
+        FILE_GLOBAL_WRITE_LEN(buffer);
+      }
+      FILE_GLOBAL_WRITE_LEN("\n");
+
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+      */
+ 
+      //print vfs_mount s
+      /*
+      for(int k = 0; k < 10; k++)
+      {
+        print_vfs_mount(&g_mount_copys[k]);
+      
+        FILE_GLOBAL_WRITE_LEN("======================================\n");
+      }
+      */
+
+      //print bytes from read wrapper
+      
+      /*
+      for(int k = 0; k < 2; k++)
+      {
+        snprintf(sprintfBuffer, 256, "offset lo: %08x offset hi: %08x size: %08x\n", g_read_buffer_ofsetLow[k], g_read_buffer_ofsetHi[k], g_read_buffer_size[k]);
+        FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+        for(int i = 0; i < 0x200; i++)
+        {
+          char buffer[4];
+          snprintf(buffer, 4, "%02x ", g_read_buffer_copys[k][i]);
+          FILE_GLOBAL_WRITE_LEN(buffer);
+        }
+        FILE_GLOBAL_WRITE_LEN("\n");
+
+        FILE_GLOBAL_WRITE_LEN("======================================\n");
+      }
+      */
+
+      //print bytes from crypto proc
+      /*
+      for(int i = 0; i < 0x200; i++)
+      {
+        char buffer[4];
+        snprintf(buffer, 4, "%02x ", g_crypto_buffer_before_copys[0][i]);
+        FILE_GLOBAL_WRITE_LEN(buffer);
+      }
+      FILE_GLOBAL_WRITE_LEN("\n");
+
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+
+      for(int i = 0; i < 0x200; i++)
+      {
+        char buffer[4];
+        snprintf(buffer, 4, "%02x ", g_crypto_buffer_after_copys[0][i]);
+        FILE_GLOBAL_WRITE_LEN(buffer);
+      }
+      FILE_GLOBAL_WRITE_LEN("\n");
+
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+      */
+    }
+    close_global_log();
+  }
+
+  if(mountInfo > 0)
+  {
+    if(mountInfo->filesystem > 0)
+    {
+      if(strncmp(mountInfo->filesystem, "PFS_GDSD_INF", sizeof("PFS_GDSD_INF")) == 0)
+      {
+        g_iofilemgr_sceVfsMount_enable_log = 0;
+      }
+    }
+  }
+
+  return res;
+}
+
+//---
+
+int iofilemgr_BE62E8_hook(int unk0, int unk1, int unk2, int unk3, int arg_0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE62E8_hook_ref, unk0, unk1, unk2, unk3, arg_0);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BE62E8_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BE62E8_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BE62E8_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE5F10_hook(vfs_node *ctx, int unk1, int unk2, int unk3, int arg_0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE5F10_hook_ref, ctx, unk1, unk2, unk3, arg_0);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BE5F10_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BE5F10_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BE5F10_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE6788_hook(void *unk0, int unk1, vfs_node **vnode, int unk3, int unk4)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE6788_hook_ref, unk0, unk1, vnode, unk3, unk4);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BE6788_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BE6788_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BE6788_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEE3C8_hook(vfs_node *ctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEE3C8_hook_ref, ctx);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEE3C8_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEE3C8_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEE3C8_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+void* iofilemgr_BEBAC0_hook()
+{
+  void* res = TAI_CONTINUE(void*, iofilemgr_BEBAC0_hook_ref);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEBAC0_hook_error_cnt++;
+
+    if((int)res == 0x8001008f)
+    {
+      g_iofilemgr_BEBAC0_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_iofilemgr_BEBAC0_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_sceVfsGetNewNode_hook(vfs_mount* mount, node_ops2* ops, int unused, vfs_node** node)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_sceVfsGetNewNode_hook_ref, mount, ops, unused, node);
+
+  memcpy((void*)&g_mount_copys[g_mount_copys_cnt], (void*)mount, sizeof(vfs_mount));
+  g_mount_copys_cnt++;
+  if(g_mount_copys_cnt == 10)
+    g_mount_copys_cnt = 0;
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_sceVfsGetNewNode_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_sceVfsGetNewNode_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_sceVfsGetNewNode_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE61C4_hook(int unk0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE61C4_hook_ref, unk0);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BE61C4_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BE61C4_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BE61C4_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEDEB0_hook(uint32_t* a0, int a1, vfs_node* a2, int a3)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEDEB0_hook_ref, a0, a1, a2, a3);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEDEB0_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEDEB0_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEDEB0_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE59BC_hook(vfs_node* a0, void* a1)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE59BC_hook_ref, a0, a1);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BE59BC_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BE59BC_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BE59BC_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE5B30_hook(vfs_node* a0, vfs_node* a1, void* a2, int a3, int a4)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE5B30_hook_ref, a0, a1, a2, a3, a4);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BE5B30_hook_error_cnt++;
+
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BE5B30_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BE5B30_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF18CC_hook(vfs_mount* a0, uint32_t* a1)
+{
+   int res = TAI_CONTINUE(int, iofilemgr_BF18CC_hook_ref, a0, a1);
+
+   if(1)
+   {
+      g_iofilemgr_BF18CC_hook_error_cnt++;
+
+      if(res == 0x8001008f)
+      {
+        g_iofilemgr_BF18CC_hook_error = res;
+      }
+      else
+      {
+        if(res < 0)
+        {
+          g_iofilemgr_BF18CC_hook_error = res;
+        }
+      }
+   }
+
+   return res;
+}
+
+int iofilemgr_BF1AF0_hook(vfs_node *cur_node, int unk1, vfs_node *node)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF1AF0_hook_ref, cur_node, unk1, node);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BF1AF0_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BF1AF0_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BF1AF0_hook_error = res;
+      }
+    }
+  }
+  
+  return res;
+}
+
+//---------------
+
+int iofilemgr_BEE364_hook(vfs_node *node)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEE364_hook_ref, node);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEE364_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEE364_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEE364_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEE2D4_hook()
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEE2D4_hook_ref);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEE2D4_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEE2D4_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEE2D4_hook_error = res;
+      }
+    }
+  }
+
+
+  return res;
+}
+
+int iofilemgr_BEE2C4_hook()
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEE2C4_hook_ref);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEE2C4_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEE2C4_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEE2C4_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEDF5C_hook(int unk0, int unk1)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEDF5C_hook_ref, unk0, unk1);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEDF5C_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEDF5C_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEDF5C_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BECE80_hook(int unk0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BECE80_hook_ref, unk0);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BECE80_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BECE80_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BECE80_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEC808_hook(int unk0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEC808_hook_ref, unk0);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEC808_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEC808_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEC808_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEC620_hook(int unk0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEC620_hook_ref, unk0);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEC620_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEC620_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEC620_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEC578_hook(int unk0, int unk1)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEC578_hook_ref, unk0, unk1);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEC578_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEC578_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEC578_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEC56C_hook(void *unk0, void *unk1)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEC56C_hook_ref, unk0, unk1);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEC56C_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEC56C_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEC56C_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEC530_hook(int unk0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEC530_hook_ref, unk0);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEC530_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEC530_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEC530_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEC010_hook(int unk0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEC010_hook_ref, unk0);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEC010_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEC010_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEC010_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE5A38_hook(int unk0, int unk1)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE5A38_hook_ref, unk0, unk1);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BE5A38_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BE5A38_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BE5A38_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE5814_hook(vfs_node *ctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE5814_hook_ref, ctx);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BE5814_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BE5814_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BE5814_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEBB84_hook(vfs_mount* arg0, vfs_node* arg1, SceUID heapid, vfs_add_data* arg3)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEBB84_hook_ref, arg0, arg1, heapid, arg3);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======iofilemgr_BEBB84_hook===========\n");
+
+    if(arg3 > 0)
+    {
+      snprintf(sprintfBuffer, 256, "add name: %s\n", arg3->name);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    }
+
+    if(arg0 > 0)
+    {
+      print_vfs_mount(arg0);
+    }
+
+    snprintf(sprintfBuffer, 256, "unk_70: %08x\n", arg1->unk_70);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+    snprintf(sprintfBuffer, 256, "res: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log();
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEBB84_hook_error_cnt++;
+    
+    if(res == 0x8001008f)
+    {
+      g_iofilemgr_BEBB84_hook_error = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        g_iofilemgr_BEBB84_hook_error = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+vfs_add_data* iofilemgr_BEC7C0_hook(char *filesystem)
+{
+  vfs_add_data* res = TAI_CONTINUE(vfs_add_data*, iofilemgr_BEC7C0_hook_ref, filesystem);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======iofilemgr_BEC7C0_hook===========\n");
+    
+    snprintf(sprintfBuffer, 256, "filesystem: %s\n", filesystem);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    
+    if(res > 0)
+    {
+      snprintf(sprintfBuffer, 256, "add name: %s\n", res->name);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    }
+
+    snprintf(sprintfBuffer, 256, "res: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log();
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BEC7C0_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_iofilemgr_BEC7C0_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_iofilemgr_BEC7C0_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+void* iofilemgr_BECE0C_hook()
+{
+  void* res = TAI_CONTINUE(void*, iofilemgr_BECE0C_hook_ref);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_BECE0C_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_iofilemgr_BECE0C_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_iofilemgr_BECE0C_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+//----------------
+
+int iofilemgr_exp_aa45010b_hook(vfs_node *ctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_exp_aa45010b_hook_ref, ctx);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_exp_aa45010b_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_iofilemgr_exp_aa45010b_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_iofilemgr_exp_aa45010b_hook_error = (int)res;
+      }
+    }
+  }
+
+
+  return res;
+}
+
+int iofilemgr_exp_21d57633_hook(vfs_node *node)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_exp_21d57633_hook_ref, node);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_exp_21d57633_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_iofilemgr_exp_21d57633_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_iofilemgr_exp_21d57633_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_exp_dc2d8bce_hook(void *mutex)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_exp_dc2d8bce_hook_ref, mutex);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_exp_dc2d8bce_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_iofilemgr_exp_dc2d8bce_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_iofilemgr_exp_dc2d8bce_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_exp_6b3ca9f7_hook(void *mutex)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_exp_6b3ca9f7_hook_ref, mutex);
+
+  if(1)
+  //if(g_pfs_mount_enable_log > 0 && g_iofilemgr_sceVfsMount_enable_log > 0)
+  { 
+    g_iofilemgr_exp_6b3ca9f7_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_iofilemgr_exp_6b3ca9f7_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_iofilemgr_exp_6b3ca9f7_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_mgr_219105C_hook(pfs_mgr_219105C_hook_args* args)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_219105C_hook_ref, args);
+
+  if(1)
+  { 
+    g_pfs_mgr_219105C_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_pfs_mgr_219105C_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_pfs_mgr_219105C_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_mgr_2193624_hook(int arg0, int arg1)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_2193624_hook_ref, arg0, arg1);
+
+  if(1)
+  { 
+    g_pfs_mgr_2193624_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_pfs_mgr_2193624_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_pfs_mgr_2193624_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_mgr_2198928_hook(int unk0, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_2198928_hook_ref, unk0, unk1, unk2, unk3);
+
+  if(1)
+  { 
+    g_pfs_mgr_2198928_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_pfs_mgr_2198928_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_pfs_mgr_2198928_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+const unsigned char sao_files_db_start[0x30] =
+{
+    0x53, 0x43, 0x45, 0x4e, 0x47, 0x50, 0x46, 0x53,
+    0x05, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+    0x00, 0x04, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x00,
+    0x0d, 0x00, 0x00, 0x00, 0xe6, 0x79, 0x2c, 0x65,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0x00, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+//read wrapper
+int pfs_mgr_2199064_hook(node_holder* unk0, char *buffer, int size, int ignored, int offsetLo, int offsetHi, uint32_t* readBytes)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_2199064_hook_ref, unk0, buffer, size, ignored, offsetLo, offsetHi, readBytes);
+   
+  //int isSaoFilesDb = memcmp(buffer, sao_files_db_start, 0x30);
+
+  //int isSaoFilesDb = ((offsetLo == 0x80 || offsetHi == 0x80) && strncmp(buffer, "SCENGPFS", 8) == 0) ? 0 : 1;
+  //int isSaoFilesDb = (offsetLo == 0x80 || offsetHi == 0x80) ? 0 : 1;
+
+  if(1)
+  //if(isSaoFilesDb == 0)
+  { 
+    g_pfs_mgr_2199064_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_pfs_mgr_2199064_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_pfs_mgr_2199064_hook_error = (int)res;
+      }
+    }
+  }
+
+  /*
+  if(isSaoFilesDb == 0)
+  {
+    g_read_buffer_ofsetLow[g_read_buffer_copys_cnt] = offsetLo;
+    g_read_buffer_ofsetHi[g_read_buffer_copys_cnt] = offsetHi;
+    g_read_buffer_size[g_read_buffer_copys_cnt] = size;
+
+    memcpy(g_read_buffer_copys[g_read_buffer_copys_cnt], buffer, min(size, 0x200));
+
+    g_read_buffer_copys_cnt++;
+
+    if(g_read_buffer_copys_cnt == 0x50)
+      g_read_buffer_copys_cnt = 0;
+  }
+  */
+
+  return res;
+}
+
+int pfs_mgr_219DE44_hook(char *unk0, char *unk1)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_219DE44_hook_ref, unk0, unk1);
+
+  if(1)
+  { 
+    g_pfs_mgr_219DE44_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_pfs_mgr_219DE44_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_pfs_mgr_219DE44_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_mgr_219DE7C_hook(char bytes14[0x14], ctx_21A27B8* base, ctx_21A27B8_70* data_base, int size)
+{
+  int isSaoFilesDb = memcmp(data_base->unk_70, sao_files_db_start, 0x30);
+
+  /*
+  if(size == 0x160)
+  {
+    memcpy(&g_crypto_buffer_before_copys[g_crypto_buffer_before_copys_cnt], base, min(size, 0x200));
+    g_crypto_buffer_before_copys_cnt++;
+    if(g_crypto_buffer_before_copys_cnt == 0x50)
+      g_crypto_buffer_before_copys_cnt = 0;
+  }
+  */
+
+  int res = TAI_CONTINUE(int, pfs_mgr_219DE7C_hook_ref, bytes14, base, data_base, size);
+
+  /*
+  if(size == 0x160)
+  {
+    memcpy(&g_crypto_buffer_after_copys[g_crypto_buffer_after_copys_cnt], base, min(size, 0x200));
+    g_crypto_buffer_after_copys_cnt++;
+    if(g_crypto_buffer_after_copys_cnt == 0x50)
+      g_crypto_buffer_after_copys_cnt = 0;
+  }
+  */
+
+  if(isSaoFilesDb == 0)
+  { 
+    g_pfs_mgr_219DE7C_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_pfs_mgr_219DE7C_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_pfs_mgr_219DE7C_hook_error = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_mgr_2199144_hook(node_holder* nodeHolder, result_2199144* result_pair)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_2199144_hook_ref, nodeHolder, result_pair);
+
+  if(1)
+  { 
+    g_pfs_mgr_2199144_hook_error_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      g_pfs_mgr_2199144_hook_error = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        g_pfs_mgr_2199144_hook_error = (int)res;
+      }
+    }
+  }
+
+  if(nodeHolder > 0)
+  {
+    vfs_node* node = nodeHolder->node;
+    if(node > 0)
+    {
+      vfs_node_70* ctx70 = node->unk_70;
+      if(ctx70 > 0)
+      {
+        char* str = ctx70->str_1C;
+        int str_len = ctx70->str_len_18;
+        if(str > 0)
+        {
+          if(nodeStrLen == 0)
+          {
+            memcpy(nodeStr, str, min(0x100, str_len));
+            nodeStrLen = str_len;
+          }
+        }
+        else
+        {
+          nodeStrLen = -4;
+        }
+      }
+      else
+      {
+        nodeStrLen = -3;
+      }
+    }
+    else
+    {
+      nodeStrLen = -2;
+    }
+  }
+  else
+  {
+    nodeStrLen = -1;
+  }
+
+  return res;
+}
+
+//param.sfo parser procedure
+int app_mgr_23D5028_hook(SceUID pid, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, app_mgr_23D5028_hook_ref, pid, unk1, unk2, unk3);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called app_mgr_23D5028_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int log_iofilemgr_in_app_mgr = 0;
+
+//param.sfo read procedure
+int app_mgr_23EF934_hook(int unk0, int unk1)
+{
+  log_iofilemgr_in_app_mgr = 1;
+
+  int res = TAI_CONTINUE(int, app_mgr_23EF934_hook_ref, unk0, unk1);
+
+  log_iofilemgr_in_app_mgr = 0;
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called app_mgr_23EF934_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int iofilemgr_BE8444_hook_err = 0;
+int iofilemgr_BE8444_hook_err_cnt = 0;
+
+int iofilemgr_50a63acf_hook_err = 0;
+int iofilemgr_50a63acf_hook_err_cnt = 0;
+
+int iofilemgr_BE584C_hook_err = 0;
+int iofilemgr_BE584C_hook_err_cnt = 0;
+
+int iofilemgr_BE5CC4_hook_err = 0;
+int iofilemgr_BE5CC4_hook_err_cnt = 0;
+
+node_ops1* iofilemgr_BE5CC4_hook_ops1;
+node_ops2* iofilemgr_BE5CC4_hook_ops2;
+
+int iofilemgr_f7dac0f5_hook_err = 0;
+int iofilemgr_f7dac0f5_hook_err_cnt = 0;
+
+int iofilemgr_a5a6a55c_hook_err = 0;
+int iofilemgr_a5a6a55c_hook_err_cnt = 0;
+
+int pfs_mgr_21910F4_hook_err = 0;
+int pfs_mgr_21910F4_hook_err_cnt = 0;
+
+int pfs_mgr_2193B44_hook_err = 0;
+int pfs_mgr_2193B44_hook_err_cnt = 0;
+
+//ksceIoGetstat hook
+int app_mgr_75c96d25_hook(const char *file, SceIoStat *stat)
+{
+  int res = TAI_CONTINUE(int, app_mgr_75c96d25_hook_ref, file, stat);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    open_global_log();
+    {
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+      
+      snprintf(sprintfBuffer, 256, "called ksceIoGetstat:\nfile: %s res: %08x\n", file, res);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BE8444_hook error: %08x cnt: %08x\n", iofilemgr_BE8444_hook_err, iofilemgr_BE8444_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_50a63acf_hook error: %08x cnt: %08x\n", iofilemgr_50a63acf_hook_err, iofilemgr_50a63acf_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "g_iofilemgr_BE62E8_hook error: %08x cnt: %08x\n", g_iofilemgr_BE62E8_hook_error, g_iofilemgr_BE62E8_hook_error_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "g_iofilemgr_BE6788_hook error: %08x cnt: %08x\n", g_iofilemgr_BE6788_hook_error, g_iofilemgr_BE6788_hook_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BE584C_hook error: %08x cnt: %08x\n", iofilemgr_BE584C_hook_err, iofilemgr_BE584C_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BE5CC4_hook error: %08x cnt: %08x\n", iofilemgr_BE5CC4_hook_err, iofilemgr_BE5CC4_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      if(iofilemgr_BE5CC4_hook_ops1 > 0)
+      {
+        int curValue = (int)iofilemgr_BE5CC4_hook_ops1;
+        int segidx = find_in_segments(g_segListKernel, SEG_LIST_SIZE, &moduleListIsConstructedKernel, curValue);
+        if(segidx >= 0)
+        {
+          open_global_log();
+          {
+            snprintf(sprintfBuffer, 256, "ops1: %08x %s %d %08x %08x\n", curValue, g_segListKernel[segidx].moduleName, g_segListKernel[segidx].seg, g_segListKernel[segidx].range.start, (curValue - g_segListKernel[segidx].range.start));
+            FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+          }
+          close_global_log();
+        }
+      }
+      
+      if(iofilemgr_BE5CC4_hook_ops2 > 0)
+      {
+        int curValue = (int)iofilemgr_BE5CC4_hook_ops2;
+        int segidx = find_in_segments(g_segListKernel, SEG_LIST_SIZE, &moduleListIsConstructedKernel, curValue);
+        if(segidx >= 0)
+        {
+          open_global_log();
+          {
+            snprintf(sprintfBuffer, 256, "ops2: %08x %s %d %08x %08x\n", curValue, g_segListKernel[segidx].moduleName, g_segListKernel[segidx].seg, g_segListKernel[segidx].range.start, (curValue - g_segListKernel[segidx].range.start));
+            FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+          }
+          close_global_log();
+        }
+      }
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_f7dac0f5_hook error: %08x cnt: %08x\n", iofilemgr_f7dac0f5_hook_err, iofilemgr_f7dac0f5_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_a5a6a55c_hook error: %08x cnt: %08x\n", iofilemgr_a5a6a55c_hook_err, iofilemgr_a5a6a55c_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "pfs_mgr_21910F4_hook error: %08x cnt: %08x\n", pfs_mgr_21910F4_hook_err, pfs_mgr_21910F4_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "pfs_mgr_2193B44_hook error: %08x cnt: %08x\n", pfs_mgr_2193B44_hook_err, pfs_mgr_2193B44_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+    }
+    close_global_log(); 
+  }
+
+  return res;
+}
+
+int iofilemgr_BE8444_hook(void* args)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE8444_hook_ref, args);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BE8444_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BE8444_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BE8444_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+//vfs_node_func15 hook
+int iofilemgr_50a63acf_hook(vfs_node* n0, int unk1, int unk2)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_50a63acf_hook_ref, n0, unk1, unk2);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_50a63acf_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_50a63acf_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_50a63acf_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE584C_hook(int unk0, int unk1, int unk2, int unk3, vfs_node **node)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE584C_hook_ref, unk0, unk1, unk2, unk3, node);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BE584C_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BE584C_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BE584C_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE5CC4_hook(vfs_node *ctx, int unk1, int unk2, int unk3, int arg_0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE5CC4_hook_ref, ctx, unk1, unk2, unk3, arg_0);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BE5CC4_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BE5CC4_hook_err = (int)res;
+
+      if(ctx > 0)
+      {
+        vfs_mount* mnt = ctx->node;
+        if(mnt > 0)
+        {
+          vfs_add_data* add = mnt->add_data;
+          if(add > 0)
+          {
+            iofilemgr_BE5CC4_hook_ops1 = add->funcs1;
+          }
+        }
+
+        iofilemgr_BE5CC4_hook_ops2 = ctx->ops;
+      }
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BE5CC4_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_f7dac0f5_hook(vfs_mount *mnt, int unk1, int unk2, int unk3, int arg_0, int arg_4, int arg_8)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_f7dac0f5_hook_ref, mnt, unk1, unk2, unk3, arg_0, arg_4, arg_8);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_f7dac0f5_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_f7dac0f5_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_f7dac0f5_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_a5a6a55c_hook(vfs_node *ctx, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_a5a6a55c_hook_ref, ctx, unk1, unk2, unk3);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_a5a6a55c_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_a5a6a55c_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_a5a6a55c_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+//vfs_node_2_func4
+int pfs_mgr_21910F4_hook(void* args)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_21910F4_hook_ref, args);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_mgr_21910F4_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      pfs_mgr_21910F4_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        pfs_mgr_21910F4_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+//icv file related function
+int pfs_mgr_2193B44_hook(void* unk0, void* unk1, int num2)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_2193B44_hook_ref, unk0, unk1, num2);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_mgr_2193B44_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      pfs_mgr_2193B44_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        pfs_mgr_2193B44_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BEA704_hook_err = 0;
+int iofilemgr_BEA704_hook_err_cnt = 0;
+
+int iofilemgr_9e347c7d_hook_err = 0;
+int iofilemgr_9e347c7d_hook_err_cnt = 0;
+
+int iofilemgr_76b79bec_hook_err = 0;
+int iofilemgr_76b79bec_hook_err_cnt = 0;
+
+int pfs_mgr_219112C_hook_err = 0;
+int pfs_mgr_219112C_hook_err_cnt = 0;
+
+int pfs_mgr_2192190_hook_err = 0;
+int pfs_mgr_2192190_hook_err_cnt = 0;
+
+int app_mgr_75192972_hook(const char* name, int flags, SceMode mode)
+{
+  int res = TAI_CONTINUE(int, app_mgr_75192972_hook_ref, name, flags, mode);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    open_global_log();
+    {
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+      
+      snprintf(sprintfBuffer, 256, "called ksceIoOpen:\nname: %s res: %08x\n", name, res);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BEA704_hook error: %08x cnt: %08x\n", iofilemgr_BEA704_hook_err, iofilemgr_BEA704_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_a5a6a55c_hook error: %08x cnt: %08x\n", iofilemgr_a5a6a55c_hook_err, iofilemgr_a5a6a55c_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_9e347c7d_hook error: %08x cnt: %08x\n", iofilemgr_9e347c7d_hook_err, iofilemgr_9e347c7d_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_76b79bec_hook error: %08x cnt: %08x\n", iofilemgr_76b79bec_hook_err, iofilemgr_76b79bec_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "pfs_mgr_219112C_hook error: %08x cnt: %08x\n", pfs_mgr_219112C_hook_err, pfs_mgr_219112C_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "pfs_mgr_2192190_hook error: %08x cnt: %08x\n", pfs_mgr_2192190_hook_err, pfs_mgr_2192190_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+    }
+    close_global_log(); 
+  }
+
+  return res;
+}
+
+int iofilemgr_BEA704_hook(void* args)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BEA704_hook_ref, args);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BEA704_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BEA704_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BEA704_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_9e347c7d_hook(vfs_node *n0, int unk1, int unk2, int unk3, int arg_0)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_9e347c7d_hook_ref, n0, unk1, unk2, unk3, arg_0);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_9e347c7d_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_9e347c7d_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_9e347c7d_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_76b79bec_hook(vfs_node *ctx, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_76b79bec_hook_ref, ctx, unk1, unk2, unk3);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_76b79bec_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_76b79bec_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_76b79bec_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+//vfs_node_2_func1
+int pfs_mgr_219112C_hook(void* args)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_219112C_hook_ref, args);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_mgr_219112C_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      pfs_mgr_219112C_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        pfs_mgr_219112C_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_mgr_2192190_hook(int unk0, int unk1, int unk2, int unk3, int arg_0)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_2192190_hook_ref, unk0, unk1, unk2, unk3, arg_0);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_mgr_2192190_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      pfs_mgr_2192190_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        pfs_mgr_2192190_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+//---------------
+
+int pfs_mgr_219BF20_hook_err = 0;
+int pfs_mgr_219BF20_hook_err_cnt = 0;
+
+int iofilemgr_BE7AEC_hook_err = 0;
+int iofilemgr_BE7AEC_hook_err_cnt = 0;
+
+int iofilemgr_BF57F8_hook_err = 0;
+int iofilemgr_BF57F8_hook_err_cnt = 0;
+
+int iofilemgr_BF66E4_hook_err = 0;
+int iofilemgr_BF66E4_hook_err_cnt = 0;
+
+int iofilemgr_BF66E4_hook_result_error = 0;
+int iofilemgr_BF66E4_hook_result_error_cnt = 0;
+
+int iofilemgr_BF6B6C_hook_err = 0;
+int iofilemgr_BF6B6C_hook_err_cnt = 0;
+
+int iofilemgr_BF69B4_hook_err = 0;
+int iofilemgr_BF69B4_hook_err_cnt = 0;
+
+int iofilemgr_BF651C_hook_err = 0;
+int iofilemgr_BF651C_hook_err_cnt = 0;
+
+int iofilemgr_BF651C_hook_ioctl_result = 0;
+int iofilemgr_BF651C_hook_ioctl_result_cnt = 0;
+
+int iofilemgr_BF89EC_hook_err = 0;
+int iofilemgr_BF89EC_hook_err_cnt = 0;
+
+int iofilemgr_BF8BD4_hook_err = 0;
+int iofilemgr_BF8BD4_hook_err_cnt = 0;
+
+int iofilemgr_BF7C00_hook_err;
+int iofilemgr_BF7C00_hook_err_cnt;
+
+//
+
+int iofilemgr_BF8BB0_hook_err = 0;
+int iofilemgr_BF7288_hook_err = 0;
+int iofilemgr_BFB5F0_hook_err = 0;
+int iofilemgr_BF88C4_hook_err = 0;
+int iofilemgr_BFB794_hook_err = 0;
+int iofilemgr_BF7268_hook_err = 0;
+int iofilemgr_BF83A0_hook_err = 0;
+int iofilemgr_BFB628_hook_err = 0;
+int iofilemgr_BF7228_hook_err = 0;
+int iofilemgr_BF83F8_hook_err = 0;
+int iofilemgr_BFB748_hook_err = 0;
+
+int iofilemgr_BF8BB0_hook_err_cnt = 0;
+int iofilemgr_BF7288_hook_err_cnt = 0;
+int iofilemgr_BFB5F0_hook_err_cnt = 0;
+int iofilemgr_BF88C4_hook_err_cnt = 0;
+int iofilemgr_BFB794_hook_err_cnt = 0;
+int iofilemgr_BF7268_hook_err_cnt = 0;
+int iofilemgr_BF83A0_hook_err_cnt = 0;
+int iofilemgr_BFB628_hook_err_cnt = 0;
+int iofilemgr_BF7228_hook_err_cnt = 0;
+int iofilemgr_BF83F8_hook_err_cnt = 0;
+int iofilemgr_BFB748_hook_err_cnt = 0;
+
+int iofilemgr_BFB628_hook_err_r2 = 0;
+int iofilemgr_BFB794_hook_ret = 0;
+int iofilemgr_BF7C00_hook_ret = 0;
+
+int iofilemgr_BE7F4C_hook_err = 0;
+int iofilemgr_BE7F4C_hook_err_cnt = 0;
+
+int iofilemgr_BFB2A8_hook_err = 0;
+int iofilemgr_BFB2A8_hook_err_cnt = 0;
+
+int pfs_facade_4238d2d2_hook_err = 0;
+int pfs_facade_4238d2d2_hook_err_cnt = 0;
+
+int app_mgr_e17efc03_hook(SceUID fd, char *data, SceSize size)
+{
+  int res = TAI_CONTINUE(int, app_mgr_e17efc03_hook_ref, fd, data, size);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    open_global_log();
+    {
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+      
+      snprintf(sprintfBuffer, 256, "called sceIoReadForDriver:\nfd: %08x size: %08x res: %08x\n", fd, size, res);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "g_pfs_mgr_2199064_hook error: %08x cnt: %08x\n", g_pfs_mgr_2199064_hook_error, g_pfs_mgr_2199064_hook_error_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "pfs_mgr_219BF20_hook error: %08x cnt: %08x\n", pfs_mgr_219BF20_hook_err, pfs_mgr_219BF20_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //sceIoReadForDriver main thread
+      snprintf(sprintfBuffer, 256, "iofilemgr_BE7AEC_hook (read) error: %08x cnt: %08x\n", iofilemgr_BE7AEC_hook_err, iofilemgr_BE7AEC_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //this is read alternative that should not be called
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF57F8_hook (callback) error: %08x cnt: %08x\n", iofilemgr_BF57F8_hook_err, iofilemgr_BF57F8_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //read alternative subroutne
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF66E4_hook error: %08x cnt: %08x\n", iofilemgr_BF66E4_hook_err, iofilemgr_BF66E4_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF66E4_hook_result error: %08x cnt: %08x\n", iofilemgr_BF66E4_hook_result_error, iofilemgr_BF66E4_hook_result_error_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //read alternative subroutne
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF6B6C_hook error: %08x cnt: %08x\n", iofilemgr_BF6B6C_hook_err, iofilemgr_BF6B6C_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //read alternative subroutne
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BF69B4_hook error: %08x cnt: %08x\n", iofilemgr_BF69B4_hook_err, iofilemgr_BF69B4_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //ioctl wrapper
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF651C_hook (ioctl) error: %08x cnt: %08x\n", iofilemgr_BF651C_hook_err, iofilemgr_BF651C_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF651C_hook_ioctl_result error: %08x cnt: %08x\n", iofilemgr_BF651C_hook_ioctl_result, iofilemgr_BF651C_hook_ioctl_result_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //io dispatcher
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF89EC_hook error: %08x cnt: %08x\n", iofilemgr_BF89EC_hook_err, iofilemgr_BF89EC_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF8BD4_hook error: %08x cnt: %08x\n", iofilemgr_BF8BD4_hook_err, iofilemgr_BF8BD4_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //main i/o dispatcher
+      snprintf(sprintfBuffer, 256, "iofilemgr_BF7C00_hook error: %08x cnt: %08x ret: %08x\n", iofilemgr_BF7C00_hook_err, iofilemgr_BF7C00_hook_err_cnt, iofilemgr_BF7C00_hook_ret);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BF8BB0_hook error: %08x cnt: %08x\n", iofilemgr_BF8BB0_hook_err, iofilemgr_BF8BB0_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BF7288_hook error: %08x cnt: %08x\n", iofilemgr_BF7288_hook_err, iofilemgr_BF7288_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BFB5F0_hook error: %08x cnt: %08x\n", iofilemgr_BFB5F0_hook_err, iofilemgr_BFB5F0_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BF88C4_hook error: %08x cnt: %08x\n", iofilemgr_BF88C4_hook_err, iofilemgr_BF88C4_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BFB794_hook error: %08x cnt: %08x ret: %08x\n", iofilemgr_BFB794_hook_err, iofilemgr_BFB794_hook_err_cnt, iofilemgr_BFB794_hook_ret);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BF7268_hook error: %08x cnt: %08x\n", iofilemgr_BF7268_hook_err, iofilemgr_BF7268_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BF83A0_hook error: %08x cnt: %08x\n", iofilemgr_BF83A0_hook_err, iofilemgr_BF83A0_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BFB628_hook error: %08x cnt: %08x err2: %08x\n", iofilemgr_BFB628_hook_err, iofilemgr_BFB628_hook_err_cnt, iofilemgr_BFB628_hook_err_r2);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BF7228_hook error: %08x cnt: %08x\n", iofilemgr_BF7228_hook_err, iofilemgr_BF7228_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BF83F8_hook error: %08x cnt: %08x\n", iofilemgr_BF83F8_hook_err, iofilemgr_BF83F8_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "iofilemgr_BFB748_hook error: %08x cnt: %08x\n", iofilemgr_BFB748_hook_err, iofilemgr_BFB748_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BE7F4C_hook error: %08x cnt: %08x\n", iofilemgr_BE7F4C_hook_err, iofilemgr_BE7F4C_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "iofilemgr_BFB2A8_hook error: %08x cnt: %08x\n", iofilemgr_BFB2A8_hook_err, iofilemgr_BFB2A8_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "pfs_facade_4238d2d2_hook error: %08x cnt: %08x\n", pfs_facade_4238d2d2_hook_err, pfs_facade_4238d2d2_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+
+      for(int i = 0; i < min(0x100, size); i++)
+      {
+        char buffer[4];
+        snprintf(buffer, 4, "%02x ", data[i]);
+        FILE_GLOBAL_WRITE_LEN(buffer);
+      }
+      FILE_GLOBAL_WRITE_LEN("\n");
+
+      FILE_GLOBAL_WRITE_LEN("======================================\n");
+
+    }
+    close_global_log(); 
+
+    iofilemgr_BF651C_hook_err = 0;
+    iofilemgr_BF651C_hook_err_cnt = 0;
+
+    iofilemgr_BF651C_hook_ioctl_result = 0;
+    iofilemgr_BF651C_hook_ioctl_result_cnt = 0;
+  }
+
+  return res;
+}
+
+int pfs_mgr_219BF20_hook(int unk0)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_219BF20_hook_ref, unk0);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_mgr_219BF20_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      pfs_mgr_219BF20_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        pfs_mgr_219BF20_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE7AEC_hook(void* args)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE7AEC_hook_ref, args);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BE7AEC_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BE7AEC_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BE7AEC_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF57F8_hook(SceUID fd, void *data, SceSize size, void* ptr)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF57F8_hook_ref, fd, data, size, ptr);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BF57F8_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BF57F8_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BF57F8_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF66E4_hook(io_scheduler_dispatcher *disp, io_context *ioctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF66E4_hook_ref, disp, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BF66E4_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BF66E4_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BF66E4_hook_err = (int)res;
+      }
+    }
+  }
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BF66E4_hook_result_error_cnt++;
+    
+    if((int)ioctx->op_result == 0x80140F02)
+    {
+      iofilemgr_BF66E4_hook_result_error = (int)ioctx->op_result;
+    }
+    else
+    {
+      if((int)ioctx->op_result < 0)
+      {
+        iofilemgr_BF66E4_hook_result_error = (int)ioctx->op_result;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF6B6C_hook(io_context *ioctx, int	ioctlOutdata1, int ioctlOutdata0, int async, int arg_0_in, int arg_4_in, void *pool_A0,	int num, SceUID	fd, void *data,	SceSize	size)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF6B6C_hook_ref, ioctx, ioctlOutdata1, ioctlOutdata0, async, arg_0_in, arg_4_in, pool_A0, num, fd, data, size);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BF6B6C_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BF6B6C_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BF6B6C_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF69B4_hook(io_context *ioctx, int io_op_index, int async, int unk3, int arg_0, io_device_code ioctlOutdata1,	int ioctlOutdata0, void	*pool_A0, int num)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF69B4_hook_ref, ioctx, io_op_index, async, unk3, arg_0, ioctlOutdata1, ioctlOutdata0, pool_A0, num);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BF69B4_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BF69B4_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BF69B4_hook_err = (int)res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF651C_hook(SceUID fd, void *outdata, int indataValue)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF651C_hook_ref, fd, outdata, indataValue);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BF651C_hook_err_cnt++;
+    
+    if((int)res == 0x8001008f)
+    {
+      iofilemgr_BF651C_hook_err = (int)res;
+    }
+    else
+    {
+      if((int)res < 0)
+      {
+        iofilemgr_BF651C_hook_err = (int)res;
+      }
+    }
+  }
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    int* dataItems = (int*)outdata;
+    int item1 = dataItems[1];
+
+    if(item1 >= 0)
+    {
+      short uxth = item1 & 0x0000FFFF;
+      if(uxth != 0x400)
+      {
+        iofilemgr_BF651C_hook_ioctl_result = 1;
+        iofilemgr_BF651C_hook_ioctl_result_cnt++;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF89EC_hook(io_scheduler *shed, io_context *ioctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF89EC_hook_ref, shed, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BF89EC_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BF89EC_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BF89EC_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF8BD4_hook(io_scheduler *shed, io_context *ioctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF8BD4_hook_ref, shed, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BF8BD4_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BF8BD4_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BF8BD4_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+//main i/o dispatcher
+int iofilemgr_BF7C00_hook(io_context *ioctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF7C00_hook_ref, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BF7C00_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BF7C00_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BF7C00_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(res == 0x80140F02)
+    {
+      iofilemgr_BF7C00_hook_ret = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        iofilemgr_BF7C00_hook_ret = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+//
+
+int iofilemgr_BF8BB0_hook(io_scheduler *shed, io_context *ioctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF8BB0_hook_ref, shed, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BF8BB0_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BF8BB0_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BF8BB0_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF7288_hook(io_context *ioctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF7288_hook_ref, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BF7288_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BF7288_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BF7288_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BFB5F0_hook(io_scheduler *shed, io_context *ioctx, int num)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BFB5F0_hook_ref, shed, ioctx, num);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BFB5F0_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BFB5F0_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BFB5F0_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF88C4_hook(io_context *ioctx, int *resptr)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF88C4_hook_ref, ioctx, resptr);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BF88C4_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BF88C4_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BF88C4_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BFB794_hook(io_context *ioctx, int unk)
+{
+  int prev_err = -1;
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      prev_err = (int)ioctx->op_result;
+    }
+  }
+
+  int res = TAI_CONTINUE(int, iofilemgr_BFB794_hook_ref, ioctx, unk);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      if(prev_err == 0) //check first time set
+      {
+        iofilemgr_BFB794_hook_err_cnt++;
+        
+        if((int)ioctx->op_result == 0x80140F02)
+        {
+          iofilemgr_BFB794_hook_err = (int)ioctx->op_result;
+        }
+        else
+        {
+          if((int)ioctx->op_result < 0)
+          {
+            iofilemgr_BFB794_hook_err = (int)ioctx->op_result;
+          }
+        }
+      }
+    }
+  }
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(res == 0x80140F02)
+    {
+      iofilemgr_BFB794_hook_ret = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        iofilemgr_BFB794_hook_ret = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF7268_hook(io_context *ioctx, void *ptr1)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF7268_hook_ref, ioctx, ptr1);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BF7268_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BF7268_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BF7268_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF83A0_hook(int *unk0, int *unk1, io_context *ioctx)
+{
+  int prev_err = -1;
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      prev_err = (int)ioctx->op_result;
+    }
+  }
+
+  int res = TAI_CONTINUE(int, iofilemgr_BF83A0_hook_ref, unk0, unk1, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      if(prev_err == 0) //check first time set
+      {
+        iofilemgr_BF83A0_hook_err_cnt++;
+        
+        if((int)ioctx->op_result == 0x80140F02)
+        {
+          iofilemgr_BF83A0_hook_err = (int)ioctx->op_result;
+        }
+        else
+        {
+          if((int)ioctx->op_result < 0)
+          {
+            iofilemgr_BF83A0_hook_err = (int)ioctx->op_result;
+          }
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BFB628_hook(io_context *ioctx, int unk1, int err)
+{
+  int err_orig = err;
+
+  int prev_err = -1;
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      prev_err = (int)ioctx->op_result;
+    }
+  }
+
+  int res = TAI_CONTINUE(int, iofilemgr_BFB628_hook_ref, ioctx, unk1, err);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      if(prev_err == 0) //check first time set
+      {
+        iofilemgr_BFB628_hook_err_cnt++;
+        
+        if((int)ioctx->op_result == 0x80140F02)
+        {
+          iofilemgr_BFB628_hook_err = (int)ioctx->op_result;
+        }
+        else
+        {
+          if((int)ioctx->op_result < 0)
+          {
+            iofilemgr_BFB628_hook_err = (int)ioctx->op_result;
+          }
+        }
+      }
+    }
+  }
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(prev_err == 0) //check first time set
+    {
+      if(err_orig == 0x80140F02)
+      {
+        iofilemgr_BFB628_hook_err_r2 = err_orig;
+      }
+      else
+      {
+        if(err_orig < 0)
+        {
+          iofilemgr_BFB628_hook_err_r2 = err_orig;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF7228_hook(io_context *ioctx)
+{
+  int prev_err = -1;
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      prev_err = (int)ioctx->op_result;
+    }
+  }
+
+  int res = TAI_CONTINUE(int, iofilemgr_BF7228_hook_ref, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      if(prev_err == 0)
+      {
+        iofilemgr_BF7228_hook_err_cnt++;
+        
+        if((int)ioctx->op_result == 0x80140F02)
+        {
+          iofilemgr_BF7228_hook_err = (int)ioctx->op_result;
+        }
+        else
+        {
+          if((int)ioctx->op_result < 0)
+          {
+            iofilemgr_BF7228_hook_err = (int)ioctx->op_result;
+          }
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BF83F8_hook(io_scheduler *shed, io_context *ioctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF83F8_hook_ref, shed, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      iofilemgr_BF83F8_hook_err_cnt++;
+      
+      if((int)ioctx->op_result == 0x80140F02)
+      {
+        iofilemgr_BF83F8_hook_err = (int)ioctx->op_result;
+      }
+      else
+      {
+        if((int)ioctx->op_result < 0)
+        {
+          iofilemgr_BF83F8_hook_err = (int)ioctx->op_result;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BFB748_hook(io_scheduler *shed, io_context *ioctx)
+{
+  int prev_err = -1;
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      prev_err = (int)ioctx->op_result;
+    }
+  }
+
+  int res = TAI_CONTINUE(int, iofilemgr_BFB748_hook_ref, shed, ioctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(ioctx > 0)
+    {
+      if(prev_err == 0)
+      {
+        iofilemgr_BFB748_hook_err_cnt++;
+        
+        if((int)ioctx->op_result == 0x80140F02)
+        {
+          iofilemgr_BFB748_hook_err = (int)ioctx->op_result;
+        }
+        else
+        {
+          if((int)ioctx->op_result < 0)
+          {
+            iofilemgr_BFB748_hook_err = (int)ioctx->op_result;
+          }
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BE7F4C_hook(sceIoLseekForDriver_args *ctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BE7F4C_hook_ref, ctx);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BE7F4C_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      iofilemgr_BE7F4C_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        iofilemgr_BE7F4C_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_BFB2A8_hook(io_context *ioctx, void* param)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BFB2A8_hook_ref, ioctx, param);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    iofilemgr_BFB2A8_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      iofilemgr_BFB2A8_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        iofilemgr_BFB2A8_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+//pfs pread impl
+int pfs_facade_4238d2d2_hook(sceIoPreadForDriver_args* args)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_4238d2d2_hook_ref, args);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_4238d2d2_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_4238d2d2_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_4238d2d2_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int iofilemgr_0b54f9e0_hook(sceIoPreadForDriver_args *args)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_0b54f9e0_hook_ref, args);
 
   return res;
 }
