@@ -149,6 +149,21 @@ SceUID proc_get_clearsign_stat_23D9A4C_hook_id = -1;
 tai_hook_ref_t pfs_mgr_a772209c_hook_ref;
 SceUID pfs_mgr_a772209c_hook_id = -1;
 
+tai_hook_ref_t pfs_mgr_2d48aea2_hook_ref;
+SceUID pfs_mgr_2d48aea2_hook_id = -1;
+
+tai_hook_ref_t pfs_mgr_2190AEC_hook_ref;
+SceUID pfs_mgr_2190AEC_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_feee44a9_hook_ref;
+SceUID iofilemgr_feee44a9_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_d220539d_hook_ref;
+SceUID iofilemgr_d220539d_hook_id = -1;
+
+tai_hook_ref_t iofilemgr_BF3848_hook_ref;
+SceUID iofilemgr_BF3848_hook_id = -1;
+
 //========================================
 
 #pragma pack(push, 1)
@@ -1150,6 +1165,91 @@ int pfs_mgr_a772209c_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int
     FILE_GLOBAL_WRITE_LEN("======================================\n");
   }
   close_global_log(); 
+
+  return res;
+}
+
+int pfs_mgr_2d48aea2_hook(int unk0, int unk1, int unk2, int unk3)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_2d48aea2_hook_ref, unk0, unk1, unk2, unk3);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called pfs_mgr_2d48aea2_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int pfs_mgr_2190AEC_hook(int unk0, int unk1, int unk2, int unk3, int arg_0)
+{
+  int res = TAI_CONTINUE(int, pfs_mgr_2190AEC_hook_ref, unk0, unk1, unk2, unk3, arg_0);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called pfs_mgr_2190AEC_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int iofilemgr_feee44a9_hook(int unk0, int unk1, int unk2)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_feee44a9_hook_ref, unk0, unk1, unk2);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called iofilemgr_feee44a9_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int iofilemgr_d220539d_hook(int unk0, int unk1, int unk2)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_d220539d_hook_ref, unk0, unk1, unk2);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called iofilemgr_d220539d_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log(); 
+
+  return res;
+}
+
+int iofilemgr_BF3848_hook(ctx_BF3848* ctx)
+{
+  int res = TAI_CONTINUE(int, iofilemgr_BF3848_hook_ref, ctx);
+
+  open_global_log();
+  {
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+    snprintf(sprintfBuffer, 256, "called iofilemgr_BF3848_hook:\nres: %08x\n", res);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    if(ctx > 0)
+    {
+      snprintf(sprintfBuffer, 256, "20: %08x\n", ctx->error);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    }
+    FILE_GLOBAL_WRITE_LEN("======================================\n");
+  }
+  close_global_log();
 
   return res;
 }

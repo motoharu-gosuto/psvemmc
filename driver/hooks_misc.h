@@ -131,6 +131,21 @@ extern SceUID proc_get_clearsign_stat_23D9A4C_hook_id;
 extern tai_hook_ref_t pfs_mgr_a772209c_hook_ref;
 extern SceUID pfs_mgr_a772209c_hook_id;
 
+extern tai_hook_ref_t pfs_mgr_2d48aea2_hook_ref;
+extern SceUID pfs_mgr_2d48aea2_hook_id;
+
+extern tai_hook_ref_t pfs_mgr_2190AEC_hook_ref;
+extern SceUID pfs_mgr_2190AEC_hook_id;
+
+extern tai_hook_ref_t iofilemgr_feee44a9_hook_ref;
+extern SceUID iofilemgr_feee44a9_hook_id;
+
+extern tai_hook_ref_t iofilemgr_d220539d_hook_ref;
+extern SceUID iofilemgr_d220539d_hook_id;
+
+extern tai_hook_ref_t iofilemgr_BF3848_hook_ref;
+extern SceUID iofilemgr_BF3848_hook_id;
+
 int gc_patch(int param0);
 int init_mmc_hook(int sd_ctx_index, sd_context_part** result);
 int init_sd_hook(int sd_ctx_index, sd_context_part** result);
@@ -196,3 +211,27 @@ int proc_generate_random_path_23D4FBC_hook(int unk0, int unk1);
 int proc_get_clearsign_stat_23D9A4C_hook(int unk0, int unk1);
 
 int pfs_mgr_a772209c_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int arg_4);
+
+int pfs_mgr_2d48aea2_hook(int unk0, int unk1, int unk2, int unk3);
+
+int pfs_mgr_2190AEC_hook(int unk0, int unk1, int unk2, int unk3, int arg_0);
+
+int iofilemgr_feee44a9_hook(int unk0, int unk1, int unk2);
+
+int iofilemgr_d220539d_hook(int unk0, int unk1, int unk2);
+
+typedef struct ctx_BF3848
+{
+   uint32_t unk_0 ;  //unk0
+   uint32_t unk_4 ;  //var_38 - 3
+   uint32_t unk_8 ;  //var_34 - 0 - arg0
+   uint32_t unk_C ;  //var_30
+   uint32_t unk_10 ; //var_2C - 0
+   uint32_t unk_14 ; //var_28 - 0 - smth from thread ctx
+   uint32_t unk_18 ; //var_24 - 0
+   uint32_t unk_1C ; //var_20 - 0 - current thread id?
+   int32_t error ;   //var_1C - 0 - result / error
+   uint32_t unk_24 ; //var_18 - 0
+} ctx_BF3848;
+
+int iofilemgr_BF3848_hook(ctx_BF3848* ctx);

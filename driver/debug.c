@@ -87,6 +87,19 @@ uint32_t sdstor_dev_fs_function_offsets[13] = {
 
 int initialize_all_hooks()
 {
+  tai_module_info_t pfsmgr_info;
+  pfsmgr_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "ScePfsMgr", &pfsmgr_info) >= 0)
+  {
+    pfs_mgr_2d48aea2_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &pfs_mgr_2d48aea2_hook_ref, "ScePfsMgr", ScePfsMgrForKernel_NID, 0x2d48aea2, pfs_mgr_2d48aea2_hook);
+
+    pfs_mgr_2190AEC_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_mgr_2190AEC_hook_ref, pfsmgr_info.modid, 0, 0xAEC, 1, pfs_mgr_2190AEC_hook);    
+
+    iofilemgr_feee44a9_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &iofilemgr_feee44a9_hook_ref, "ScePfsMgr", SceIofilemgrForDriver_NID, 0xfeee44a9, iofilemgr_feee44a9_hook);
+
+    iofilemgr_d220539d_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &iofilemgr_d220539d_hook_ref, "ScePfsMgr", SceIofilemgrForDriver_NID, 0xd220539d, iofilemgr_d220539d_hook);    
+  }
+
   tai_module_info_t appmgr_info;
   appmgr_info.size = sizeof(tai_module_info_t);
   if (taiGetModuleInfoForKernel(KERNEL_PID, "SceAppMgr", &appmgr_info) >= 0)
@@ -246,6 +259,8 @@ int initialize_all_hooks()
     #ifdef ENABLE_IO_FILE_OPEN_LOG
     sceIoOpenForDriver_hook_id = taiHookFunctionExportForKernel(KERNEL_PID, &sceIoOpenForDriver_hook_ref, "SceIofilemgr", SceIofilemgr_NID, 0xCC67B6FD, sceIoOpenForDriver_hook);
     #endif
+
+    iofilemgr_BF3848_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &iofilemgr_BF3848_hook_ref, iofilemgr_info.modid, 0, 0x13848, 1, iofilemgr_BF3848_hook);
   }
  
   tai_module_info_t err_info;
@@ -798,6 +813,56 @@ int initialize_all_hooks()
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
 
+  if(pfs_mgr_2d48aea2_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set pfs_mgr_2d48aea2_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set pfs_mgr_2d48aea2_hook: %x\n", pfs_mgr_2d48aea2_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
+  if(pfs_mgr_2190AEC_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set pfs_mgr_2190AEC_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set pfs_mgr_2190AEC_hook: %x\n", pfs_mgr_2190AEC_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+  
+  if(iofilemgr_feee44a9_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set iofilemgr_feee44a9_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set iofilemgr_feee44a9_hook: %x\n", iofilemgr_feee44a9_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
+  if(iofilemgr_d220539d_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set iofilemgr_d220539d_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set iofilemgr_d220539d_hook: %x\n", iofilemgr_d220539d_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
+  if(iofilemgr_BF3848_hook_id >= 0)
+  {
+    FILE_GLOBAL_WRITE_LEN("set iofilemgr_BF3848_hook\n");
+  }
+  else
+  {
+    snprintf(sprintfBuffer, 256, "failed to set iofilemgr_BF3848_hook: %x\n", iofilemgr_BF3848_hook_id);
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+  }
+
   close_global_log();
   
   return 0;
@@ -969,6 +1034,21 @@ int deinitialize_all_hooks()
 
   if(pfs_mgr_a772209c_hook_id >= 0)
     taiHookReleaseForKernel(pfs_mgr_a772209c_hook_id, pfs_mgr_a772209c_hook_ref);
+
+  if(pfs_mgr_2d48aea2_hook_id >= 0)
+    taiHookReleaseForKernel(pfs_mgr_2d48aea2_hook_id, pfs_mgr_2d48aea2_hook_ref);
+
+  if(pfs_mgr_2190AEC_hook_id >= 0)
+    taiHookReleaseForKernel(pfs_mgr_2190AEC_hook_id, pfs_mgr_2190AEC_hook_ref);
+
+  if(iofilemgr_feee44a9_hook_id >= 0)
+    taiHookReleaseForKernel(iofilemgr_feee44a9_hook_id, iofilemgr_feee44a9_hook_ref);
+
+  if(iofilemgr_d220539d_hook_id >= 0)
+    taiHookReleaseForKernel(iofilemgr_d220539d_hook_id, iofilemgr_d220539d_hook_ref); 
+
+  if(iofilemgr_BF3848_hook_id >= 0)
+    taiHookReleaseForKernel(iofilemgr_BF3848_hook_id, iofilemgr_BF3848_hook_ref); 
 
   return 0;
 }
