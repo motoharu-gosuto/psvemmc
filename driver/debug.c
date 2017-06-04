@@ -30,9 +30,13 @@
 
 #define CONCAT(a, b) a ## b
 
-#define CONCAT3(a, b, c) a ## b ## c
+#define CONCAT3(a, b, c) a ## _ ## b ## _ ## c
 
-#define TOKEN_TO_STRING(token) #token
+#define CONCAT4(a, b, c, d) a ## b ## c ## d
+
+#define TO_STRING(x) # x
+
+#define EXPAND_STRING(x) TO_STRING(x)
 
 #define RELEASE_HOOK(name) if(CONCAT(name, _id)  >= 0) \
                              taiHookReleaseForKernel(CONCAT(name, _id), CONCAT(name, _ref));
@@ -41,10 +45,18 @@
                                taiInjectReleaseForKernel(CONCAT(name, _uid));
 
 #define PRINT_HOOK(name) if(CONCAT(name, _id) >= 0){\
-                           FILE_GLOBAL_WRITE_LEN(TOKEN_TO_STRING(CONCAT3(set , name, \n)));}\
+                           FILE_GLOBAL_WRITE_LEN(EXPAND_STRING(CONCAT3(set,name,_\n)));}\
                          else{\
-                           snprintf(sprintfBuffer, 256, TOKEN_TO_STRING(CONCAT3(failed to set ,name,: %x\n)), CONCAT(name, _id));\
-                           FILE_GLOBAL_WRITE_LEN(sprintfBuffer);}
+                           snprintf(sprintfBuffer, 256, EXPAND_STRING(CONCAT4(failed_to_set_,name,_:_,_%x\n)), CONCAT(name, _id));\
+                           FILE_GLOBAL_WRITE_LEN(sprintfBuffer);\
+                           }
+
+#define PRINT_INJECT(name) if(CONCAT(name, _uid) >= 0){\
+                           FILE_GLOBAL_WRITE_LEN(EXPAND_STRING(CONCAT3(set,name,_\n)));}\
+                         else{\
+                           snprintf(sprintfBuffer, 256, EXPAND_STRING(CONCAT4(failed_to_set_,name,_:_,_%x\n)), CONCAT(name, _uid));\
+                           FILE_GLOBAL_WRITE_LEN(sprintfBuffer);\
+                           }                           
 
 char sprintfBuffer[256];
 
@@ -175,6 +187,7 @@ int initialize_all_hooks()
     //pfs_219DE44_check_patch7_uid = taiInjectDataForKernel(KERNEL_PID, pfsmgr_info.modid, 0, 0x21A0524 - 0x2190000, pfs_219DE44_check_patch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP) 
     #endif
 
+    //test patches for 80140f02 in crypto thread
     char test_patch[8] = {0x4F, 0xF6, 0x02, 0x70, 0xC8, 0xF2, 0x14, 0x00};
     //pfs_80140f02_test_patch1_uid = taiInjectDataForKernel(KERNEL_PID, pfsmgr_info.modid, 0, 0x219ADA6 - 0x2190000, test_patch, 8);
     //pfs_80140f02_test_patch2_uid = taiInjectDataForKernel(KERNEL_PID, pfsmgr_info.modid, 0, 0x219AF64 - 0x2190000, test_patch, 8);
@@ -182,7 +195,41 @@ int initialize_all_hooks()
     //encryption subroutine ?
     //pfs_mgr_219BF20_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_mgr_219BF20_hook_ref, pfsmgr_info.modid, 0, 0x219BF20 - 0x2190000, 1, pfs_mgr_219BF20_hook);
 
+    //iofilemgr pread impl
     iofilemgr_0b54f9e0_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &iofilemgr_0b54f9e0_hook_ref, "ScePfsMgr", SceIofilemgrForDriver_NID, 0x0b54f9e0, iofilemgr_0b54f9e0_hook);
+
+    //ioctl crypro stuff
+    pfs_facade_219C9E8_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_facade_219C9E8_hook_ref, pfsmgr_info.modid, 0, 0x219C9E8 - 0x2190000, 1, pfs_facade_219C9E8_hook);
+
+    pfs_facade_21A179C_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_facade_21A179C_hook_ref, pfsmgr_info.modid, 0, 0x21A179C - 0x2190000, 1, pfs_facade_21A179C_hook);
+    pfs_facade_21A19A8_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_facade_21A19A8_hook_ref, pfsmgr_info.modid, 0, 0x21A19A8 - 0x2190000, 1, pfs_facade_21A19A8_hook);
+    pfs_facade_219BB70_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_facade_219BB70_hook_ref, pfsmgr_info.modid, 0, 0x219BB70 - 0x2190000, 1, pfs_facade_219BB70_hook);
+
+    pfs_facade_219BDD4_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_facade_219BDD4_hook_ref, pfsmgr_info.modid, 0, 0x219BDD4 - 0x2190000, 1, pfs_facade_219BDD4_hook);
+    pfs_facade_219BD88_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_facade_219BD88_hook_ref, pfsmgr_info.modid, 0, 0x219BD88 - 0x2190000, 1, pfs_facade_219BD88_hook);
+
+    //t_sceIoIoctlForDriver
+    pfs_facade_c1dd4317_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &pfs_facade_c1dd4317_hook_ref, "ScePfsMgr", SceIofilemgrForDriver_NID, 0xc1dd4317, pfs_facade_c1dd4317_hook);
+
+    pfs_facade_219BEA0_hook_id = taiHookFunctionOffsetForKernel(KERNEL_PID, &pfs_facade_219BEA0_hook_ref, pfsmgr_info.modid, 0, 0x219BEA0 - 0x2190000, 1, pfs_facade_219BEA0_hook);
+
+    pfs_facade_15c17487_hook_id = taiHookFunctionImportForKernel(KERNEL_PID, &pfs_facade_15c17487_hook_ref, "ScePfsMgr", SceIofilemgrForDriver_NID, 0x15c17487, pfs_facade_15c17487_hook);
+
+    //this is the patch for checks that occur in crypto thread on pread
+    #ifdef ENABLE_SD_PATCHES
+    
+    //looks like this patch is not required
+    //pfs_facade_0219C328_crypto_patch1_uid = taiInjectDataForKernel(KERNEL_PID, pfsmgr_info.modid, 0, 0x219C328 - 0x2190000, pfs_219DE44_check_patch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP) 
+
+    //looks like this patch is not required
+    //pfs_facade_0219C486_crypto_patch2_uid = taiInjectDataForKernel(KERNEL_PID, pfsmgr_info.modid, 0, 0x219C486 - 0x2190000, pfs_219DE44_check_patch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP) 
+
+    //looks like this patch is not required
+    //pfs_facade_0219C3F4_crypto_patch3_uid = taiInjectDataForKernel(KERNEL_PID, pfsmgr_info.modid, 0, 0x219C3F4 - 0x2190000, pfs_219DE44_check_patch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP) 
+
+    pfs_facade_0219C1F0_crypto_patch4_uid = taiInjectDataForKernel(KERNEL_PID, pfsmgr_info.modid, 0, 0x219C1F0 - 0x2190000, pfs_219DE44_check_patch, 4); //patch (BLX) to (MOVS R0, #1 ; NOP) 
+
+    #endif
   }
 
   tai_module_info_t appmgr_info;
@@ -2063,6 +2110,24 @@ int initialize_all_hooks()
 
   PRINT_HOOK(iofilemgr_0b54f9e0_hook);
 
+  PRINT_HOOK(pfs_facade_219C9E8_hook);
+
+  PRINT_HOOK(pfs_facade_21A179C_hook);
+  PRINT_HOOK(pfs_facade_21A19A8_hook);
+  PRINT_HOOK(pfs_facade_219BB70_hook);
+
+  PRINT_HOOK(pfs_facade_219BDD4_hook);
+  PRINT_HOOK(pfs_facade_219BD88_hook);
+
+  PRINT_HOOK(pfs_facade_c1dd4317_hook);
+  PRINT_HOOK(pfs_facade_219BEA0_hook);
+  PRINT_HOOK(pfs_facade_15c17487_hook);
+
+  PRINT_INJECT(pfs_facade_0219C328_crypto_patch1);
+  PRINT_INJECT(pfs_facade_0219C486_crypto_patch2);
+  PRINT_INJECT(pfs_facade_0219C3F4_crypto_patch3);
+  PRINT_INJECT(pfs_facade_0219C1F0_crypto_patch4);
+
   close_global_log();
   
   return 0;
@@ -2280,6 +2345,24 @@ int deinitialize_all_hooks()
   RELEASE_HOOK(iofilemgr_BFB2A8_hook);
   RELEASE_HOOK(pfs_facade_4238d2d2_hook);
   RELEASE_HOOK(iofilemgr_0b54f9e0_hook);
+
+  RELEASE_HOOK(pfs_facade_219C9E8_hook);
+
+  RELEASE_HOOK(pfs_facade_21A179C_hook);
+  RELEASE_HOOK(pfs_facade_21A19A8_hook);
+  RELEASE_HOOK(pfs_facade_219BB70_hook);
+
+  RELEASE_HOOK(pfs_facade_219BDD4_hook);
+  RELEASE_HOOK(pfs_facade_219BD88_hook);
+
+  RELEASE_HOOK(pfs_facade_c1dd4317_hook);
+  RELEASE_HOOK(pfs_facade_219BEA0_hook);
+  RELEASE_HOOK(pfs_facade_15c17487_hook);
+
+  RELEASE_INJECT(pfs_facade_0219C328_crypto_patch1);
+  RELEASE_INJECT(pfs_facade_0219C486_crypto_patch2);
+  RELEASE_INJECT(pfs_facade_0219C3F4_crypto_patch3);
+  RELEASE_INJECT(pfs_facade_0219C1F0_crypto_patch4);
 
   return 0;
 }

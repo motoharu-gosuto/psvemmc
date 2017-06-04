@@ -447,6 +447,38 @@ SceUID pfs_facade_4238d2d2_hook_id = -1;
 tai_hook_ref_t iofilemgr_0b54f9e0_hook_ref = -1;
 SceUID iofilemgr_0b54f9e0_hook_id = -1;
 
+tai_hook_ref_t pfs_facade_219C9E8_hook_ref = -1;
+SceUID pfs_facade_219C9E8_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_21A179C_hook_ref = -1;
+SceUID pfs_facade_21A179C_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_21A19A8_hook_ref = -1;
+SceUID pfs_facade_21A19A8_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_219BB70_hook_ref = -1;
+SceUID pfs_facade_219BB70_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_219BDD4_hook_ref = -1;
+SceUID pfs_facade_219BDD4_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_219BD88_hook_ref = -1;
+SceUID pfs_facade_219BD88_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_c1dd4317_hook_ref = -1;
+SceUID pfs_facade_c1dd4317_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_219BEA0_hook_ref = -1;
+SceUID pfs_facade_219BEA0_hook_id = -1;
+
+tai_hook_ref_t pfs_facade_15c17487_hook_ref = -1;
+SceUID pfs_facade_15c17487_hook_id = -1;
+
+SceUID pfs_facade_0219C328_crypto_patch1_uid = -1;
+SceUID pfs_facade_0219C486_crypto_patch2_uid = -1;
+SceUID pfs_facade_0219C3F4_crypto_patch3_uid = -1;
+SceUID pfs_facade_0219C1F0_crypto_patch4_uid = -1;
+
 //========================================
 
 #pragma pack(push, 1)
@@ -3725,6 +3757,35 @@ int pfs_facade_4238d2d2_hook_err_cnt = 0;
 int iofilemgr_0b54f9e0_hook_err = 0;
 int iofilemgr_0b54f9e0_hook_err_cnt = 0;
 
+int pfs_facade_219C9E8_hook_err = 0;
+int pfs_facade_219C9E8_hook_err_cnt = 0;
+
+int pfs_facade_21A179C_hook_err = 0;
+int pfs_facade_21A179C_hook_err_cnt = 0;
+
+int pfs_facade_21A19A8_hook_err = 0;
+int pfs_facade_21A19A8_hook_err_cnt = 0;
+
+int pfs_facade_219BB70_hook_err = 0;
+int pfs_facade_219BB70_hook_err_cnt = 0;
+
+int pfs_facade_219BDD4_hook_err = 0;
+int pfs_facade_219BDD4_hook_err_cnt = 0;
+
+int pfs_facade_219BD88_hook_err = 0;
+int pfs_facade_219BD88_hook_err_cnt = 0;
+
+int pfs_facade_c1dd4317_hook_err = 0;
+int pfs_facade_c1dd4317_hook_err_cnt = 0;
+
+int pfs_facade_219BEA0_hook_err = 0; 
+int pfs_facade_219BEA0_hook_err_cnt = 0; 
+
+int pfs_facade_219BEA0_hook_prob_err = 0;
+
+int pfs_facade_15c17487_hook_err = 0;
+int pfs_facade_15c17487_hook_err_cnt = 0;
+
 int app_mgr_e17efc03_hook(SceUID fd, char *data, SceSize size)
 {
   int res = TAI_CONTINUE(int, app_mgr_e17efc03_hook_ref, fd, data, size);
@@ -3831,6 +3892,33 @@ int app_mgr_e17efc03_hook(SceUID fd, char *data, SceSize size)
 
       snprintf(sprintfBuffer, 256, "iofilemgr_0b54f9e0_hook error: %08x cnt: %08x\n", iofilemgr_0b54f9e0_hook_err, iofilemgr_0b54f9e0_hook_err_cnt);
       FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "pfs_facade_219C9E8_hook error: %08x cnt: %08x\n", pfs_facade_219C9E8_hook_err, pfs_facade_219C9E8_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "pfs_facade_21A179C_hook error: %08x cnt: %08x\n", pfs_facade_21A179C_hook_err, pfs_facade_21A179C_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "pfs_facade_21A19A8_hook error: %08x cnt: %08x\n", pfs_facade_21A19A8_hook_err, pfs_facade_21A19A8_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "pfs_facade_219BB70_hook error: %08x cnt: %08x\n", pfs_facade_219BB70_hook_err, pfs_facade_219BB70_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "pfs_facade_219BDD4_hook error: %08x cnt: %08x\n", pfs_facade_219BDD4_hook_err, pfs_facade_219BDD4_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "pfs_facade_219BD88_hook error: %08x cnt: %08x\n", pfs_facade_219BD88_hook_err, pfs_facade_219BD88_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "pfs_facade_c1dd4317_hook error: %08x cnt: %08x\n", pfs_facade_c1dd4317_hook_err, pfs_facade_c1dd4317_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      snprintf(sprintfBuffer, 256, "pfs_facade_219BEA0_hook error: %08x error_C: %08x cnt: %08x\n", pfs_facade_219BEA0_hook_err, pfs_facade_219BEA0_hook_prob_err, pfs_facade_219BEA0_hook_err_cnt);
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+
+      //snprintf(sprintfBuffer, 256, "pfs_facade_15c17487_hook error: %08x cnt: %08x\n", pfs_facade_15c17487_hook_err, pfs_facade_15c17487_hook_err_cnt);
+      //FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
 
       FILE_GLOBAL_WRITE_LEN("======================================\n");
 
@@ -4619,6 +4707,16 @@ int pfs_facade_4238d2d2_hook(sceIoPreadForDriver_args* args)
     }
   }
 
+  /*
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(args > 0)
+    {
+      print_bytes(args->data, min(args->size, 100));
+    }
+  }
+  */
+
   return res;
 }
 
@@ -4639,6 +4737,242 @@ int iofilemgr_0b54f9e0_hook(sceIoPreadForDriver_args *args)
       if(res < 0)
       {
         iofilemgr_0b54f9e0_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_219C9E8_hook(SceUID fd, int unk1, int unk2, SceOff offset, int dispatcherFlag)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_219C9E8_hook_ref, fd, unk1, unk2, offset, dispatcherFlag);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_219C9E8_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_219C9E8_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_219C9E8_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_21A179C_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, void **arg_4, int arg_8)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_21A179C_hook_ref, unk0, unk1, unk2, unk3, arg_0, arg_4, arg_8);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_21A179C_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_21A179C_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_21A179C_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_21A19A8_hook(int unk0, int unk1, int unk2, int unk3, int arg_0, int arg_4)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_21A19A8_hook_ref, unk0, unk1, unk2, unk3, arg_0, arg_4);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_21A19A8_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_21A19A8_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_21A19A8_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_219BB70_hook(void* unk0)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_219BB70_hook_ref, unk0);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_219BB70_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_219BB70_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_219BB70_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_219BDD4_hook(void* unk0)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_219BDD4_hook_ref, unk0);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_219BDD4_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_219BDD4_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_219BDD4_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_219BD88_hook(void* unk0)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_219BD88_hook_ref, unk0);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_219BD88_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_219BD88_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_219BD88_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_c1dd4317_hook(sceIoIoctlForDriver_args *args)
+{
+  int res =  TAI_CONTINUE(int, pfs_facade_c1dd4317_hook_ref, args);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_c1dd4317_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_c1dd4317_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_c1dd4317_hook_err = res;
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_219BEA0_hook(t_219BEA0* unk0)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_219BEA0_hook_ref, unk0);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_219BEA0_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_219BEA0_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_219BEA0_hook_err = res;
+      }
+    }
+  }
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    if(unk0 > 0)
+    {
+      int prob_err = unk0->unk_C;
+
+      if(prob_err == 0x80140F02)
+      {
+        pfs_facade_219BEA0_hook_prob_err = prob_err;
+      }
+      else
+      {
+        if(prob_err < 0)
+        {
+          pfs_facade_219BEA0_hook_prob_err = prob_err;
+        }
+      }
+    }
+  }
+
+  return res;
+}
+
+int pfs_facade_15c17487_hook(int code)
+{
+  int res = TAI_CONTINUE(int, pfs_facade_15c17487_hook_ref, code);
+
+  if(log_iofilemgr_in_app_mgr > 0)
+  {
+    pfs_facade_15c17487_hook_err_cnt++;
+    
+    if(res == 0x80140F02)
+    {
+      pfs_facade_15c17487_hook_err = res;
+    }
+    else
+    {
+      if(res < 0)
+      {
+        pfs_facade_15c17487_hook_err = res;
       }
     }
   }
