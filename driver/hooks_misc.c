@@ -545,6 +545,72 @@ int gc_sd_init(void* args)
    return 0;
 }
 
+char data_5018_real_data[0x34] = {0};
+
+int set_5018_data()
+{
+  tai_module_info_t gc_info;
+  gc_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceSblGcAuthMgr", &gc_info) >= 0)
+  {
+    uintptr_t addr = 0;
+    int ofstRes = module_get_offset(KERNEL_PID, gc_info.modid, 1, 0x5018, &addr);
+    if(ofstRes == 0)
+    {
+      char* data_5018 = (char*)addr;
+      memcpy(data_5018, data_5018_real_data, 0x34);
+    }
+  }
+
+  return 0;
+}
+
+char data_5018_buffer[0x34] = {0};
+
+int get_5018_data()
+{
+  tai_module_info_t gc_info;
+  gc_info.size = sizeof(tai_module_info_t);
+  if (taiGetModuleInfoForKernel(KERNEL_PID, "SceSblGcAuthMgr", &gc_info) >= 0)
+  {
+    uintptr_t addr = 0;
+    int ofstRes = module_get_offset(KERNEL_PID, gc_info.modid, 1, 0x5018, &addr);
+    if(ofstRes == 0)
+    {
+      open_global_log();
+      snprintf(sprintfBuffer, 256, "start reading SceSblGcAuthMgr 5018 data\n");
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+      close_global_log();
+
+      char* data_5018 = (char*)addr;
+      memcpy(data_5018_buffer, data_5018, 0x34);
+
+      print_bytes(data_5018_buffer, 0x34);
+
+      open_global_log();
+      snprintf(sprintfBuffer, 256, "finished reading SceSblGcAuthMgr 5018 data\n");
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+      close_global_log();
+    }
+    else
+    {
+      open_global_log();
+      snprintf(sprintfBuffer, 256, "failed to get SceSblGcAuthMgr offset\n");
+      FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+      close_global_log();
+    }
+  }
+  else
+  {
+    open_global_log();
+    snprintf(sprintfBuffer, 256, "failed to get SceSblGcAuthMgr info\n");
+    FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
+    close_global_log();
+  }
+
+  return 0;
+}
+
 int gc_patch(int param0)
 {
   /*
@@ -560,6 +626,8 @@ int gc_patch(int param0)
     FILE_GLOBAL_WRITE_LEN(sprintfBuffer);
   }
   close_global_log();
+
+  get_5018_data();
   
   return res;
 }
@@ -626,6 +694,10 @@ int init_sd_hook(int sd_ctx_index, sd_context_part** result)
   close_global_log();
   
   //initialize_gc_globals(); //initialize all globals here since it can not be done on boot
+
+  #ifdef ENABLE_SD_PATCHES
+  set_5018_data();
+  #endif
   
   return res;
 }
@@ -3922,7 +3994,7 @@ int app_mgr_e17efc03_hook(SceUID fd, char *data, SceSize size)
 
       FILE_GLOBAL_WRITE_LEN("======================================\n");
 
-      for(int i = 0; i < min(0x100, size); i++)
+      for(int i = 0; i < min(0x10, size); i++)
       {
         char buffer[4];
         snprintf(buffer, 4, "%02x ", data[i]);
