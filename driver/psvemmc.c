@@ -452,6 +452,7 @@ int module_start(SceSize argc, const void *args)
   //initialize ms if required
   initialize_ms_globals();
   
+  #ifdef ENABLE_REVERSING
   initialize_all_hooks();
 
   //deal with module table
@@ -466,6 +467,7 @@ int module_start(SceSize argc, const void *args)
   construct_module_range_table(ksceKernelGetProcessId(), 0xFFFFFFFF, 1, g_modlistUser, MOD_LIST_SIZE, g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser);
   sort_segment_table(g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser);
   print_segment_table(g_segListUser, SEG_LIST_SIZE, &moduleListIsConstructedUser);
+  #endif
   
   //dump_vfs_data();
 
@@ -512,7 +514,9 @@ int module_stop(SceSize argc, const void *args)
   deinit_net();
   #endif
 
+  #ifdef ENABLE_REVERSING
   deinitialize_all_hooks();
+  #endif
   
   //deinitialize buffers if required
   psvemmcDeinitialize();

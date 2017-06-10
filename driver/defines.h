@@ -1,7 +1,9 @@
 #pragma once
 
+//#define ENABLE_REVERSING
+
 #define ENABLE_SD_PATCHES
-#define ENABLE_LOW_SPEED_PATCH 
+//#define ENABLE_LOW_SPEED_PATCH 
 
 //#define ENABLE_NETWORK
 //#define ENABLE_NETWORK_REPORT_SEND_FAILURE
